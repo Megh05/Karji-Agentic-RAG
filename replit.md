@@ -1,0 +1,85 @@
+# Overview
+
+This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It features an intelligent sales assistant that combines Retrieval-Augmented Generation (RAG) with product recommendations. The system includes a React-based chat interface and an admin dashboard for managing knowledge base content, product data, and AI configuration.
+
+# User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+# System Architecture
+
+## Frontend Architecture
+- **Framework**: React with TypeScript using Vite as the build tool
+- **UI Library**: Radix UI components with shadcn/ui design system
+- **Styling**: Tailwind CSS with custom CSS variables for theming
+- **State Management**: TanStack Query for server state management
+- **Routing**: Wouter for lightweight client-side routing
+- **Form Handling**: React Hook Form with Zod validation
+
+## Backend Architecture
+- **Framework**: Express.js with TypeScript
+- **Database ORM**: Drizzle ORM with PostgreSQL support
+- **File Handling**: Multer for document uploads
+- **Session Management**: Express sessions with PostgreSQL store
+- **API Design**: RESTful APIs with structured error handling
+
+## Data Storage Architecture
+- **Primary Database**: PostgreSQL with Drizzle ORM
+- **Database Provider**: Neon Database (serverless PostgreSQL)
+- **Schema Design**: 
+  - Users table for authentication
+  - Documents table for knowledge base files
+  - Products table for e-commerce catalog
+  - Offers table for promotional pricing
+  - API configuration table for OpenRouter settings
+  - Merchant feeds table for external product data
+
+## RAG Implementation
+- **Similarity Search**: Basic text similarity using word overlap calculations
+- **Context Retrieval**: Combines document content and product information
+- **Embedding Strategy**: Planned integration with local embedding models
+- **Search Algorithm**: Text-based similarity scoring with configurable thresholds
+
+## Chat System Architecture
+- **Message Flow**: User input → RAG context retrieval → LLM processing → Structured response
+- **Product Recommendations**: Integrated product cards within chat responses
+- **Streaming**: Designed for real-time message streaming
+- **Context Management**: Maintains conversation history and relevant product context
+
+## Admin Panel Features
+- **API Configuration**: OpenRouter API key and model selection
+- **Knowledge Base Management**: Document upload and processing for PDF, Word, Excel, CSV
+- **Product Offers**: Excel-based offer management with discount pricing
+- **Merchant Feed Integration**: XML feed parsing and product synchronization
+
+# External Dependencies
+
+## AI/ML Services
+- **OpenRouter API**: External LLM service for chat completions
+- **Planned Integrations**: Local embedding models (sentence-transformers/all-MiniLM-L6-v2)
+- **Vector Database**: ChromaDB integration planned for similarity search
+
+## Database Services
+- **Neon Database**: Serverless PostgreSQL hosting
+- **Connection**: Environment-based DATABASE_URL configuration
+
+## File Processing
+- **Multer**: Multipart form data handling for file uploads
+- **File Types**: Support for PDF, Word, Excel, CSV document processing
+
+## UI/UX Libraries
+- **Radix UI**: Comprehensive component primitives for accessibility
+- **Lucide React**: Icon library for consistent iconography
+- **React Day Picker**: Calendar and date selection components
+- **Recharts**: Data visualization and charting capabilities
+
+## Development Tools
+- **Vite**: Fast development server and build tool
+- **TypeScript**: Type safety across frontend and backend
+- **ESBuild**: Fast JavaScript bundling for production
+- **PostCSS**: CSS processing with Tailwind CSS
+
+## Third-Party Integrations
+- **Google Merchant Feed**: XML feed parsing for product catalog
+- **Replit Platform**: Development environment with custom plugins
+- **Session Storage**: PostgreSQL-based session management
