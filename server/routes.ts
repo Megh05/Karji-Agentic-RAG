@@ -559,6 +559,18 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     }
   });
 
+  // Save MemoryVectorStore state endpoint
+  app.post("/api/admin/save-vector-store", async (req, res) => {
+    try {
+      const { langchainRAGService } = await import('./services/langchainRAG.js');
+      await langchainRAGService.saveVectorStoreState();
+      res.json({ success: true, message: "MemoryVectorStore state saved successfully" });
+    } catch (error) {
+      console.error('Save vector store error:', error);
+      res.status(500).json({ error: "Failed to save vector store state" });
+    }
+  });
+
   // Helper function to extract price from various formats
   function extractPrice(priceStr: string): string {
     if (!priceStr) return '';

@@ -17,9 +17,11 @@ export interface ProcessedDocument {
 export class LangchainRAGService {
   private static instance: LangchainRAGService;
   private textSplitter: RecursiveCharacterTextSplitter;
-  private embeddings: HuggingFaceTransformersEmbeddings;
-  private vectorStore: MemoryVectorStore;
+  private embeddings!: HuggingFaceTransformersEmbeddings;
+  private vectorStore!: MemoryVectorStore;
   private isInitialized = false;
+  private lastVectorSave: number = 0;
+  private storedDocuments: Document[] = [];
 
   private constructor() {
     // Initialize text splitter for document chunking
@@ -48,8 +50,11 @@ export class LangchainRAGService {
         modelName: "Xenova/all-MiniLM-L6-v2",
       });
 
-      // Initialize memory vector store as fallback
+      // Initialize memory vector store
       this.vectorStore = new MemoryVectorStore(this.embeddings);
+      
+      // Load persisted vector store data if exists
+      await this.loadPersistedVectorStore();
 
       // Initialize ChromaDB service
       await chromaVectorDBService.initialize();
@@ -78,6 +83,7 @@ export class LangchainRAGService {
 
       // Store chunks in vector database
       await this.vectorStore.addDocuments(docs);
+      this.storedDocuments.push(...docs);
       
       // Also store in ChromaDB for persistence
       const vectorDocs = docs.map((doc, index) => ({
@@ -87,6 +93,13 @@ export class LangchainRAGService {
       }));
 
       await chromaVectorDBService.addDocuments(vectorDocs);
+
+      // Save vector store state periodically for documents too
+      const currentTime = Date.now();
+      if (!this.lastVectorSave || currentTime - this.lastVectorSave > 30000) { // Save every 30 seconds
+        await this.saveVectorStoreState();
+        this.lastVectorSave = currentTime;
+      }
 
       // Only store processed document locally if it's not a product (to avoid excessive file creation)
       if (metadata.type !== 'product') {
@@ -134,6 +147,7 @@ export class LangchainRAGService {
 
       // Store chunks in vector database
       await this.vectorStore.addDocuments(docs);
+      this.storedDocuments.push(...docs);
       
       // Store in ChromaDB products collection
       await chromaVectorDBService.addProducts([{
@@ -141,6 +155,13 @@ export class LangchainRAGService {
         content,
         metadata
       }]);
+
+      // Save vector store state periodically (every 10 products processed)
+      const currentTime = Date.now();
+      if (!this.lastVectorSave || currentTime - this.lastVectorSave > 30000) { // Save every 30 seconds
+        await this.saveVectorStoreState();
+        this.lastVectorSave = currentTime;
+      }
 
       console.log(`Product processed in memory: ${product.title}`);
       return processedDoc;
@@ -272,9 +293,73 @@ export class LangchainRAGService {
       // Write new consolidated file (replacing old one)
       await fs.promises.writeFile(vectorFilePath, JSON.stringify(productVectors, null, 2), 'utf-8');
       
+      // Also save MemoryVectorStore state after updating products
+      await this.saveVectorStoreState();
+      
       console.log(`Updated consolidated product vectors: ${productVectors.length} products in products_consolidated.json`);
     } catch (error) {
       console.error('Error saving consolidated product vectors:', error);
+    }
+  }
+
+  public async saveVectorStoreState(): Promise<void> {
+    try {
+      const vectorDir = path.join(process.cwd(), 'uploads', 'vectors');
+      if (!fs.existsSync(vectorDir)) {
+        fs.mkdirSync(vectorDir, { recursive: true });
+      }
+
+      // Save the stored documents for reconstruction
+      const vectorStoreData = {
+        documents: this.storedDocuments.map(doc => ({
+          pageContent: doc.pageContent,
+          metadata: doc.metadata
+        })),
+        savedAt: new Date().toISOString(),
+        count: this.storedDocuments.length
+      };
+
+      const vectorStorePath = path.join(vectorDir, 'memory_vector_store.json');
+      await fs.promises.writeFile(vectorStorePath, JSON.stringify(vectorStoreData, null, 2), 'utf-8');
+      
+      console.log(`MemoryVectorStore state saved: ${vectorStoreData.count} documents`);
+    } catch (error) {
+      console.error('Error saving vector store state:', error);
+    }
+  }
+
+  public async loadPersistedVectorStore(): Promise<void> {
+    try {
+      const vectorStorePath = path.join(process.cwd(), 'uploads', 'vectors', 'memory_vector_store.json');
+      
+      if (!fs.existsSync(vectorStorePath)) {
+        console.log('No persisted vector store found, starting fresh');
+        return;
+      }
+
+      const content = await fs.promises.readFile(vectorStorePath, 'utf-8');
+      const vectorStoreData = JSON.parse(content);
+      
+      if (vectorStoreData.documents && vectorStoreData.documents.length > 0) {
+        // Reconstruct documents
+        const documents = vectorStoreData.documents.map((docData: any) => 
+          new Document({
+            pageContent: docData.pageContent,
+            metadata: docData.metadata
+          })
+        );
+
+        // Add documents to vector store
+        await this.vectorStore.addDocuments(documents);
+        this.storedDocuments = [...documents];
+        
+        console.log(`MemoryVectorStore restored: ${documents.length} documents loaded`);
+      } else {
+        console.log('No documents found in persisted vector store');
+      }
+    } catch (error) {
+      console.error('Error loading persisted vector store:', error);
+      console.log('Starting with fresh MemoryVectorStore');
     }
   }
 
