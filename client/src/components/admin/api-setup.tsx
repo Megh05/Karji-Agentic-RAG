@@ -37,9 +37,12 @@ export default function ApiSetup() {
   }, [config]);
 
   const saveConfigMutation = useMutation({
-    mutationFn: async (data: ApiConfig) => {
+    mutationFn: async (data: any) => {
+      console.log('Saving config:', data);
       const response = await apiRequest("POST", "/api/config", data);
-      return response.json();
+      const result = await response.json();
+      console.log('Save response:', result);
+      return result;
     },
     onSuccess: () => {
       toast({
@@ -48,7 +51,8 @@ export default function ApiSetup() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/config"] });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Save error:', error);
       toast({
         title: "Error",
         description: "Failed to save configuration",
@@ -100,10 +104,10 @@ export default function ApiSetup() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Debug logging
-  console.log('Models data:', models);
-  console.log('Models loading:', modelsLoading);
-  console.log('Models error:', modelsError);
+  // Remove debug logging once working
+  // console.log('Models data:', models);
+  // console.log('Models loading:', modelsLoading);
+  // console.log('Models error:', modelsError);
 
   return (
     <div className="max-w-4xl">

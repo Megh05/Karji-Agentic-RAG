@@ -92,6 +92,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const config = await storage.getApiConfig();
+      console.log('Chat config check:', { hasApiKey: !!config?.openrouterKey, selectedModel: config?.selectedModel });
+      
       if (!config?.openrouterKey && !process.env.OPENROUTER_API_KEY) {
         return res.status(400).json({ error: "OpenRouter API key not configured" });
       }
@@ -116,7 +118,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { role: "user", content: message }
       ];
 
+      console.log('Making OpenRouter API call...');
       const response = await callOpenRouterAPI(messages, config);
+      console.log('OpenRouter API response received');
       
       res.json({
         message: response.choices[0]?.message?.content || "Sorry, I couldn't process your request.",
