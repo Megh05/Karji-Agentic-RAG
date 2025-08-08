@@ -13,7 +13,7 @@ export interface RAGContext {
 
 export class RAGService {
   private static instance: RAGService;
-  private isInitialized = false;
+  public isInitialized = false;
 
   private constructor() {}
 

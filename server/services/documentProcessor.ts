@@ -75,15 +75,20 @@ export class DocumentProcessor {
 
   private async processPDF(filePath: string): Promise<string> {
     try {
+      // Ensure file exists
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`PDF file not found: ${filePath}`);
+      }
+      
       // Dynamic import to handle pdf-parse issues
       const pdfParse = (await import('pdf-parse')).default;
       const dataBuffer = fs.readFileSync(filePath);
       const data = await pdfParse(dataBuffer);
-      return data.text;
+      return data.text || '';
     } catch (error) {
       console.error('PDF parsing error:', error);
-      // Fallback to text reading
-      return fs.readFileSync(filePath, 'utf8');
+      // Fallback: return empty string instead of trying to read as UTF-8
+      return '';
     }
   }
 
