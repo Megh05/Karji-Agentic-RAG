@@ -48,7 +48,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Admin Panel Features
 - **API Configuration**: OpenRouter API key setup with live model fetching (400+ models), connection testing, and parameter tuning
-- **Knowledge Base Management**: Document upload and processing for PDF, Word, Excel, CSV files with automatic text extraction
+- **Knowledge Base Management**: Document upload and processing for PDF, Word, Excel, CSV files with automatic text extraction, plus custom AI instructions tab
 - **Product Offers**: Excel-based offer management with discount pricing and batch import
 - **Merchant Feed Integration**: Real XML feed parsing with Google Merchant format support and product synchronization
 
