@@ -477,7 +477,7 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       try {
         const { langchainRAGService } = await import('./services/langchainRAG.js');
         await langchainRAGService.saveAllProductsVector();
-        console.log('Consolidated product vectors saved successfully');
+        console.log('Consolidated product vectors updated after feed sync');
       } catch (error) {
         console.error('Error saving consolidated vectors:', error);
       }
@@ -527,6 +527,35 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     } catch (error) {
       console.error('Save consolidated vectors error:', error);
       res.status(500).json({ error: "Failed to save consolidated vectors" });
+    }
+  });
+
+  // Test consolidated search endpoint
+  app.post("/api/admin/test-consolidated-search", async (req, res) => {
+    try {
+      const { query } = req.body;
+      if (!query) {
+        return res.status(400).json({ error: "Query required" });
+      }
+
+      const context = await ragService.findRelevantContext(query, {
+        maxProducts: 5,
+        maxDocuments: 2
+      });
+
+      res.json({ 
+        success: true, 
+        query,
+        found: {
+          products: context.products.length,
+          documents: context.documents.length
+        },
+        products: context.products.slice(0, 3), // Show first 3 products
+        message: `Found ${context.products.length} products and ${context.documents.length} documents using consolidated search`
+      });
+    } catch (error) {
+      console.error('Test consolidated search error:', error);
+      res.status(500).json({ error: "Failed to test consolidated search" });
     }
   });
 

@@ -262,9 +262,17 @@ export class LangchainRAGService {
       }));
 
       const vectorFilePath = path.join(vectorDir, 'products_consolidated.json');
+      
+      // Create backup of existing file if it exists
+      const backupPath = path.join(vectorDir, `products_consolidated_backup_${Date.now()}.json`);
+      if (fs.existsSync(vectorFilePath)) {
+        await fs.promises.copyFile(vectorFilePath, backupPath);
+      }
+      
+      // Write new consolidated file (replacing old one)
       await fs.promises.writeFile(vectorFilePath, JSON.stringify(productVectors, null, 2), 'utf-8');
       
-      console.log(`Saved consolidated product vectors: ${productVectors.length} products in products_consolidated.json`);
+      console.log(`Updated consolidated product vectors: ${productVectors.length} products in products_consolidated.json`);
     } catch (error) {
       console.error('Error saving consolidated product vectors:', error);
     }

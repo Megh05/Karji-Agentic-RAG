@@ -125,9 +125,13 @@ export class RAGService {
           vectorDocs.some(vDoc => vDoc.id === doc.id)
         ).map(doc => ({ ...doc, similarity: 0.8 })); // High similarity for vector matches
 
-        const relevantProducts = products.filter(product => 
-          vectorProducts.some(vProduct => vProduct.id === product.id)
-        ).map(product => ({ ...product, similarity: 0.8 }));
+        // For products, use consolidated file if available
+        const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts);
+        const relevantProducts = consolidatedProducts.length > 0 
+          ? consolidatedProducts.slice(0, maxProducts).map(product => ({ ...product, similarity: 0.8 }))
+          : products.filter(product => 
+              vectorProducts.some(vProduct => vProduct.id === product.id)
+            ).map(product => ({ ...product, similarity: 0.8 }));
 
         return {
           documents: relevantDocs,
@@ -146,6 +150,35 @@ export class RAGService {
     }
   }
 
+  private async searchConsolidatedProducts(query: string, maxProducts: number): Promise<any[]> {
+    try {
+      const { langchainRAGService } = await import('./langchainRAG.js');
+      const consolidatedProducts = await langchainRAGService.loadConsolidatedProducts();
+      
+      if (consolidatedProducts.length === 0) {
+        console.log('No consolidated products found, falling back to storage');
+        return await storage.getProducts();
+      }
+
+      const queryLower = query.toLowerCase();
+      
+      const relevantProducts = consolidatedProducts
+        .map(product => ({
+          ...product,
+          similarity: this.calculateBasicSimilarity(query, product.content)
+        }))
+        .filter(product => product.similarity > 0.1)
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, maxProducts);
+
+      console.log(`Found ${relevantProducts.length} products from consolidated file`);
+      return relevantProducts;
+    } catch (error) {
+      console.error('Error searching consolidated products:', error);
+      return [];
+    }
+  }
+
   private async basicSimilaritySearch(
     query: string, 
     threshold: number, 
@@ -153,7 +186,9 @@ export class RAGService {
     maxProducts: number
   ): Promise<RAGContext> {
     const documents = await storage.getDocuments();
-    const products = await storage.getProducts();
+    
+    // Use consolidated product file for product search
+    const products = await this.searchConsolidatedProducts(query, maxProducts);
 
     const relevantDocs = documents
       .map(doc => ({ 
@@ -164,18 +199,9 @@ export class RAGService {
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, maxDocs);
 
-    const relevantProducts = products
-      .map(product => ({ 
-        ...product, 
-        similarity: this.calculateBasicSimilarity(query, `${product.title} ${product.description || ''}`) 
-      }))
-      .filter(product => product.similarity > threshold)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, maxProducts);
-
     return {
       documents: relevantDocs,
-      products: relevantProducts,
+      products: products,
       relevantChunks: []
     };
   }
