@@ -56,7 +56,7 @@ export class LangchainRAGService {
       // Load persisted vector store data if exists
       await this.loadPersistedVectorStore();
 
-      // Initialize ChromaDB service
+      // Initialize ChromaDB service (graceful fallback to MemoryVectorStore)
       await chromaVectorDBService.initialize();
       
       this.isInitialized = true;

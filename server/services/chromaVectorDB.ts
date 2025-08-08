@@ -50,8 +50,7 @@ export class ChromaVectorDBService {
         await this.setupCollections();
         console.log('ChromaDB initialized successfully');
       } catch (chromaError) {
-        console.warn('ChromaDB not available, using in-memory vector storage with file backup');
-        console.warn('ChromaDB error:', chromaError);
+        console.log('ChromaDB not available - using MemoryVectorStore with file persistence (recommended for Replit)');
         this.client = null;
       }
 
