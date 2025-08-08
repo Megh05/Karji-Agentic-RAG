@@ -39,24 +39,12 @@ export class ChromaVectorDBService {
 
       // Try to initialize ChromaDB
       try {
-        const chromadb = await import('chromadb');
+        const { ChromaApi } = await import('chromadb');
         
-        // Create client with proper import handling
-        if (chromadb.ChromaApi) {
-          this.client = new chromadb.ChromaApi({
-            path: process.env.CHROMA_HOST || "http://localhost:8000"
-          });
-        } else if (chromadb.default && chromadb.default.ChromaApi) {
-          this.client = new chromadb.default.ChromaApi({
-            path: process.env.CHROMA_HOST || "http://localhost:8000"
-          });
-        } else {
-          // Fallback for different export patterns
-          const ChromaClient = chromadb.default || chromadb;
-          this.client = new ChromaClient({
-            path: process.env.CHROMA_HOST || "http://localhost:8000"
-          });
-        }
+        // Create ChromaDB client
+        this.client = new ChromaApi({
+          path: process.env.CHROMA_HOST || "http://localhost:8000"
+        });
 
         // Test connection and create collections
         await this.setupCollections();

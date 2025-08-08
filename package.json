@@ -15,6 +15,7 @@
     "@jridgewell/trace-mapping": "^0.3.25",
     "@langchain/community": "^0.3.50",
     "@langchain/core": "^0.3.68",
+    "@langchain/textsplitters": "^0.1.0",
     "@neondatabase/serverless": "^0.10.4",
     "@radix-ui/react-accordion": "^1.2.4",
     "@radix-ui/react-alert-dialog": "^1.1.7",

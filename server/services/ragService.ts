@@ -1,3 +1,4 @@
+import { langchainRAGService } from './langchainRAG.js';
 import { chromaVectorDBService as vectorDBService, VectorDocument } from './chromaVectorDB.js';
 import { embeddingService } from './embedding.js';
 import { documentProcessor } from './documentProcessor.js';
@@ -30,7 +31,10 @@ export class RAGService {
     try {
       console.log('Initializing RAG service...');
       
-      // Initialize vector database and embedding service
+      // Initialize Langchain RAG service (includes ChromaDB and embeddings)
+      await langchainRAGService.initialize();
+      
+      // Also initialize vector database and embedding service for fallback
       await vectorDBService.initialize();
       await embeddingService.initialize();
       
@@ -47,22 +51,17 @@ export class RAGService {
     if (!this.isInitialized) await this.initialize();
 
     try {
-      // Create vector document for ChromaDB primary storage
-      const vectorDoc: VectorDocument = {
+      // Process document using Langchain RAG service
+      await langchainRAGService.processDocument(document.content, {
         id: document.id,
-        content: document.content,
-        metadata: {
-          name: document.name,
-          type: document.type,
-          size: document.size,
-          uploadedAt: document.uploadedAt?.toISOString(),
-          sourceType: 'document'
-        }
-      };
+        name: document.name,
+        type: document.type,
+        size: document.size,
+        uploadedAt: document.uploadedAt?.toISOString(),
+        sourceType: 'document'
+      });
 
-      // Store in ChromaDB as primary vector storage
-      await vectorDBService.addDocuments([vectorDoc]);
-      console.log(`Indexed document in ChromaDB: ${document.name}`);
+      console.log(`Indexed document using Langchain RAG: ${document.name}`);
     } catch (error) {
       console.error('Error indexing document:', error);
     }
@@ -72,27 +71,10 @@ export class RAGService {
     if (!this.isInitialized) await this.initialize();
 
     try {
-      // Create searchable content for product
-      const processedDoc = documentProcessor.createProductDocument(product);
-      
-      const vectorDoc: VectorDocument = {
-        id: product.id,
-        content: processedDoc.content,
-        metadata: {
-          ...processedDoc.metadata,
-          title: product.title,
-          price: product.price,
-          discountPrice: product.discountPrice,
-          availability: product.availability,
-          imageLink: product.imageLink,
-          link: product.link,
-          sourceType: 'product'
-        }
-      };
+      // Process product using Langchain RAG service
+      await langchainRAGService.processProduct(product);
 
-      // Store in ChromaDB as primary vector storage
-      await vectorDBService.addProducts([vectorDoc]);
-      console.log(`Indexed product in ChromaDB: ${product.title}`);
+      console.log(`Indexed product using Langchain RAG: ${product.title}`);
     } catch (error) {
       console.error('Error indexing product:', error);
     }

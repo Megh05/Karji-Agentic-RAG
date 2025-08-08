@@ -24,34 +24,35 @@ Preferred communication style: Simple, everyday language.
 - **API Design**: RESTful APIs with structured error handling
 
 ## Data Storage Architecture
-- **Primary Database**: PostgreSQL with Drizzle ORM
-- **Database Provider**: Neon Database (serverless PostgreSQL)
-- **Schema Design**: 
-  - Users table for authentication
-  - Documents table for knowledge base files
-  - Products table for e-commerce catalog
-  - Offers table for promotional pricing
-  - API configuration table for OpenRouter settings
-  - Merchant feeds table for external product data
-  - Uploaded files table for tracking file storage and processing
-  - Vector embeddings are stored in ChromaDB for optimal performance
+- **Primary Database**: JSON-based file storage system
+- **Data Directory**: `/data/` with organized JSON files for each entity type
+- **Storage Files**: 
+  - `users.json` - User authentication data
+  - `documents.json` - Knowledge base files metadata
+  - `products.json` - E-commerce product catalog
+  - `offers.json` - Promotional pricing and discounts
+  - `api-config.json` - OpenRouter API settings
+  - `merchant-feeds.json` - External product feed configurations
+  - `uploaded-files.json` - File upload tracking and metadata
 - **File Storage System**: Organized upload folders with automatic directory management
   - `/uploads/documents/` - PDF, Word, Excel, CSV files
   - `/uploads/merchant-feeds/` - XML feed data and processed product information
   - `/uploads/offers/` - Offer spreadsheets and processed data
-  - `/uploads/embeddings/` - Vector embedding backups
-  - `/uploads/processed/` - Processed document chunks and extracted data
-- **Dual Storage Strategy**: Critical data stored in both PostgreSQL and file system for redundancy
+  - `/uploads/embeddings/` - Vector embedding backups (ChromaDB fallback)
+  - `/uploads/processed/` - Processed document chunks and extracted data (Langchain)
+- **Vector Storage Strategy**: ChromaDB for vector embeddings with in-memory fallback when unavailable
 
-## RAG Implementation
-- **Primary Vector Storage**: ChromaDB as the main vector database for all embeddings
-- **Similarity Search**: Vector similarity using local embedding models (all-MiniLM-L6-v2)
-- **Context Retrieval**: Combines document content and product information with vector search
-- **Embedding Strategy**: Integrated @xenova/transformers for local embeddings
-- **Fallback Storage**: In-memory storage with file system backup when ChromaDB unavailable
-- **Document Processing**: Langchain text splitters with support for PDF, Word, Excel, CSV files
-- **Search Algorithm**: ChromaDB vector similarity with cosine similarity fallback
-- **Data Persistence**: All scraped data, documents, and file metadata stored in PostgreSQL
+## RAG Implementation with Langchain
+- **Framework**: Langchain for comprehensive RAG pipeline
+- **Primary Vector Storage**: ChromaDB with in-memory fallback when unavailable
+- **Text Processing**: Langchain RecursiveCharacterTextSplitter for optimal document chunking
+- **Embedding Model**: HuggingFace Transformers (all-MiniLM-L6-v2) for local embeddings
+- **Vector Storage**: Dual approach with Langchain MemoryVectorStore and ChromaDB persistence
+- **Document Processing**: Automated chunking and vectorization of all uploaded documents
+- **Product Indexing**: Intelligent product content processing for e-commerce search
+- **Context Retrieval**: Advanced similarity search combining documents and product data
+- **Persistence Strategy**: All processed documents and chunks stored locally in `/uploads/processed/`
+- **Data Persistence**: All scraped data, documents, and file metadata stored in JSON files
 
 ## Chat System Architecture
 - **Message Flow**: User input → RAG context retrieval → LLM processing → Structured response
