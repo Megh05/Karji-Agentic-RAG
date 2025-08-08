@@ -1,0 +1,64 @@
+🌐 Frontend:
+Use React or Next.js for the UI.
+A chat window with a modern, clean interface.
+Messages should stream as the bot types.
+Display product recommendations in card format showing:
+Product Name
+Short Description
+Product Image
+Product Page Link (opens in new tab)
+A simple admin dashboard (no login required).
+⚙️ Admin Panel Features:
+Tab 1: OpenRouter API Setup
+Input OpenRouter API key.
+Select model from dropdown (e.g. mistral, mixtral, gpt-4, etc.)
+Tab 2: Knowledgebase Upload
+Upload PDF, Word, Excel, or CSV files.
+Extract and embed document content.
+Store in a local vector database.
+Tab 3: Product Offers
+Upload Excel file with:
+product_id
+discount_price
+offer_desc
+Store in a local database or JSON file.
+Tab 4: Google Merchant Feed
+Input the XML feed URL (Google Merchant format).
+Parse and extract all available fields, such as:
+title
+description
+price
+availability
+image_link
+link
+Any other present fields
+Support syncing or reloading the feed on demand.
+Store product info in a structured database (e.g., JSON or SQLite).
+Create product embeddings and store in ChromaDB for fast retrieval.
+🤖 Chatbot Behavior:
+Implements RAG (Retrieval-Augmented Generation) with Langchain.
+Use local embedding model like sentence-transformers/all-MiniLM-L6-v2.
+Store document and product embeddings in ChromaDB.
+On message from user:
+Perform similarity search (merchant feed, KB docs, offers).
+Compile top-matching chunks into context.
+Send context + message to selected OpenRouter LLM.
+Render LLM response and any product recommendations in card format.
+The bot should act as a sales assistant, encouraging customers to buy, especially discounted items.
+🧠 Tech Stack:
+Frontend: React or Next.js
+Backend: FastAPI (Python)
+RAG: Langchain
+Embeddings: Local (all-MiniLM-L6-v2)
+Vector DB: ChromaDB (local)
+LLM API: OpenRouter
+File Parsing: Langchain loaders or Unstructured
+Storage: JSON
+Deployment: Local setup
+📦 Deliverables:
+frontend/ and backend/ folders
+chat/ RAG module
+.env for config
+Scripts to run locally
+No login/authentication required
+Flexible parsing of merchant XML with fallback for missing fields
