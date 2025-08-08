@@ -52,7 +52,7 @@ async function findRelevantContext(query: string): Promise<{ documents: any[], p
 
 // OpenRouter API call
 async function callOpenRouterAPI(messages: any[], config: any) {
-  const apiKey = process.env.OPENROUTER_API_KEY || config.openrouterKey;
+  const apiKey = process.env.OPENROUTER_API_KEY || config?.openrouterKey;
   if (!apiKey) {
     throw new Error('OpenRouter API key not configured');
   }
@@ -62,17 +62,20 @@ async function callOpenRouterAPI(messages: any[], config: any) {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://karjistore.com',
+      'X-Title': 'KarjiStore AI Assistant'
     },
     body: JSON.stringify({
-      model: config.selectedModel || 'mistralai/mixtral-8x7b-instruct',
+      model: config?.selectedModel || 'mistralai/mixtral-8x7b-instruct',
       messages,
-      temperature: config.temperature || 0.7,
-      max_tokens: config.maxTokens || 500,
+      temperature: config?.temperature || 0.7,
+      max_tokens: config?.maxTokens || 500,
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`OpenRouter API error: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   return response.json();
@@ -270,14 +273,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/config/test", async (req, res) => {
     try {
       const config = await storage.getApiConfig();
+      const apiKey = req.body.apiKey || config?.openrouterKey;
+      
+      if (!apiKey) {
+        return res.status(400).json({ success: false, error: "API key is required" });
+      }
+
       const testMessages = [
         { role: "user", content: "Hello, this is a test message." }
       ];
       
-      const response = await callOpenRouterAPI(testMessages, config);
+      const testConfig = { ...config, openrouterKey: apiKey };
+      const response = await callOpenRouterAPI(testMessages, testConfig);
       res.json({ success: true, response: response.choices[0]?.message?.content });
     } catch (error) {
       res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  });
+
+  // Get OpenRouter models
+  app.get("/api/openrouter/models", async (req, res) => {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/models', {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch models: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const models = data.data.map((model: any) => ({
+        value: model.id,
+        label: model.name,
+        pricing: model.pricing,
+        context_length: model.context_length
+      }));
+
+      res.json(models);
+    } catch (error) {
+      console.error('Failed to fetch OpenRouter models:', error);
+      // Fallback to popular models if API fails
+      const fallbackModels = [
+        { value: "openai/gpt-4", label: "GPT-4" },
+        { value: "openai/gpt-4-turbo", label: "GPT-4 Turbo" },
+        { value: "openai/gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
+        { value: "anthropic/claude-3-opus", label: "Claude 3 Opus" },
+        { value: "anthropic/claude-3-sonnet", label: "Claude 3 Sonnet" },
+        { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
+        { value: "meta-llama/llama-3-70b-instruct", label: "Llama 3 70B" },
+        { value: "meta-llama/llama-3-8b-instruct", label: "Llama 3 8B" },
+        { value: "mistralai/mixtral-8x7b-instruct", label: "Mixtral 8x7B" },
+        { value: "mistralai/mistral-7b-instruct", label: "Mistral 7B" },
+        { value: "google/gemini-pro", label: "Gemini Pro" }
+      ];
+      res.json(fallbackModels);
     }
   });
 

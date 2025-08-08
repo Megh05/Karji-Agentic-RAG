@@ -47,15 +47,16 @@ Preferred communication style: Simple, everyday language.
 - **Context Management**: Maintains conversation history and relevant product context
 
 ## Admin Panel Features
-- **API Configuration**: OpenRouter API key and model selection
-- **Knowledge Base Management**: Document upload and processing for PDF, Word, Excel, CSV
-- **Product Offers**: Excel-based offer management with discount pricing
-- **Merchant Feed Integration**: XML feed parsing and product synchronization
+- **API Configuration**: OpenRouter API key setup with live model fetching (400+ models), connection testing, and parameter tuning
+- **Knowledge Base Management**: Document upload and processing for PDF, Word, Excel, CSV files with automatic text extraction
+- **Product Offers**: Excel-based offer management with discount pricing and batch import
+- **Merchant Feed Integration**: Real XML feed parsing with Google Merchant format support and product synchronization
 
 # External Dependencies
 
 ## AI/ML Services
-- **OpenRouter API**: External LLM service for chat completions
+- **OpenRouter API**: External LLM service for chat completions with 400+ model access
+- **Dynamic Model Loading**: Real-time fetching of available models from OpenRouter
 - **Planned Integrations**: Local embedding models (sentence-transformers/all-MiniLM-L6-v2)
 - **Vector Database**: ChromaDB integration planned for similarity search
 

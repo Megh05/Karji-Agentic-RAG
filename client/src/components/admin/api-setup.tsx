@@ -59,7 +59,7 @@ export default function ApiSetup() {
 
   const testConnectionMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/config/test", {});
+      const response = await apiRequest("POST", "/api/config/test", { apiKey: formData.openrouterKey });
       return response.json();
     },
     onSuccess: (data) => {
@@ -83,15 +83,21 @@ export default function ApiSetup() {
   };
 
   const handleTest = () => {
+    if (!formData.openrouterKey) {
+      toast({
+        title: "Error",
+        description: "Please enter an API key before testing",
+        variant: "destructive"
+      });
+      return;
+    }
     testConnectionMutation.mutate();
   };
 
-  const models = [
-    { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
-    { value: "openai/gpt-4-turbo", label: "GPT-4 Turbo" },
-    { value: "mistralai/mixtral-8x7b-instruct", label: "Mixtral 8x7B Instruct" },
-    { value: "meta-llama/llama-2-70b-chat", label: "Llama 2 70B Chat" }
-  ];
+  // Fetch available models from OpenRouter
+  const { data: models = [] } = useQuery<Array<{value: string, label: string}>>({
+    queryKey: ["/api/openrouter/models"]
+  });
 
   return (
     <div className="max-w-4xl">
@@ -181,10 +187,10 @@ export default function ApiSetup() {
             <Button 
               onClick={handleTest} 
               variant="outline"
-              disabled={testConnectionMutation.isPending}
+              disabled={testConnectionMutation.isPending || !formData.openrouterKey}
             >
               <FlaskConical className="w-4 h-4 mr-2" />
-              Test Connection
+              {testConnectionMutation.isPending ? "Testing..." : "Test Connection"}
             </Button>
             <Button 
               onClick={handleSave}
