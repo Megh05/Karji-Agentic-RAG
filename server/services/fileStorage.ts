@@ -78,7 +78,11 @@ export class FileStorageService {
     sourceType: string
   ): Promise<string> {
     const embeddingsDir = path.join(this.baseUploadPath, 'embeddings');
-    const embeddingFileName = `${sourceType}_${sourceId}_${Date.now()}.json`;
+    this.ensureDirectoriesExist();
+    
+    // Sanitize sourceId to create valid filename (remove invalid characters)
+    const sanitizedId = sourceId.replace(/[^a-zA-Z0-9\-_]/g, '_');
+    const embeddingFileName = `${sourceType}_${sanitizedId}_${Date.now()}.json`;
     const embeddingFilePath = path.join(embeddingsDir, embeddingFileName);
 
     const embeddingData = {

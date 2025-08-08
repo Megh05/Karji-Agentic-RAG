@@ -161,9 +161,13 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       await fileStorageService.storeProcessedData(processedDocs, fileName, 'document');
 
       // Create document in storage and index it
+      const textContent = processedDocs.map(doc => doc.content).join('\n\n');
+      // Remove null bytes and other invalid UTF-8 characters that cause database errors
+      const cleanContent = textContent.replace(/\0/g, '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+      
       const document = await storage.createDocument({
         name: req.file.originalname,
-        content: processedDocs.map(doc => doc.content).join('\n\n'),
+        content: cleanContent,
         type: req.file.mimetype,
         size: `${(req.file.size / 1024).toFixed(1)} KB`,
       });
