@@ -95,9 +95,15 @@ export default function ApiSetup() {
   };
 
   // Fetch available models from OpenRouter
-  const { data: models = [] } = useQuery<Array<{value: string, label: string}>>({
-    queryKey: ["/api/openrouter/models"]
+  const { data: models = [], isLoading: modelsLoading, error: modelsError } = useQuery<Array<{value: string, label: string}>>({
+    queryKey: ["/api/openrouter/models"],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
+
+  // Debug logging
+  console.log('Models data:', models);
+  console.log('Models loading:', modelsLoading);
+  console.log('Models error:', modelsError);
 
   return (
     <div className="max-w-4xl">
@@ -143,11 +149,17 @@ export default function ApiSetup() {
                 <SelectValue placeholder="Select a model..." />
               </SelectTrigger>
               <SelectContent>
-                {models.map((model) => (
-                  <SelectItem key={model.value} value={model.value}>
-                    {model.label}
-                  </SelectItem>
-                ))}
+                {modelsLoading ? (
+                  <div className="p-2 text-center text-sm text-gray-500">Loading models...</div>
+                ) : models.length === 0 ? (
+                  <div className="p-2 text-center text-sm text-gray-500">No models available</div>
+                ) : (
+                  models.map((model) => (
+                    <SelectItem key={model.value} value={model.value}>
+                      {model.label}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
