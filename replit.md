@@ -33,6 +33,15 @@ Preferred communication style: Simple, everyday language.
   - Offers table for promotional pricing
   - API configuration table for OpenRouter settings
   - Merchant feeds table for external product data
+  - Vector embeddings table for persistent AI search capabilities
+  - Uploaded files table for tracking file storage and processing
+- **File Storage System**: Organized upload folders with automatic directory management
+  - `/uploads/documents/` - PDF, Word, Excel, CSV files
+  - `/uploads/merchant-feeds/` - XML feed data and processed product information
+  - `/uploads/offers/` - Offer spreadsheets and processed data
+  - `/uploads/embeddings/` - Vector embedding backups
+  - `/uploads/processed/` - Processed document chunks and extracted data
+- **Dual Storage Strategy**: Critical data stored in both PostgreSQL and file system for redundancy
 
 ## RAG Implementation
 - **Similarity Search**: Vector similarity using local embedding models (all-MiniLM-L6-v2)
@@ -41,6 +50,8 @@ Preferred communication style: Simple, everyday language.
 - **Vector Database**: ChromaDB for efficient similarity search with fallback to basic text similarity
 - **Document Processing**: Langchain text splitters with support for PDF, Word, Excel, CSV files
 - **Search Algorithm**: Cosine similarity with embedding vectors, configurable thresholds
+- **Persistent Storage**: PostgreSQL database with dual storage (database + file system) for vector embeddings
+- **Data Persistence**: All scraped data, documents, and embeddings survive server restarts
 
 ## Chat System Architecture
 - **Message Flow**: User input → RAG context retrieval → LLM processing → Structured response

@@ -1,8 +1,9 @@
 import { vectorDBService, VectorDocument } from './vectordb.js';
 import { embeddingService } from './embedding.js';
 import { documentProcessor } from './documentProcessor.js';
+import { fileStorageService } from './fileStorage.js';
 import { storage } from '../storage.js';
-import type { Document, Product } from '@shared/schema';
+import type { Document, Product, VectorEmbedding } from '@shared/schema';
 
 export interface RAGContext {
   documents: Array<Document & { similarity?: number; content: string }>;
@@ -46,7 +47,27 @@ export class RAGService {
     if (!this.isInitialized) await this.initialize();
 
     try {
-      // Create vector document for storage
+      // Generate embedding for document
+      const embedding = await embeddingService.embedText(document.content);
+      
+      // Store embedding in database
+      await storage.createEmbedding({
+        sourceId: document.id,
+        sourceType: 'document',
+        content: document.content,
+        embedding: embedding,
+        metadata: {
+          name: document.name,
+          type: document.type,
+          size: document.size,
+          uploadedAt: document.uploadedAt?.toISOString()
+        }
+      });
+
+      // Also store in file system for backup
+      await fileStorageService.storeEmbeddings([{ embedding, content: document.content }], document.id, 'document');
+
+      // Create vector document for ChromaDB if available
       const vectorDoc: VectorDocument = {
         id: document.id,
         content: document.content,
@@ -71,6 +92,29 @@ export class RAGService {
     try {
       // Create searchable content for product
       const processedDoc = documentProcessor.createProductDocument(product);
+      
+      // Generate embedding for product
+      const embedding = await embeddingService.embedText(processedDoc.content);
+      
+      // Store embedding in database
+      await storage.createEmbedding({
+        sourceId: product.id,
+        sourceType: 'product',
+        content: processedDoc.content,
+        embedding: embedding,
+        metadata: {
+          ...processedDoc.metadata,
+          title: product.title,
+          price: product.price,
+          discountPrice: product.discountPrice,
+          availability: product.availability,
+          imageLink: product.imageLink,
+          link: product.link
+        }
+      });
+
+      // Also store in file system for backup
+      await fileStorageService.storeEmbeddings([{ embedding, content: processedDoc.content }], product.id, 'product');
       
       const vectorDoc: VectorDocument = {
         id: product.id,

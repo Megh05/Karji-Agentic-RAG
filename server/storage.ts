@@ -10,7 +10,11 @@ import {
   type ApiConfig,
   type InsertApiConfig,
   type MerchantFeed,
-  type InsertMerchantFeed
+  type InsertMerchantFeed,
+  type VectorEmbedding,
+  type InsertVectorEmbedding,
+  type UploadedFile,
+  type InsertUploadedFile
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -49,6 +53,18 @@ export interface IStorage {
   createMerchantFeed(feed: InsertMerchantFeed): Promise<MerchantFeed>;
   updateMerchantFeed(id: string, updates: Partial<MerchantFeed>): Promise<MerchantFeed | undefined>;
   deleteMerchantFeed(id: string): Promise<boolean>;
+
+  // Vector Embedding operations
+  getEmbeddings(sourceId?: string, sourceType?: string): Promise<VectorEmbedding[]>;
+  createEmbedding(embedding: InsertVectorEmbedding): Promise<VectorEmbedding>;
+  deleteEmbeddings(sourceId: string, sourceType?: string): Promise<boolean>;
+  clearAllEmbeddings(): Promise<boolean>;
+
+  // Uploaded File operations
+  getUploadedFiles(sourceType?: string): Promise<UploadedFile[]>;
+  createUploadedFile(file: InsertUploadedFile): Promise<UploadedFile>;
+  updateUploadedFile(id: string, updates: Partial<UploadedFile>): Promise<UploadedFile | undefined>;
+  deleteUploadedFile(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -227,4 +243,8 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Import database storage
+import { DatabaseStorage } from './services/databaseStorage.js';
+
+// Use database storage instead of memory storage
+export const storage = new DatabaseStorage();
