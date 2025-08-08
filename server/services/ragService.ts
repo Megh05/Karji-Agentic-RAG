@@ -156,10 +156,11 @@ export class RAGService {
       const consolidatedProducts = await langchainRAGService.loadConsolidatedProducts();
       
       if (consolidatedProducts.length === 0) {
-        console.log('No consolidated products found, falling back to storage with limits');
+        console.log('No consolidated products found, falling back to intelligent product search');
         const allProducts = await storage.getProducts();
-        // Limit to first few products to avoid token overflow
-        return allProducts.slice(0, maxProducts);
+        // Search products based on title, description, and product_type
+        const relevantProducts = this.searchProductsIntelligently(query, allProducts, maxProducts);
+        return relevantProducts;
       }
 
       const queryLower = query.toLowerCase();
@@ -216,6 +217,53 @@ export class RAGService {
     const union = Array.from(new Set([...words1, ...words2]));
     
     return intersection.length / union.length;
+  }
+
+  private searchProductsIntelligently(query: string, products: any[], maxProducts: number): any[] {
+    const queryLower = query.toLowerCase();
+    const queryWords = queryLower.split(/\s+/);
+    
+    // Score products based on relevance
+    const scoredProducts = products.map(product => {
+      let score = 0;
+      
+      // Search in title (high weight)
+      const titleLower = (product.title || '').toLowerCase();
+      queryWords.forEach(word => {
+        if (titleLower.includes(word)) score += 3;
+      });
+      
+      // Search in description (medium weight) 
+      const descLower = (product.description || '').toLowerCase();
+      queryWords.forEach(word => {
+        if (descLower.includes(word)) score += 2;
+      });
+      
+      // Search in product_type/category (medium weight)
+      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
+      queryWords.forEach(word => {
+        if (categoryLower.includes(word)) score += 2;
+      });
+      
+      // Price filtering for specific queries
+      if (queryLower.includes('under') || queryLower.includes('below')) {
+        const priceMatch = query.match(/(\d+)\s*aed/i);
+        if (priceMatch && product.price) {
+          const maxPrice = parseInt(priceMatch[1]);
+          const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
+          if (productPrice <= maxPrice) score += 1;
+          else score = Math.max(0, score - 2); // Penalize if over budget
+        }
+      }
+      
+      return { ...product, searchScore: score };
+    });
+    
+    // Return products with score > 0, sorted by score
+    return scoredProducts
+      .filter(product => product.searchScore > 0)
+      .sort((a, b) => b.searchScore - a.searchScore)
+      .slice(0, maxProducts);
   }
 
   public async clearIndex(): Promise<void> {
