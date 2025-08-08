@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema } from "@shared/schema";
+import { ragService } from "./services/ragService.js";
+import { documentProcessor } from "./services/documentProcessor.js";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -13,42 +15,8 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
-// Basic text similarity function
-function calculateSimilarity(text1: string, text2: string): number {
-  const words1 = text1.toLowerCase().split(/\s+/);
-  const words2 = text2.toLowerCase().split(/\s+/);
-  
-  const intersection = words1.filter(word => words2.includes(word));
-  const union = Array.from(new Set([...words1, ...words2]));
-  
-  return intersection.length / union.length;
-}
-
-// RAG function to find relevant context
-async function findRelevantContext(query: string): Promise<{ documents: any[], products: any[] }> {
-  const documents = await storage.getDocuments();
-  const products = await storage.getProducts();
-  
-  const relevantDocs = documents
-    .map(doc => ({ 
-      ...doc, 
-      similarity: calculateSimilarity(query, doc.content) 
-    }))
-    .filter(doc => doc.similarity > 0.1)
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, 3);
-
-  const relevantProducts = products
-    .map(product => ({ 
-      ...product, 
-      similarity: calculateSimilarity(query, `${product.title} ${product.description || ''}`) 
-    }))
-    .filter(product => product.similarity > 0.1)
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, 5);
-
-  return { documents: relevantDocs, products: relevantProducts };
-}
+// Initialize RAG service
+ragService.initialize();
 
 // OpenRouter API call
 async function callOpenRouterAPI(messages: any[], config: any) {
@@ -98,8 +66,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "OpenRouter API key not configured" });
       }
 
-      // Find relevant context using RAG
-      const context = await findRelevantContext(message);
+      // Find relevant context using enhanced RAG
+      const context = await ragService.findRelevantContext(message);
       
       // Create system prompt with context
       const systemPrompt = `You are a helpful and persuasive shopping assistant for KarjiStore.com, an online store with thousands of products, including many discounted offers. Your goal is to engage customers naturally and assist them in finding products they want while encouraging purchases, especially highlighting discounts and special offers.
@@ -161,15 +129,26 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       }
 
       const filePath = req.file.path;
-      const content = fs.readFileSync(filePath, 'utf8');
+      
+      // Process document with enhanced document processor
+      const processedDocs = await documentProcessor.processFile(
+        filePath, 
+        req.file.originalname, 
+        req.file.mimetype
+      );
+      
       fs.unlinkSync(filePath); // Clean up uploaded file
 
+      // Create document in storage and index it
       const document = await storage.createDocument({
         name: req.file.originalname,
-        content,
+        content: processedDocs.map(doc => doc.content).join('\n\n'),
         type: req.file.mimetype,
         size: `${(req.file.size / 1024).toFixed(1)} KB`,
       });
+
+      // Index document in vector database
+      await ragService.indexDocument(document);
 
       res.json(document);
     } catch (error) {
@@ -207,6 +186,7 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     try {
       const productData = insertProductSchema.parse(req.body);
       const product = await storage.createProduct(productData);
+      await ragService.indexProduct(product);
       res.json(product);
     } catch (error) {
       res.status(400).json({ error: "Invalid product data" });
@@ -398,6 +378,7 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
 
       // Clear existing products before importing new ones
       await storage.clearProducts();
+      await ragService.clearIndex();
 
       // Parse Google Shopping XML format
       if (result.rss && result.rss.channel && result.rss.channel.item) {
@@ -450,10 +431,11 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         }));
       }
 
-      // Store products in database
+      // Store products in database and index them
       for (const productData of products) {
         try {
-          await storage.createProduct(productData);
+          const product = await storage.createProduct(productData);
+          await ragService.indexProduct(product);
           importedCount++;
         } catch (error) {
           console.log(`Failed to import product ${productData.id}:`, error);
@@ -472,6 +454,27 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         status: 'error'
       });
       res.status(500).json({ error: `Failed to sync feed: ${error instanceof Error ? error.message : 'Unknown error'}` });
+    }
+  });
+
+  // Vector Index Management endpoints
+  app.post("/api/admin/reindex", async (req, res) => {
+    try {
+      await ragService.reindexAll();
+      res.json({ success: true, message: "Vector index rebuilt successfully" });
+    } catch (error) {
+      console.error('Reindex error:', error);
+      res.status(500).json({ error: "Failed to rebuild index" });
+    }
+  });
+
+  app.post("/api/admin/clear-index", async (req, res) => {
+    try {
+      await ragService.clearIndex();
+      res.json({ success: true, message: "Vector index cleared successfully" });
+    } catch (error) {
+      console.error('Clear index error:', error);
+      res.status(500).json({ error: "Failed to clear index" });
     }
   });
 
