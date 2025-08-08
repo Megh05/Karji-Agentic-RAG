@@ -122,16 +122,27 @@ export class LangchainRAGService {
         brand: product.brand
       };
 
-      const processedDoc = await this.processDocument(content, metadata);
+      // Process product content for vector storage (no file saving)
+      const docs = await this.textSplitter.createDocuments([content], [metadata]);
       
-      // Store in products collection
+      const processedDoc: ProcessedDocument = {
+        id: this.sanitizeFileName(product.id),
+        content,
+        metadata,
+        chunks: docs
+      };
+
+      // Store chunks in vector database
+      await this.vectorStore.addDocuments(docs);
+      
+      // Store in ChromaDB products collection
       await chromaVectorDBService.addProducts([{
         id: product.id,
         content,
         metadata
       }]);
 
-      console.log(`Processed product: ${product.title}`);
+      console.log(`Product processed in memory: ${product.title}`);
       return processedDoc;
     } catch (error) {
       console.error('Error processing product:', error);
@@ -222,6 +233,40 @@ export class LangchainRAGService {
       console.log(`Saved processed document: ${sanitizedId}.json`);
     } catch (error) {
       console.error('Error saving processed document:', error);
+    }
+  }
+
+  public async saveAllProductsVector(): Promise<void> {
+    try {
+      const vectorDir = path.join(process.cwd(), 'uploads', 'vectors');
+      if (!fs.existsSync(vectorDir)) {
+        fs.mkdirSync(vectorDir, { recursive: true });
+      }
+
+      // Get all products from JSON storage and create consolidated vector data
+      const { storage } = await import('../storage.js');
+      const products = await storage.getProducts();
+      
+      const productVectors = products.map(product => ({
+        id: product.id,
+        title: product.title,
+        description: product.description || '',
+        price: product.price,
+        discountPrice: product.discountPrice,
+        brand: product.brand,
+        availability: product.availability,
+        imageLink: product.imageLink,
+        link: product.link,
+        content: `${product.title}\n${product.description || ''}\nPrice: ${product.price || 'N/A'}\nBrand: ${product.brand || 'N/A'}\nAvailability: ${product.availability || 'N/A'}`,
+        processedAt: new Date().toISOString()
+      }));
+
+      const vectorFilePath = path.join(vectorDir, 'products_consolidated.json');
+      await fs.promises.writeFile(vectorFilePath, JSON.stringify(productVectors, null, 2), 'utf-8');
+      
+      console.log(`Saved consolidated product vectors: ${productVectors.length} products in products_consolidated.json`);
+    } catch (error) {
+      console.error('Error saving consolidated product vectors:', error);
     }
   }
 

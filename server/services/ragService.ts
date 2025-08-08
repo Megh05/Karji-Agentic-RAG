@@ -205,6 +205,16 @@ export class RAGService {
     await this.clearIndex();
     await this.indexAllDocuments();
     await this.indexAllProducts();
+    
+    // Save consolidated product vectors after reindexing
+    try {
+      const { langchainRAGService } = await import('./langchainRAG.js');
+      await langchainRAGService.saveAllProductsVector();
+      console.log('Consolidated product vectors saved after reindexing');
+    } catch (error) {
+      console.error('Error saving consolidated vectors during reindex:', error);
+    }
+    
     console.log('Reindexing complete');
   }
 }

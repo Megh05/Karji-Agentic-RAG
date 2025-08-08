@@ -473,6 +473,15 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         }
       }
 
+      // Save consolidated product vectors after processing all products
+      try {
+        const { langchainRAGService } = await import('./services/langchainRAG.js');
+        await langchainRAGService.saveAllProductsVector();
+        console.log('Consolidated product vectors saved successfully');
+      } catch (error) {
+        console.error('Error saving consolidated vectors:', error);
+      }
+
       await storage.updateMerchantFeed(req.params.id, {
         lastSynced: new Date(),
         status: 'success'
@@ -506,6 +515,18 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     } catch (error) {
       console.error('Clear index error:', error);
       res.status(500).json({ error: "Failed to clear index" });
+    }
+  });
+
+  // Save consolidated product vectors endpoint
+  app.post("/api/admin/save-consolidated-vectors", async (req, res) => {
+    try {
+      const { langchainRAGService } = await import('./services/langchainRAG.js');
+      await langchainRAGService.saveAllProductsVector();
+      res.json({ success: true, message: "Consolidated product vectors saved successfully" });
+    } catch (error) {
+      console.error('Save consolidated vectors error:', error);
+      res.status(500).json({ error: "Failed to save consolidated vectors" });
     }
   });
 
