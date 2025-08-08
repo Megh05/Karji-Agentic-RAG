@@ -213,62 +213,175 @@ export class RAGService {
     return intersection.length / union.length;
   }
 
-  private searchProductsIntelligently(query: string, products: any[], maxProducts: number): any[] {
+  private parseUserIntent(query: string): {
+    searchTerms: string[];
+    priceFilter: { min?: number; max?: number } | null;
+    categoryHints: string[];
+    brandPreferences: string[];
+    qualityLevel: 'budget' | 'mid-range' | 'luxury' | null;
+  } {
     const queryLower = query.toLowerCase();
-    const queryWords = queryLower.split(/\s+/);
+    
+    // Extract price information using intelligent parsing
+    let priceFilter: { min?: number; max?: number } | null = null;
+    
+    // Find all numbers in the query
+    const numbers = query.match(/\d+/g)?.map(n => parseInt(n)) || [];
+    
+    // Price filter patterns - more flexible approach
+    const priceKeywords = ['aed', 'dirham', 'price', 'cost', 'budget'];
+    const rangeKeywords = ['range', 'between', 'from', 'to', 'and'];
+    const limitKeywords = ['under', 'below', 'less', 'maximum', 'max', 'up to'];
+    
+    const hasPriceContext = priceKeywords.some(keyword => queryLower.includes(keyword));
+    const hasRangeContext = rangeKeywords.some(keyword => queryLower.includes(keyword));
+    const hasLimitContext = limitKeywords.some(keyword => queryLower.includes(keyword));
+    
+    if (hasPriceContext && numbers.length > 0) {
+      if (hasRangeContext && numbers.length >= 2) {
+        // Range query: use first two numbers as min and max
+        priceFilter = { min: Math.min(numbers[0], numbers[1]), max: Math.max(numbers[0], numbers[1]) };
+      } else if (hasLimitContext && numbers.length >= 1) {
+        // Upper limit query: use first number as max
+        priceFilter = { max: numbers[0] };
+      } else if (numbers.length === 1) {
+        // Single number with price context - assume it's a max limit
+        priceFilter = { max: numbers[0] };
+      }
+    }
+    
+    // Extract category hints with semantic understanding
+    const categoryKeywords = [
+      'perfume', 'fragrance', 'cologne', 'scent', 'eau', 'edp', 'edt',
+      'watch', 'timepiece', 'clock', 'chronograph',
+      'jewelry', 'necklace', 'ring', 'bracelet', 'earring', 'chain',
+      'wallet', 'bag', 'accessory', 'leather',
+      'men', 'women', 'unisex', 'male', 'female', 'mens', 'womens',
+      'luxury', 'premium', 'designer', 'elegant', 'sophisticated',
+      'gift', 'present', 'special', 'occasion'
+    ];
+    
+    // Add semantic understanding for vague terms
+    const vaguePhrases = {
+      'something nice': ['luxury', 'premium', 'elegant'],
+      'good quality': ['premium', 'luxury'],
+      'affordable': ['budget', 'cheap', 'inexpensive'],
+      'expensive': ['luxury', 'premium', 'designer'],
+    };
+    
+    // Check for vague phrases and expand them
+    Object.entries(vaguePhrases).forEach(([phrase, expansions]) => {
+      if (queryLower.includes(phrase)) {
+        categoryKeywords.push(...expansions);
+      }
+    });
+    
+    const categoryHints = categoryKeywords.filter(keyword => 
+      queryLower.includes(keyword) || queryLower.includes(keyword + 's')
+    );
+    
+    // Extract meaningful search terms (excluding price and range keywords)
+    const excludeWords = [...priceKeywords, ...rangeKeywords, ...limitKeywords, 'show', 'me', 'find', 'get', 'i', 'want', 'need'];
+    const searchTerms = queryLower
+      .split(/\s+/)
+      .filter(word => 
+        word.length > 2 && 
+        !excludeWords.includes(word) && 
+        !numbers.includes(parseInt(word))
+      );
+    
+    // Extract brand preferences
+    const commonBrands = [
+      'michael kors', 'calvin klein', 'roberto cavalli', 'dunhill', 'lencia',
+      'fabian', 'police', 'cerruti', 'boadicea', 'nasamat', 'zenology'
+    ];
+    
+    const brandPreferences = commonBrands.filter(brand => 
+      queryLower.includes(brand.toLowerCase())
+    );
+    
+    // Determine quality/price level based on context
+    let qualityLevel: 'budget' | 'mid-range' | 'luxury' | null = null;
+    
+    const budgetTerms = ['cheap', 'affordable', 'budget', 'inexpensive', 'low cost'];
+    const luxuryTerms = ['luxury', 'premium', 'expensive', 'high-end', 'designer', 'exclusive'];
+    const midRangeTerms = ['decent', 'good quality', 'reasonable', 'moderate'];
+    
+    if (budgetTerms.some(term => queryLower.includes(term))) {
+      qualityLevel = 'budget';
+      if (!priceFilter) priceFilter = { max: 300 }; // Auto-suggest budget range
+    } else if (luxuryTerms.some(term => queryLower.includes(term))) {
+      qualityLevel = 'luxury';
+      if (!priceFilter) priceFilter = { min: 1000 }; // Auto-suggest luxury range
+    } else if (midRangeTerms.some(term => queryLower.includes(term))) {
+      qualityLevel = 'mid-range';
+      if (!priceFilter) priceFilter = { min: 300, max: 1000 }; // Auto-suggest mid-range
+    }
+    
+    return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
+  }
+
+  private searchProductsIntelligently(query: string, products: any[], maxProducts: number): any[] {
+    const intent = this.parseUserIntent(query);
+    console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
     // Score products based on relevance
     const scoredProducts = products.map(product => {
       let score = 0;
       
-      // Search in title (high weight)
-      const titleLower = (product.title || '').toLowerCase();
-      queryWords.forEach(word => {
-        if (titleLower.includes(word)) score += 3;
-      });
-      
-      // Search in description (medium weight) 
-      const descLower = (product.description || '').toLowerCase();
-      queryWords.forEach(word => {
-        if (descLower.includes(word)) score += 2;
-      });
-      
-      // Search in product_type/category (medium weight)
-      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
-      queryWords.forEach(word => {
-        if (categoryLower.includes(word)) score += 2;
-      });
-      
-      // Advanced price filtering for various query types
-      if (product.price) {
+      // Apply price filter first (strict filtering)
+      if (intent.priceFilter && product.price) {
         const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
         
-        // Handle "under X" or "below X" queries
-        if (queryLower.includes('under') || queryLower.includes('below')) {
-          const priceMatch = query.match(/(\d+)\s*aed/i);
-          if (priceMatch) {
-            const maxPrice = parseInt(priceMatch[1]);
-            if (productPrice <= maxPrice) score += 3;
-            else return { ...product, searchScore: 0 }; // Exclude if over budget
-          }
-        }
+        const withinMin = !intent.priceFilter.min || productPrice >= intent.priceFilter.min;
+        const withinMax = !intent.priceFilter.max || productPrice <= intent.priceFilter.max;
         
-        // Handle "range X-Y", "X to Y", "between X and Y", "from X to Y" queries
-        const rangeMatch = query.match(/(?:range|between|from)\s*(\d+)[-\s]?(?:to|and)?\s*(\d+)\s*aed/i);
-        if (rangeMatch) {
-          const minPrice = parseInt(rangeMatch[1]);
-          const maxPrice = parseInt(rangeMatch[2]);
-          if (productPrice >= minPrice && productPrice <= maxPrice) score += 3;
-          else return { ...product, searchScore: 0 }; // Exclude if outside range
+        if (!withinMin || !withinMax) {
+          return { ...product, searchScore: 0 }; // Exclude if outside price range
         }
+        score += 5; // Bonus for matching price criteria
+      }
+      
+      // Search terms matching
+      const titleLower = (product.title || '').toLowerCase();
+      const descLower = (product.description || '').toLowerCase();
+      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
+      const brandLower = (product.brand || '').toLowerCase();
+      
+      intent.searchTerms.forEach(term => {
+        if (titleLower.includes(term)) score += 4; // Title matches are most important
+        if (brandLower.includes(term)) score += 3; // Brand matches are important
+        if (categoryLower.includes(term)) score += 3; // Category matches
+        if (descLower.includes(term)) score += 2; // Description matches
+      });
+      
+      // Category hints bonus
+      intent.categoryHints.forEach(hint => {
+        if (titleLower.includes(hint)) score += 2;
+        if (categoryLower.includes(hint)) score += 3;
+        if (descLower.includes(hint)) score += 1;
+      });
+      
+      // Brand preference bonus
+      intent.brandPreferences.forEach(brand => {
+        if (brandLower.includes(brand)) score += 5; // Strong brand preference
+        if (titleLower.includes(brand)) score += 3;
+      });
+      
+      // Quality level alignment
+      if (intent.qualityLevel && product.price) {
+        const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
         
-        // Handle "in range X-Y aed" queries (like your example)
-        const inRangeMatch = query.match(/in\s+range\s+(\d+)[-\s]+(\d+)\s*aed/i);
-        if (inRangeMatch) {
-          const minPrice = parseInt(inRangeMatch[1]);
-          const maxPrice = parseInt(inRangeMatch[2]);
-          if (productPrice >= minPrice && productPrice <= maxPrice) score += 3;
-          else return { ...product, searchScore: 0 }; // Exclude if outside range
+        switch (intent.qualityLevel) {
+          case 'budget':
+            if (productPrice <= 300) score += 2;
+            break;
+          case 'mid-range':
+            if (productPrice >= 300 && productPrice <= 1000) score += 2;
+            break;
+          case 'luxury':
+            if (productPrice >= 1000) score += 2;
+            break;
         }
       }
       
@@ -276,10 +389,13 @@ export class RAGService {
     });
     
     // Return products with score > 0, sorted by score
-    return scoredProducts
+    const filteredProducts = scoredProducts
       .filter(product => product.searchScore > 0)
       .sort((a, b) => b.searchScore - a.searchScore)
       .slice(0, maxProducts);
+    
+    console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
+    return filteredProducts;
   }
 
   public async clearIndex(): Promise<void> {
