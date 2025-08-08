@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema } from "@shared/schema";
 import { ragService } from "./services/ragService.js";
 import { documentProcessor } from "./services/documentProcessor.js";
+import { fileStorageService } from "./services/fileStorage.js";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -128,8 +129,27 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      const filePath = req.file.path;
+      const tempFilePath = req.file.path;
       
+      // Store file permanently
+      const { fileName, filePath } = await fileStorageService.storeFile(
+        tempFilePath,
+        req.file.originalname,
+        'documents',
+        req.file.mimetype
+      );
+
+      // Create uploaded file record
+      const uploadedFile = await storage.createUploadedFile({
+        originalName: req.file.originalname,
+        fileName,
+        filePath,
+        mimeType: req.file.mimetype,
+        size: `${(req.file.size / 1024).toFixed(1)} KB`,
+        sourceType: 'document',
+        processed: false
+      });
+
       // Process document with enhanced document processor
       const processedDocs = await documentProcessor.processFile(
         filePath, 
@@ -137,7 +157,8 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         req.file.mimetype
       );
       
-      fs.unlinkSync(filePath); // Clean up uploaded file
+      // Store processed data
+      await fileStorageService.storeProcessedData(processedDocs, fileName, 'document');
 
       // Create document in storage and index it
       const document = await storage.createDocument({
@@ -150,7 +171,10 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       // Index document in vector database
       await ragService.indexDocument(document);
 
-      res.json(document);
+      // Mark as processed
+      await storage.updateUploadedFile(uploadedFile.id, { processed: true });
+
+      res.json({ document, uploadedFile, processedChunks: processedDocs.length });
     } catch (error) {
       console.error('Document upload error:', error);
       res.status(500).json({ error: "Failed to upload document" });
@@ -378,6 +402,7 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
 
       // Clear existing products before importing new ones
       await storage.clearProducts();
+      await storage.clearAllEmbeddings();
       await ragService.clearIndex();
 
       // Parse Google Shopping XML format
@@ -430,6 +455,9 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
           }
         }));
       }
+
+      // Store merchant feed data
+      await fileStorageService.storeMerchantFeedData(products, req.params.id, feed.url);
 
       // Store products in database and index them
       for (const productData of products) {
@@ -492,6 +520,85 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     }
     return priceStr;
   }
+
+  // File management endpoints
+  app.get("/api/files", async (req, res) => {
+    try {
+      const { sourceType } = req.query;
+      const files = await storage.getUploadedFiles(sourceType as string);
+      const stats = fileStorageService.getUploadStats();
+      res.json({ files, stats });
+    } catch (error) {
+      console.error('Error getting files:', error);
+      res.status(500).json({ error: "Failed to get files" });
+    }
+  });
+
+  app.delete("/api/files/:id", async (req, res) => {
+    try {
+      const files = await storage.getUploadedFiles();
+      const targetFile = files.find(f => f.id === req.params.id);
+      
+      if (!targetFile) {
+        return res.status(404).json({ error: "File not found" });
+      }
+
+      fileStorageService.deleteFile(targetFile.filePath);
+      const success = await storage.deleteUploadedFile(req.params.id);
+      await storage.deleteEmbeddings(req.params.id, targetFile.sourceType);
+      
+      res.json({ success });
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      res.status(500).json({ error: "Failed to delete file" });
+    }
+  });
+
+  // Embeddings management endpoints
+  app.get("/api/embeddings", async (req, res) => {
+    try {
+      const { sourceType, sourceId } = req.query;
+      const embeddings = await storage.getEmbeddings(
+        sourceId as string, 
+        sourceType as string
+      );
+      res.json(embeddings);
+    } catch (error) {
+      console.error('Error getting embeddings:', error);
+      res.status(500).json({ error: "Failed to get embeddings" });
+    }
+  });
+
+  app.delete("/api/embeddings", async (req, res) => {
+    try {
+      await storage.clearAllEmbeddings();
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error clearing embeddings:', error);
+      res.status(500).json({ error: "Failed to clear embeddings" });
+    }
+  });
+
+  // System status endpoint
+  app.get("/api/system/status", async (req, res) => {
+    try {
+      const stats = fileStorageService.getUploadStats();
+      const embeddingCount = (await storage.getEmbeddings()).length;
+      const documentCount = (await storage.getDocuments()).length;
+      const productCount = (await storage.getProducts()).length;
+      
+      res.json({
+        storage: stats,
+        embeddings: embeddingCount,
+        documents: documentCount,
+        products: productCount,
+        ragInitialized: ragService.isInitialized
+      });
+    } catch (error) {
+      console.error('Error getting system status:', error);
+      res.status(500).json({ error: "Failed to get system status" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

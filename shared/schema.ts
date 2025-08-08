@@ -57,6 +57,28 @@ export const merchantFeeds = pgTable("merchant_feeds", {
   status: text("status").default("pending"),
 });
 
+export const vectorEmbeddings = pgTable("vector_embeddings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceId: text("source_id").notNull(), // ID of the document or product
+  sourceType: text("source_type").notNull(), // 'document', 'product', 'chunk'
+  content: text("content").notNull(),
+  embedding: jsonb("embedding").notNull(), // Store embedding as JSON array
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const uploadedFiles = pgTable("uploaded_files", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  originalName: text("original_name").notNull(),
+  fileName: text("file_name").notNull(), // Stored file name
+  filePath: text("file_path").notNull(), // Full path to stored file
+  mimeType: text("mime_type").notNull(),
+  size: text("size").notNull(),
+  sourceType: text("source_type").notNull(), // 'document', 'merchant_feed', 'offer'
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+  processed: boolean("processed").default(false),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -83,6 +105,16 @@ export const insertMerchantFeedSchema = createInsertSchema(merchantFeeds).omit({
   lastSynced: true,
 });
 
+export const insertVectorEmbeddingSchema = createInsertSchema(vectorEmbeddings).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertUploadedFileSchema = createInsertSchema(uploadedFiles).omit({
+  id: true,
+  uploadedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Document = typeof documents.$inferSelect;
@@ -95,3 +127,7 @@ export type ApiConfig = typeof apiConfig.$inferSelect;
 export type InsertApiConfig = z.infer<typeof insertApiConfigSchema>;
 export type MerchantFeed = typeof merchantFeeds.$inferSelect;
 export type InsertMerchantFeed = z.infer<typeof insertMerchantFeedSchema>;
+export type VectorEmbedding = typeof vectorEmbeddings.$inferSelect;
+export type InsertVectorEmbedding = z.infer<typeof insertVectorEmbeddingSchema>;
+export type UploadedFile = typeof uploadedFiles.$inferSelect;
+export type InsertUploadedFile = z.infer<typeof insertUploadedFileSchema>;
