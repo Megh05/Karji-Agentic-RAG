@@ -11,8 +11,6 @@ import {
   type InsertApiConfig,
   type MerchantFeed,
   type InsertMerchantFeed,
-  type VectorEmbedding,
-  type InsertVectorEmbedding,
   type UploadedFile,
   type InsertUploadedFile
 } from "@shared/schema";
@@ -54,11 +52,8 @@ export interface IStorage {
   updateMerchantFeed(id: string, updates: Partial<MerchantFeed>): Promise<MerchantFeed | undefined>;
   deleteMerchantFeed(id: string): Promise<boolean>;
 
-  // Vector Embedding operations
-  getEmbeddings(sourceId?: string, sourceType?: string): Promise<VectorEmbedding[]>;
-  createEmbedding(embedding: InsertVectorEmbedding): Promise<VectorEmbedding>;
-  deleteEmbeddings(sourceId: string, sourceType?: string): Promise<boolean>;
-  clearAllEmbeddings(): Promise<boolean>;
+  // Vector embeddings are now managed by ChromaDB service
+  // No longer stored in PostgreSQL for better performance
 
   // Uploaded File operations
   getUploadedFiles(sourceType?: string): Promise<UploadedFile[]>;

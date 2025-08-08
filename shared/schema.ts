@@ -57,15 +57,8 @@ export const merchantFeeds = pgTable("merchant_feeds", {
   status: text("status").default("pending"),
 });
 
-export const vectorEmbeddings = pgTable("vector_embeddings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  sourceId: text("source_id").notNull(), // ID of the document or product
-  sourceType: text("source_type").notNull(), // 'document', 'product', 'chunk'
-  content: text("content").notNull(),
-  embedding: jsonb("embedding").notNull(), // Store embedding as JSON array
-  metadata: jsonb("metadata").default({}),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+// Vector embeddings are now stored in ChromaDB instead of PostgreSQL
+// This provides better performance and proper vector similarity search
 
 export const uploadedFiles = pgTable("uploaded_files", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -105,10 +98,7 @@ export const insertMerchantFeedSchema = createInsertSchema(merchantFeeds).omit({
   lastSynced: true,
 });
 
-export const insertVectorEmbeddingSchema = createInsertSchema(vectorEmbeddings).omit({
-  id: true,
-  createdAt: true,
-});
+// Vector embedding schemas removed - using ChromaDB for vector storage
 
 export const insertUploadedFileSchema = createInsertSchema(uploadedFiles).omit({
   id: true,
@@ -127,7 +117,6 @@ export type ApiConfig = typeof apiConfig.$inferSelect;
 export type InsertApiConfig = z.infer<typeof insertApiConfigSchema>;
 export type MerchantFeed = typeof merchantFeeds.$inferSelect;
 export type InsertMerchantFeed = z.infer<typeof insertMerchantFeedSchema>;
-export type VectorEmbedding = typeof vectorEmbeddings.$inferSelect;
-export type InsertVectorEmbedding = z.infer<typeof insertVectorEmbeddingSchema>;
+// Vector embedding types removed - using ChromaDB for vector storage
 export type UploadedFile = typeof uploadedFiles.$inferSelect;
 export type InsertUploadedFile = z.infer<typeof insertUploadedFileSchema>;

@@ -1,9 +1,8 @@
 import { 
-  users, documents, products, offers, apiConfig, merchantFeeds, vectorEmbeddings, uploadedFiles,
+  users, documents, products, offers, apiConfig, merchantFeeds, uploadedFiles,
   type User, type InsertUser, type Document, type InsertDocument,
   type Product, type InsertProduct, type Offer, type InsertOffer,
   type ApiConfig, type InsertApiConfig, type MerchantFeed, type InsertMerchantFeed,
-  type VectorEmbedding, type InsertVectorEmbedding, 
   type UploadedFile, type InsertUploadedFile
 } from "@shared/schema";
 import { db } from "../db.js";
@@ -147,40 +146,8 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount > 0;
   }
 
-  // Vector Embedding operations
-  async getEmbeddings(sourceId?: string, sourceType?: string): Promise<VectorEmbedding[]> {
-    if (sourceId && sourceType) {
-      return await db.select().from(vectorEmbeddings)
-        .where(and(eq(vectorEmbeddings.sourceId, sourceId), eq(vectorEmbeddings.sourceType, sourceType)));
-    } else if (sourceId) {
-      return await db.select().from(vectorEmbeddings).where(eq(vectorEmbeddings.sourceId, sourceId));
-    } else if (sourceType) {
-      return await db.select().from(vectorEmbeddings).where(eq(vectorEmbeddings.sourceType, sourceType));
-    } else {
-      return await db.select().from(vectorEmbeddings);
-    }
-  }
-
-  async createEmbedding(insertEmbedding: InsertVectorEmbedding): Promise<VectorEmbedding> {
-    const [embedding] = await db.insert(vectorEmbeddings).values(insertEmbedding).returning();
-    return embedding;
-  }
-
-  async deleteEmbeddings(sourceId: string, sourceType?: string): Promise<boolean> {
-    let result;
-    if (sourceType) {
-      result = await db.delete(vectorEmbeddings)
-        .where(and(eq(vectorEmbeddings.sourceId, sourceId), eq(vectorEmbeddings.sourceType, sourceType)));
-    } else {
-      result = await db.delete(vectorEmbeddings).where(eq(vectorEmbeddings.sourceId, sourceId));
-    }
-    return result.rowCount > 0;
-  }
-
-  async clearAllEmbeddings(): Promise<boolean> {
-    await db.delete(vectorEmbeddings);
-    return true;
-  }
+  // Vector embeddings are now managed by ChromaDB service
+  // Removed PostgreSQL embedding operations for better performance
 
   // Uploaded File operations
   async getUploadedFiles(sourceType?: string): Promise<UploadedFile[]> {

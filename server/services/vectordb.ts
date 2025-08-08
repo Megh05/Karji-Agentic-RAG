@@ -1,5 +1,6 @@
 import { ChromaApi, Collection } from 'chromadb';
 import { embeddingService } from './embedding.js';
+import { fileStorageService } from './fileStorage.js';
 
 export interface VectorDocument {
   id: string;
