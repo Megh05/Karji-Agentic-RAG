@@ -7,13 +7,14 @@ import KnowledgeBase from "@/components/admin/knowledge-base";
 import ProductOffers from "@/components/admin/product-offers";
 import MerchantFeed from "@/components/admin/merchant-feed";
 import { useQuery } from "@tanstack/react-query";
+import type { Product, Document } from "@shared/schema";
 
 export default function AdminPage() {
-  const { data: products = [] } = useQuery({
+  const { data: products = [] } = useQuery<Product[]>({
     queryKey: ["/api/products"]
   });
 
-  const { data: documents = [] } = useQuery({
+  const { data: documents = [] } = useQuery<Document[]>({
     queryKey: ["/api/documents"]
   });
 

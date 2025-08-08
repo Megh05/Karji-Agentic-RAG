@@ -31,6 +31,7 @@ export interface IStorage {
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, updates: Partial<Product>): Promise<Product | undefined>;
   deleteProduct(id: string): Promise<boolean>;
+  clearProducts(): Promise<boolean>;
   searchProducts(query: string): Promise<Product[]>;
 
   // Offer operations
@@ -111,7 +112,19 @@ export class MemStorage implements IStorage {
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const product: Product = { ...insertProduct };
+    const product: Product = { 
+      ...insertProduct,
+      brand: insertProduct.brand || null,
+      link: insertProduct.link || null,
+      description: insertProduct.description || null,
+      price: insertProduct.price || null,
+      originalPrice: insertProduct.originalPrice || null,
+      discountPrice: insertProduct.discountPrice || null,
+      availability: insertProduct.availability || null,
+      imageLink: insertProduct.imageLink || null,
+      condition: insertProduct.condition || null,
+      additionalFields: insertProduct.additionalFields || null
+    };
     this.products.set(product.id, product);
     return product;
   }
@@ -127,6 +140,11 @@ export class MemStorage implements IStorage {
 
   async deleteProduct(id: string): Promise<boolean> {
     return this.products.delete(id);
+  }
+
+  async clearProducts(): Promise<boolean> {
+    this.products.clear();
+    return true;
   }
 
   async searchProducts(query: string): Promise<Product[]> {
@@ -168,7 +186,13 @@ export class MemStorage implements IStorage {
 
   async upsertApiConfig(config: InsertApiConfig): Promise<ApiConfig> {
     const id = this.apiConfig?.id || randomUUID();
-    this.apiConfig = { ...config, id };
+    this.apiConfig = { 
+      id,
+      openrouterKey: config.openrouterKey || null,
+      selectedModel: config.selectedModel || null,
+      temperature: config.temperature || null,
+      maxTokens: config.maxTokens || null
+    };
     return this.apiConfig;
   }
 
@@ -178,7 +202,13 @@ export class MemStorage implements IStorage {
 
   async createMerchantFeed(insertFeed: InsertMerchantFeed): Promise<MerchantFeed> {
     const id = randomUUID();
-    const feed: MerchantFeed = { ...insertFeed, id };
+    const feed: MerchantFeed = { 
+      ...insertFeed, 
+      id,
+      lastSynced: null,
+      status: insertFeed.status || null,
+      autoSync: insertFeed.autoSync || null
+    };
     this.merchantFeeds.set(id, feed);
     return feed;
   }

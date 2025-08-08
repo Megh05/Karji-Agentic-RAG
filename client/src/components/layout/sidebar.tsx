@@ -40,16 +40,14 @@ export default function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
-            <Link key={item.href} href={item.href}>
-              <a className={cn(
-                "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                item.active 
-                  ? "bg-primary text-white" 
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              )}>
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </a>
+            <Link key={item.href} href={item.href} className={cn(
+              "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+              item.active 
+                ? "bg-primary text-white" 
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            )}>
+              <Icon className="w-5 h-5" />
+              <span>{item.label}</span>
             </Link>
           );
         })}

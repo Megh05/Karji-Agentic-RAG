@@ -6,6 +6,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { z } from "zod";
+import xml2js from "xml2js";
 
 const upload = multer({ 
   dest: 'uploads/',
@@ -18,7 +19,7 @@ function calculateSimilarity(text1: string, text2: string): number {
   const words2 = text2.toLowerCase().split(/\s+/);
   
   const intersection = words1.filter(word => words2.includes(word));
-  const union = [...new Set([...words1, ...words2])];
+  const union = Array.from(new Set([...words1, ...words2]));
   
   return intersection.length / union.length;
 }
@@ -276,7 +277,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await callOpenRouterAPI(testMessages, config);
       res.json({ success: true, response: response.choices[0]?.message?.content });
     } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+      res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
@@ -298,46 +299,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/merchant-feeds/:id/sync", async (req, res) => {
     try {
-      const feed = await storage.updateMerchantFeed(req.params.id, {
-        lastSynced: new Date(),
-        status: 'syncing'
-      });
-
+      const feedRecord = await storage.getMerchantFeeds();
+      const feed = feedRecord.find(f => f.id === req.params.id);
+      
       if (!feed) {
         return res.status(404).json({ error: "Feed not found" });
       }
 
-      // Simulate feed parsing (in production, parse actual XML)
-      const mockProducts = [
-        {
-          id: 'SONY-WH720N',
-          title: 'Sony WH-CH720N Wireless Headphones',
-          description: 'Wireless noise-canceling headphones with 35-hour battery',
-          price: '$149.99',
-          availability: 'In Stock',
-          imageLink: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
-          link: 'https://example.com/product/sony-wh720n',
-          brand: 'Sony',
-          condition: 'new',
-          additionalFields: {}
-        },
-        {
-          id: 'JBL-TUNE230NC',
-          title: 'JBL Tune 230NC True Wireless Earbuds',
-          description: 'True wireless earbuds with active noise canceling',
-          price: '$99.99',
-          availability: 'In Stock',
-          imageLink: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb',
-          link: 'https://example.com/product/jbl-tune230nc',
-          brand: 'JBL',
-          condition: 'new',
-          additionalFields: {}
-        }
-      ];
+      await storage.updateMerchantFeed(req.params.id, {
+        lastSynced: new Date(),
+        status: 'syncing'
+      });
 
-      // Store products
-      for (const productData of mockProducts) {
-        await storage.createProduct(productData);
+      // Fetch and parse actual XML feed
+      const response = await fetch(feed.url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch feed: ${response.statusText}`);
+      }
+      
+      const xmlData = await response.text();
+      const parser = new xml2js.Parser({ explicitArray: false });
+      const result = await parser.parseStringPromise(xmlData);
+
+      let products: any[] = [];
+      let importedCount = 0;
+
+      // Clear existing products before importing new ones
+      await storage.clearProducts();
+
+      // Parse Google Shopping XML format
+      if (result.rss && result.rss.channel && result.rss.channel.item) {
+        const items = Array.isArray(result.rss.channel.item) 
+          ? result.rss.channel.item 
+          : [result.rss.channel.item];
+
+        products = items.map((item: any) => ({
+          id: item.guid || item.link || `product-${Date.now()}-${Math.random()}`,
+          title: item.title || 'Unnamed Product',
+          description: item.description || '',
+          price: extractPrice(item['g:price'] || item.price),
+          originalPrice: extractPrice(item['g:price'] || item.price),
+          availability: item['g:availability'] || 'Unknown',
+          imageLink: item['g:image_link'] || item.image || '',
+          link: item.link || '',
+          brand: item['g:brand'] || '',
+          condition: item['g:condition'] || 'new',
+          additionalFields: {
+            gtin: item['g:gtin'] || '',
+            mpn: item['g:mpn'] || '',
+            product_type: item['g:product_type'] || '',
+            google_product_category: item['g:google_product_category'] || ''
+          }
+        }));
+      }
+      // Parse Atom feed format
+      else if (result.feed && result.feed.entry) {
+        const entries = Array.isArray(result.feed.entry) 
+          ? result.feed.entry 
+          : [result.feed.entry];
+
+        products = entries.map((entry: any) => ({
+          id: entry.id || entry.link?.href || `product-${Date.now()}-${Math.random()}`,
+          title: entry.title || 'Unnamed Product',
+          description: entry.summary || entry.content || '',
+          price: extractPrice(entry['g:price']),
+          originalPrice: extractPrice(entry['g:price']),
+          availability: entry['g:availability'] || 'Unknown',
+          imageLink: entry['g:image_link'] || '',
+          link: entry.link?.href || entry.link || '',
+          brand: entry['g:brand'] || '',
+          condition: entry['g:condition'] || 'new',
+          additionalFields: {
+            gtin: entry['g:gtin'] || '',
+            mpn: entry['g:mpn'] || '',
+            product_type: entry['g:product_type'] || '',
+            google_product_category: entry['g:google_product_category'] || ''
+          }
+        }));
+      }
+
+      // Store products in database
+      for (const productData of products) {
+        try {
+          await storage.createProduct(productData);
+          importedCount++;
+        } catch (error) {
+          console.log(`Failed to import product ${productData.id}:`, error);
+        }
       }
 
       await storage.updateMerchantFeed(req.params.id, {
@@ -345,14 +393,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'success'
       });
 
-      res.json({ success: true, productsImported: mockProducts.length });
+      res.json({ success: true, productsImported: importedCount, totalFound: products.length });
     } catch (error) {
+      console.error('Feed sync error:', error);
       await storage.updateMerchantFeed(req.params.id, {
         status: 'error'
       });
-      res.status(500).json({ error: "Failed to sync feed" });
+      res.status(500).json({ error: `Failed to sync feed: ${error instanceof Error ? error.message : 'Unknown error'}` });
     }
   });
+
+  // Helper function to extract price from various formats
+  function extractPrice(priceStr: string): string {
+    if (!priceStr) return '';
+    // Extract numeric value and currency
+    const match = priceStr.match(/([0-9,]+\.?[0-9]*)\s*([A-Z]{3}|[$€£¥])/i);
+    if (match) {
+      const [, amount, currency] = match;
+      if (currency === 'USD' || currency === '$') {
+        return `$${amount}`;
+      }
+      return `${amount} ${currency}`;
+    }
+    return priceStr;
+  }
 
   const httpServer = createServer(app);
   return httpServer;

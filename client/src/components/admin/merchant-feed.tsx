@@ -126,7 +126,7 @@ export default function MerchantFeed() {
                   disabled={createFeedMutation.isPending}
                 >
                   <FolderSync className="w-4 h-4 mr-2" />
-                  FolderSync Feed
+                  Add Feed
                 </Button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -175,7 +175,7 @@ export default function MerchantFeed() {
                     onClick={() => handleSyncFeed(currentFeed.id)}
                     disabled={syncFeedMutation.isPending}
                   >
-                    Force FolderSync
+                    Force Sync
                   </Button>
                 </div>
               </CardContent>
@@ -211,7 +211,7 @@ export default function MerchantFeed() {
             <h4 className="font-medium text-gray-700 dark:text-gray-300">Product Preview</h4>
             {products.length === 0 ? (
               <p className="text-sm text-gray-500 dark:text-gray-400 py-8 text-center">
-                No products imported yet. FolderSync a merchant feed to see products here.
+                No products imported yet. Add and sync a merchant feed to see products here.
               </p>
             ) : (
               <div className="overflow-x-auto">

@@ -158,7 +158,7 @@ export default function KnowledgeBase() {
                     <div>
                       <p className="font-medium text-sm">{doc.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {doc.size} • Added {formatDate(doc.uploadedAt)}
+                        {doc.size} • Added {formatDate(doc.uploadedAt || new Date())}
                       </p>
                     </div>
                   </div>
