@@ -70,7 +70,7 @@ export class LangchainRAGService {
       const docs = await this.textSplitter.createDocuments([content], [metadata]);
       
       const processedDoc: ProcessedDocument = {
-        id: metadata.id || `doc_${Date.now()}`,
+        id: this.sanitizeFileName(metadata.id || `doc_${Date.now()}`),
         content,
         metadata,
         chunks: docs
@@ -88,8 +88,12 @@ export class LangchainRAGService {
 
       await chromaVectorDBService.addDocuments(vectorDocs);
 
-      // Store processed document locally
-      await this.saveProcessedDocument(processedDoc);
+      // Only store processed document locally if it's not a product (to avoid excessive file creation)
+      if (metadata.type !== 'product') {
+        await this.saveProcessedDocument(processedDoc);
+      } else {
+        console.log(`Product processed in memory: ${metadata.title || processedDoc.id}`);
+      }
       
       console.log(`Processed document: ${metadata.name || 'Unknown'} into ${docs.length} chunks`);
       return processedDoc;
@@ -192,6 +196,16 @@ export class LangchainRAGService {
     }
   }
 
+  private sanitizeFileName(fileName: string): string {
+    // Remove or replace invalid characters for file names
+    return fileName
+      .replace(/[<>:"/\\|?*]/g, '_') // Replace invalid chars with underscore
+      .replace(/^https?:\/\//, '') // Remove http/https protocol
+      .replace(/\//g, '_') // Replace forward slashes with underscores
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .substring(0, 100); // Limit length to prevent overly long file names
+  }
+
   private async saveProcessedDocument(doc: ProcessedDocument): Promise<void> {
     try {
       const processedDir = path.join(process.cwd(), 'uploads', 'processed');
@@ -199,10 +213,13 @@ export class LangchainRAGService {
         fs.mkdirSync(processedDir, { recursive: true });
       }
 
-      const filePath = path.join(processedDir, `${doc.id}.json`);
+      // Sanitize the document ID for use as filename
+      const sanitizedId = this.sanitizeFileName(doc.id);
+      const filePath = path.join(processedDir, `${sanitizedId}.json`);
+      
       await fs.promises.writeFile(filePath, JSON.stringify(doc, null, 2), 'utf-8');
       
-      console.log(`Saved processed document: ${filePath}`);
+      console.log(`Saved processed document: ${sanitizedId}.json`);
     } catch (error) {
       console.error('Error saving processed document:', error);
     }
