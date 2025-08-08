@@ -128,7 +128,7 @@ export class RAGService {
         // For products, use consolidated file if available
         const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts);
         const relevantProducts = consolidatedProducts.length > 0 
-          ? consolidatedProducts.slice(0, maxProducts).map(product => ({ ...product, similarity: 0.8 }))
+          ? consolidatedProducts // Already processed by intelligent search
           : products.filter(product => 
               vectorProducts.some(vProduct => vProduct.id === product.id)
             ).map(product => ({ ...product, similarity: 0.8 }));
@@ -163,17 +163,11 @@ export class RAGService {
         return relevantProducts;
       }
 
-      const queryLower = query.toLowerCase();
+      console.log(`Searching ${consolidatedProducts.length} consolidated products intelligently`);
       
-      const relevantProducts = consolidatedProducts
-        .map(product => ({
-          ...product,
-          similarity: this.calculateBasicSimilarity(query, product.content)
-        }))
-        .filter(product => product.similarity > 0.1)
-        .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, maxProducts);
-
+      // Use intelligent search on consolidated products
+      const relevantProducts = this.searchProductsIntelligently(query, consolidatedProducts, maxProducts);
+      
       console.log(`Found ${relevantProducts.length} products from consolidated file`);
       return relevantProducts;
     } catch (error) {
@@ -245,14 +239,36 @@ export class RAGService {
         if (categoryLower.includes(word)) score += 2;
       });
       
-      // Price filtering for specific queries
-      if (queryLower.includes('under') || queryLower.includes('below')) {
-        const priceMatch = query.match(/(\d+)\s*aed/i);
-        if (priceMatch && product.price) {
-          const maxPrice = parseInt(priceMatch[1]);
-          const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
-          if (productPrice <= maxPrice) score += 1;
-          else score = Math.max(0, score - 2); // Penalize if over budget
+      // Advanced price filtering for various query types
+      if (product.price) {
+        const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
+        
+        // Handle "under X" or "below X" queries
+        if (queryLower.includes('under') || queryLower.includes('below')) {
+          const priceMatch = query.match(/(\d+)\s*aed/i);
+          if (priceMatch) {
+            const maxPrice = parseInt(priceMatch[1]);
+            if (productPrice <= maxPrice) score += 3;
+            else return { ...product, searchScore: 0 }; // Exclude if over budget
+          }
+        }
+        
+        // Handle "range X-Y", "X to Y", "between X and Y", "from X to Y" queries
+        const rangeMatch = query.match(/(?:range|between|from)\s*(\d+)[-\s]?(?:to|and)?\s*(\d+)\s*aed/i);
+        if (rangeMatch) {
+          const minPrice = parseInt(rangeMatch[1]);
+          const maxPrice = parseInt(rangeMatch[2]);
+          if (productPrice >= minPrice && productPrice <= maxPrice) score += 3;
+          else return { ...product, searchScore: 0 }; // Exclude if outside range
+        }
+        
+        // Handle "in range X-Y aed" queries (like your example)
+        const inRangeMatch = query.match(/in\s+range\s+(\d+)[-\s]+(\d+)\s*aed/i);
+        if (inRangeMatch) {
+          const minPrice = parseInt(inRangeMatch[1]);
+          const maxPrice = parseInt(inRangeMatch[2]);
+          if (productPrice >= minPrice && productPrice <= maxPrice) score += 3;
+          else return { ...product, searchScore: 0 }; // Exclude if outside range
         }
       }
       
