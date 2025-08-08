@@ -35,10 +35,12 @@ Preferred communication style: Simple, everyday language.
   - Merchant feeds table for external product data
 
 ## RAG Implementation
-- **Similarity Search**: Basic text similarity using word overlap calculations
-- **Context Retrieval**: Combines document content and product information
-- **Embedding Strategy**: Planned integration with local embedding models
-- **Search Algorithm**: Text-based similarity scoring with configurable thresholds
+- **Similarity Search**: Vector similarity using local embedding models (all-MiniLM-L6-v2)
+- **Context Retrieval**: Combines document content and product information with vector search
+- **Embedding Strategy**: Integrated @xenova/transformers for local embeddings
+- **Vector Database**: ChromaDB for efficient similarity search with fallback to basic text similarity
+- **Document Processing**: Langchain text splitters with support for PDF, Word, Excel, CSV files
+- **Search Algorithm**: Cosine similarity with embedding vectors, configurable thresholds
 
 ## Chat System Architecture
 - **Message Flow**: User input → RAG context retrieval → LLM processing → Structured response
