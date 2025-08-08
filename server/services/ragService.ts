@@ -156,8 +156,10 @@ export class RAGService {
       const consolidatedProducts = await langchainRAGService.loadConsolidatedProducts();
       
       if (consolidatedProducts.length === 0) {
-        console.log('No consolidated products found, falling back to storage');
-        return await storage.getProducts();
+        console.log('No consolidated products found, falling back to storage with limits');
+        const allProducts = await storage.getProducts();
+        // Limit to first few products to avoid token overflow
+        return allProducts.slice(0, maxProducts);
       }
 
       const queryLower = query.toLowerCase();
@@ -187,8 +189,8 @@ export class RAGService {
   ): Promise<RAGContext> {
     const documents = await storage.getDocuments();
     
-    // Use consolidated product file for product search
-    const products = await this.searchConsolidatedProducts(query, maxProducts);
+    // Use consolidated product file for product search with strict limits
+    const products = await this.searchConsolidatedProducts(query, Math.min(maxProducts, 3));
 
     const relevantDocs = documents
       .map(doc => ({ 

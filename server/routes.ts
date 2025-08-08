@@ -67,8 +67,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "OpenRouter API key not configured" });
       }
 
-      // Find relevant context using enhanced RAG
-      const context = await ragService.findRelevantContext(message);
+      // Find relevant context using enhanced RAG with stricter limits
+      const context = await ragService.findRelevantContext(message, {
+        maxDocuments: 2,
+        maxProducts: 3,
+        similarityThreshold: 0.3
+      });
+      
+      // Log context sizes for debugging
+      console.log('Context sizes:', {
+        products: context.products.length,
+        documents: context.documents.length,
+        totalProductsText: context.products.map(p => `${p.title}: ${p.description || ''}`).join('').length,
+        totalDocumentsText: context.documents.map(d => d.content || '').join('').length
+      });
       
       // Create system prompt with context
       const systemPrompt = `You are a helpful and persuasive shopping assistant for KarjiStore.com, an online store with thousands of products, including many discounted offers. Your goal is to engage customers naturally and assist them in finding products they want while encouraging purchases, especially highlighting discounts and special offers.
@@ -90,18 +102,35 @@ If you do not have relevant information in context, politely let the user know a
 Remember: your main objective is to help users find and buy products at KarjiStore.com while providing an excellent chat experience.
 
 AVAILABLE PRODUCT CONTEXT:
-${context.products.map(p => `- ${p.title}: ${p.description || ''} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Discounted: ${p.discountPrice}` : ''}) [Link: ${p.link || 'N/A'}]`).join('\n')}
+${context.products.slice(0, 3).map(p => `- ${p.title}: ${(p.description || '').substring(0, 200)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Discounted: ${p.discountPrice}` : ''}) [Link: ${p.link || 'N/A'}]`).join('\n')}
 
 KNOWLEDGE BASE CONTEXT:
-${context.documents.map(d => d.content.substring(0, 500)).join('\n')}
+${context.documents.slice(0, 2).map(d => (d.content || '').substring(0, 300)).join('\n')}
 
 CUSTOM INSTRUCTIONS:
-${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || d.name.toLowerCase().includes('prompt')).map(d => d.content).join('\n')}`;
+${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || d.name.toLowerCase().includes('prompt')).map(d => (d.content || '').substring(0, 500)).join('\n').substring(0, 1000)}`;
 
-      const messages = [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ];
+      // Estimate token count (rough approximation: 4 characters = 1 token)
+      const estimatedTokens = Math.ceil((systemPrompt.length + message.length) / 4);
+      console.log('Estimated tokens:', estimatedTokens);
+      
+      let messages;
+      if (estimatedTokens > 120000) { // Leave buffer for max context of 131k
+        console.warn('System prompt too long, truncating...');
+        const maxSystemLength = 120000 * 4 - message.length - 1000; // Buffer
+        const truncatedPrompt = systemPrompt.substring(0, maxSystemLength) + '\n\n[Content truncated due to length]';
+        console.log('Truncated system prompt length:', truncatedPrompt.length);
+        
+        messages = [
+          { role: "system", content: truncatedPrompt },
+          { role: "user", content: message }
+        ];
+      } else {
+        messages = [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ];
+      }
 
       console.log('Making OpenRouter API call...');
       const response = await callOpenRouterAPI(messages, config);
