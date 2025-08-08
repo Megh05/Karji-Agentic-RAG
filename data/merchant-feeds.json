@@ -2,7 +2,13 @@
   "69528551-48e9-44e1-9896-707e100c0818": {
     "url": "https://www.karjistore.com/userfiles/1-4-0001-mygooglemerchantcenterxmlfeed2.xml",
     "id": "69528551-48e9-44e1-9896-707e100c0818",
-    "lastSynced": "2025-08-08T21:45:46.376Z",
+    "lastSynced": "2025-08-08T21:57:41.419Z",
     "status": "syncing"
+  },
+  "3d7c3038-24b4-4f6b-8a53-0e9bd8d308ae": {
+    "url": "https://www.karjistore.com/userfiles/1-4-0001-mygooglemerchantcenterxmlfeed2.xml",
+    "id": "3d7c3038-24b4-4f6b-8a53-0e9bd8d308ae",
+    "lastSynced": null,
+    "status": "pending"
   }
 }

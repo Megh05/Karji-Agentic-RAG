@@ -270,6 +270,25 @@ export class LangchainRAGService {
     }
   }
 
+  public async loadConsolidatedProducts(): Promise<any[]> {
+    try {
+      const vectorFilePath = path.join(process.cwd(), 'uploads', 'vectors', 'products_consolidated.json');
+      if (!fs.existsSync(vectorFilePath)) {
+        console.log('No consolidated product vectors found');
+        return [];
+      }
+
+      const content = await fs.promises.readFile(vectorFilePath, 'utf-8');
+      const products = JSON.parse(content);
+      
+      console.log(`Loaded ${products.length} products from consolidated vector file`);
+      return products;
+    } catch (error) {
+      console.error('Error loading consolidated products:', error);
+      return [];
+    }
+  }
+
   public async loadProcessedDocuments(): Promise<ProcessedDocument[]> {
     try {
       const processedDir = path.join(process.cwd(), 'uploads', 'processed');
