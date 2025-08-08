@@ -402,7 +402,6 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
 
       // Clear existing products before importing new ones
       await storage.clearProducts();
-      await storage.clearAllEmbeddings();
       await ragService.clearIndex();
 
       // Parse Google Shopping XML format
@@ -545,7 +544,7 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
 
       fileStorageService.deleteFile(targetFile.filePath);
       const success = await storage.deleteUploadedFile(req.params.id);
-      await storage.deleteEmbeddings(req.params.id, targetFile.sourceType);
+      // Vector embeddings are automatically managed by ChromaDB
       
       res.json({ success });
     } catch (error) {
@@ -554,28 +553,25 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
     }
   });
 
-  // Embeddings management endpoints
-  app.get("/api/embeddings", async (req, res) => {
+  // ChromaDB embeddings management endpoints
+  app.get("/api/embeddings/status", async (req, res) => {
     try {
-      const { sourceType, sourceId } = req.query;
-      const embeddings = await storage.getEmbeddings(
-        sourceId as string, 
-        sourceType as string
-      );
-      res.json(embeddings);
+      const { chromaVectorDBService } = await import('./services/chromaVectorDB.js');
+      const status = chromaVectorDBService.getStatus();
+      res.json(status);
     } catch (error) {
-      console.error('Error getting embeddings:', error);
-      res.status(500).json({ error: "Failed to get embeddings" });
+      console.error('Error getting ChromaDB status:', error);
+      res.status(500).json({ error: "Failed to get ChromaDB status" });
     }
   });
 
   app.delete("/api/embeddings", async (req, res) => {
     try {
-      await storage.clearAllEmbeddings();
-      res.json({ success: true });
+      await ragService.clearIndex();
+      res.json({ success: true, message: "ChromaDB vector index cleared" });
     } catch (error) {
-      console.error('Error clearing embeddings:', error);
-      res.status(500).json({ error: "Failed to clear embeddings" });
+      console.error('Error clearing ChromaDB embeddings:', error);
+      res.status(500).json({ error: "Failed to clear ChromaDB embeddings" });
     }
   });
 
@@ -583,13 +579,15 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
   app.get("/api/system/status", async (req, res) => {
     try {
       const stats = fileStorageService.getUploadStats();
-      const embeddingCount = (await storage.getEmbeddings()).length;
       const documentCount = (await storage.getDocuments()).length;
       const productCount = (await storage.getProducts()).length;
       
+      const { chromaVectorDBService } = await import('./services/chromaVectorDB.js');
+      const chromaStatus = chromaVectorDBService.getStatus();
+      
       res.json({
         storage: stats,
-        embeddings: embeddingCount,
+        chroma: chromaStatus,
         documents: documentCount,
         products: productCount,
         ragInitialized: ragService.isInitialized

@@ -1,9 +1,9 @@
-import { vectorDBService, VectorDocument } from './vectordb.js';
+import { chromaVectorDBService as vectorDBService, VectorDocument } from './chromaVectorDB.js';
 import { embeddingService } from './embedding.js';
 import { documentProcessor } from './documentProcessor.js';
 import { fileStorageService } from './fileStorage.js';
 import { storage } from '../storage.js';
-import type { Document, Product, VectorEmbedding } from '@shared/schema';
+import type { Document, Product } from '@shared/schema';
 
 export interface RAGContext {
   documents: Array<Document & { similarity?: number; content: string }>;
@@ -47,27 +47,7 @@ export class RAGService {
     if (!this.isInitialized) await this.initialize();
 
     try {
-      // Generate embedding for document
-      const embedding = await embeddingService.embedText(document.content);
-      
-      // Store embedding in database
-      await storage.createEmbedding({
-        sourceId: document.id,
-        sourceType: 'document',
-        content: document.content,
-        embedding: embedding,
-        metadata: {
-          name: document.name,
-          type: document.type,
-          size: document.size,
-          uploadedAt: document.uploadedAt?.toISOString()
-        }
-      });
-
-      // Also store in file system for backup
-      await fileStorageService.storeEmbeddings([{ embedding, content: document.content }], document.id, 'document');
-
-      // Create vector document for ChromaDB if available
+      // Create vector document for ChromaDB primary storage
       const vectorDoc: VectorDocument = {
         id: document.id,
         content: document.content,
@@ -75,12 +55,14 @@ export class RAGService {
           name: document.name,
           type: document.type,
           size: document.size,
-          uploadedAt: document.uploadedAt?.toISOString()
+          uploadedAt: document.uploadedAt?.toISOString(),
+          sourceType: 'document'
         }
       };
 
+      // Store in ChromaDB as primary vector storage
       await vectorDBService.addDocuments([vectorDoc]);
-      console.log(`Indexed document: ${document.name}`);
+      console.log(`Indexed document in ChromaDB: ${document.name}`);
     } catch (error) {
       console.error('Error indexing document:', error);
     }
@@ -93,29 +75,6 @@ export class RAGService {
       // Create searchable content for product
       const processedDoc = documentProcessor.createProductDocument(product);
       
-      // Generate embedding for product
-      const embedding = await embeddingService.embedText(processedDoc.content);
-      
-      // Store embedding in database
-      await storage.createEmbedding({
-        sourceId: product.id,
-        sourceType: 'product',
-        content: processedDoc.content,
-        embedding: embedding,
-        metadata: {
-          ...processedDoc.metadata,
-          title: product.title,
-          price: product.price,
-          discountPrice: product.discountPrice,
-          availability: product.availability,
-          imageLink: product.imageLink,
-          link: product.link
-        }
-      });
-
-      // Also store in file system for backup
-      await fileStorageService.storeEmbeddings([{ embedding, content: processedDoc.content }], product.id, 'product');
-      
       const vectorDoc: VectorDocument = {
         id: product.id,
         content: processedDoc.content,
@@ -126,12 +85,14 @@ export class RAGService {
           discountPrice: product.discountPrice,
           availability: product.availability,
           imageLink: product.imageLink,
-          link: product.link
+          link: product.link,
+          sourceType: 'product'
         }
       };
 
+      // Store in ChromaDB as primary vector storage
       await vectorDBService.addProducts([vectorDoc]);
-      console.log(`Indexed product: ${product.title}`);
+      console.log(`Indexed product in ChromaDB: ${product.title}`);
     } catch (error) {
       console.error('Error indexing product:', error);
     }
