@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/hf_transformers";
+import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "@langchain/core/documents";
 import { chromaVectorDBService } from './chromaVectorDB.js';
@@ -47,7 +47,7 @@ export class LangchainRAGService {
       
       // Initialize HuggingFace Transformers embeddings (local)
       this.embeddings = new HuggingFaceTransformersEmbeddings({
-        modelName: "Xenova/all-MiniLM-L6-v2",
+        model: "Xenova/all-MiniLM-L6-v2",
       });
 
       // Initialize memory vector store
