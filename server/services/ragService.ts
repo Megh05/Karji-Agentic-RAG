@@ -256,7 +256,7 @@ export class RAGService {
       'watch', 'timepiece', 'clock', 'chronograph',
       'jewelry', 'necklace', 'ring', 'bracelet', 'earring', 'chain',
       'wallet', 'bag', 'accessory', 'leather',
-      'men', 'women', 'unisex', 'male', 'female', 'mens', 'womens',
+      'men', 'women', 'unisex', 'male', 'female', 'mens', 'womens', 'mans', 'womans',
       'luxury', 'premium', 'designer', 'elegant', 'sophisticated',
       'gift', 'present', 'special', 'occasion'
     ];
@@ -329,7 +329,33 @@ export class RAGService {
     const scoredProducts = products.map(product => {
       let score = 0;
       
-      // Apply price filter first (strict filtering)
+      // Get product fields for filtering
+      const titleLower = (product.title || '').toLowerCase();
+      const descLower = (product.description || '').toLowerCase();
+      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
+      const brandLower = (product.brand || '').toLowerCase();
+      
+      // Gender-specific filtering - exclude products for opposite gender FIRST
+      const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens'].includes(hint)) ||
+                              intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens'].includes(term));
+      const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
+                             intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term));
+      
+      if (hasGenderRequest) {
+        // When men's products are requested, exclude all women's products
+        if (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women') || titleLower.includes('her majesty')) {
+          return { ...product, searchScore: 0 }; 
+        }
+      }
+      
+      if (hasWomenRequest) {
+        // When women's products are requested, exclude all men's products
+        if (categoryLower.includes('men') && !categoryLower.includes('women')) {
+          return { ...product, searchScore: 0 }; 
+        }
+      }
+      
+      // Apply price filter (strict filtering)
       if (intent.priceFilter && product.price) {
         const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
         
@@ -342,12 +368,6 @@ export class RAGService {
         score += 5; // Bonus for matching price criteria
       }
       
-      // Search terms matching
-      const titleLower = (product.title || '').toLowerCase();
-      const descLower = (product.description || '').toLowerCase();
-      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
-      const brandLower = (product.brand || '').toLowerCase();
-      
       intent.searchTerms.forEach(term => {
         if (titleLower.includes(term)) score += 4; // Title matches are most important
         if (brandLower.includes(term)) score += 3; // Brand matches are important
@@ -355,12 +375,21 @@ export class RAGService {
         if (descLower.includes(term)) score += 2; // Description matches
       });
       
-      // Category hints bonus
+      // Category hints bonus with gender filtering
       intent.categoryHints.forEach(hint => {
         if (titleLower.includes(hint)) score += 2;
         if (categoryLower.includes(hint)) score += 3;
         if (descLower.includes(hint)) score += 1;
       });
+      
+      // Gender scoring boost for matching products
+      if (hasGenderRequest && (categoryLower.includes('men') || titleLower.includes('men') || titleLower.includes('for men') || titleLower.includes('his majesty'))) {
+        score += 15; // Strong boost for gender match
+      }
+      
+      if (hasWomenRequest && (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women'))) {
+        score += 15; // Strong boost for gender match
+      }
       
       // Brand preference bonus
       intent.brandPreferences.forEach(brand => {
@@ -390,11 +419,18 @@ export class RAGService {
     
     // Return products with score > 0, sorted by score
     const filteredProducts = scoredProducts
-      .filter(product => product.searchScore > 0)
+      .filter(product => {
+        if (product.searchScore <= 0) {
+          console.log(`Excluded product: ${product.title} (score: ${product.searchScore})`);
+          return false;
+        }
+        return true;
+      })
       .sort((a, b) => b.searchScore - a.searchScore)
       .slice(0, maxProducts);
     
     console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
+    filteredProducts.forEach(p => console.log(`Included: ${p.title} (score: ${p.searchScore})`));
     return filteredProducts;
   }
 
