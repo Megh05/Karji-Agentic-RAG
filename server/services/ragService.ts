@@ -185,7 +185,7 @@ export class RAGService {
     const documents = await storage.getDocuments();
     
     // Use consolidated product file for product search with strict limits
-    const products = await this.searchConsolidatedProducts(query, Math.min(maxProducts, 3));
+    const products = await this.searchConsolidatedProducts(query, Math.min(maxProducts, 4));
 
     const relevantDocs = documents
       .map(doc => ({ 
