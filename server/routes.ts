@@ -4,6 +4,9 @@ import { storage } from "./storage.js";
 import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema } from "@shared/schema";
 import { ragService } from "./services/ragService.js";
 import { conversationService } from "./services/conversationService.js";
+import { smartResponseService } from "./services/smartResponseService.js";
+import { intentRecognitionService } from "./services/intentRecognition.js";
+import { userProfileService } from "./services/userProfileService.js";
 import { documentProcessor } from "./services/documentProcessor.js";
 import { fileStorageService } from "./services/fileStorage.js";
 import multer from "multer";
@@ -74,9 +77,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add user message to conversation history
       conversationService.addMessage(currentSessionId, 'user', message);
 
-      // Get user preferences from conversation history
+      // Get user preferences from conversation history 
       const userPreferences = conversationService.getUserPreferences(currentSessionId);
       const conversationContext = conversationService.getContextualPrompt(currentSessionId);
+
 
       // Find relevant context using enhanced RAG with user preferences
       const context = await ragService.findRelevantContext(message, {
@@ -93,35 +97,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalDocumentsText: context.documents.map(d => d.content || '').join('').length
       });
       
-      // Create system prompt with context and conversation history
-      const systemPrompt = `You are a helpful and persuasive shopping assistant for KarjiStore.com, an online store with thousands of products, including many discounted offers. Your goal is to engage customers naturally and assist them in finding products they want while encouraging purchases, especially highlighting discounts and special offers.
+      // Analyze user intent and generate intelligent insights
+      const intent = intentRecognitionService.analyzeIntent(message, conversationService.getMessages(currentSessionId) || []);
+      userProfileService.updateProfileFromMessage(currentSessionId, message, intent);
+      
+      const profile = userProfileService.getOrCreateProfile(currentSessionId);
+      const insights = userProfileService.getProfileInsights(currentSessionId);
+      const recommendations = userProfileService.getPersonalizedRecommendations(currentSessionId);
 
-Use the context provided from product data, offers, and knowledge base documents to answer user queries accurately and helpfully.
+      // Create enhanced system prompt with intelligence
+      const systemPrompt = `You are an advanced AI shopping assistant for KarjiStore.com with deep understanding of customer psychology and preferences. Your responses should be intelligent, personalized, and conversion-focused.
 
-IMPORTANT - CONVERSATION CONTEXT: You have access to the customer's conversation history and preferences. Use this context to provide personalized recommendations and maintain conversation continuity. When a customer asks vague questions like "show me more" or "what about preferences", refer to their previous interactions to understand what they're looking for.
+CUSTOMER INTELLIGENCE:
+- Customer Type: ${insights.customerType}
+- Purchase Probability: ${(insights.purchaseProbability * 100).toFixed(0)}%
+- Recommended Approach: ${insights.recommendedApproach}
+- Communication Tone: ${recommendations.communicationTone}
+- Current Mood: ${profile.emotionalProfile.currentMood}
+- Trust Level: ${(profile.emotionalProfile.trustLevel * 100).toFixed(0)}%
+- Urgency Level: ${(profile.emotionalProfile.urgencyLevel * 100).toFixed(0)}%
 
-${conversationContext}
+CONVERSATION CONTEXT: ${conversationContext}
 
-When recommending products:
-- Use customer's established preferences from conversation history
-- Prioritize items that match their shown interests (categories, brands, budget, quality level)
-- Present products clearly with their name, short description, discount or price if available
-- Reference previous conversation when relevant ("Based on your interest in luxury perfumes..." or "Following up on the watches you asked about...")
-- Encourage users to explore and buy these products
-- If multiple relevant products are available, mention the top 2-3 best matches
-- Format product recommendations as natural part of your conversation
+CUSTOMER PREFERENCES:
+- Preferred Categories: ${recommendations.recommendedCategories?.join(', ') || 'Not established yet'}
+- Preferred Brands: ${recommendations.recommendedBrands?.join(', ') || 'Not established yet'}
+- Price Range: ${recommendations.recommendedPriceRange?.join(', ') || 'Flexible'}
+- Key Features: ${recommendations.recommendedFeatures?.join(', ') || 'General preferences'}
 
-Always keep your tone friendly, professional, and conversational. Maintain conversation flow by referencing previous messages when appropriate.
+DETECTED OBJECTIONS: ${insights.potentialObjections?.join(', ') || 'None detected'}
+MOTIVATIONS: ${insights.motivations?.join(', ') || 'General interest'}
 
-If you do not have relevant information in context, politely let the user know and offer general assistance or ask clarifying questions based on their conversation history.
+BEHAVIORAL TRIGGERS:
+${insights.keyTriggers?.map((trigger: string) => `- ${trigger}`).join('\n') || '- Standard approach'}
 
-Remember: your main objective is to help users find and buy products at KarjiStore.com while providing an excellent, personalized chat experience using their conversation history.
+INSTRUCTIONS:
+1. Respond according to the customer type and recommended approach
+2. Address any detected objections proactively
+3. Use the appropriate communication tone (${recommendations.communicationTone})
+4. Reference conversation history naturally for continuity
+5. Apply behavioral triggers strategically
+6. Create urgency if urgency level is high (${profile.emotionalProfile.urgencyLevel > 0.7 ? 'YES' : 'NO'})
+7. Build trust if trust level is low (${profile.emotionalProfile.trustLevel < 0.5 ? 'YES' : 'NO'})
 
-AVAILABLE PRODUCT CONTEXT:
-${context.products.slice(0, 3).map(p => `- ${p.title}: ${(p.description || '').substring(0, 200)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Discounted: ${p.discountPrice}` : ''}) [Link: ${p.link || 'N/A'}]`).join('\n')}
+SMART PRODUCT RECOMMENDATIONS:
+${context.products.slice(0, 3).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 150)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''}) ${p.availability === 'in_stock' ? '[IN STOCK]' : '[LIMITED]'}`).join('\n')}
 
-KNOWLEDGE BASE CONTEXT:
-${context.documents.slice(0, 2).map(d => (d.content || '').substring(0, 300)).join('\n')}
+KNOWLEDGE BASE:
+${context.documents.slice(0, 2).map((d: any) => (d.content || '').substring(0, 200)).join('\n')}
+
+Remember: You're not just providing information - you're creating a personalized shopping experience that guides this specific customer toward a purchase decision.
 
 CUSTOM INSTRUCTIONS:
 ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || d.name.toLowerCase().includes('prompt')).map(d => (d.content || '').substring(0, 500)).join('\n').substring(0, 1000)}`;
@@ -152,15 +177,39 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       const response = await callOpenRouterAPI(messages, config);
       console.log('OpenRouter API response received');
       
-      const assistantMessage = response.choices[0]?.message?.content || "Sorry, I couldn't process your request.";
-      
-      // Add assistant message to conversation history
-      conversationService.addMessage(currentSessionId, 'assistant', assistantMessage, context.products.slice(0, 3));
+      const baseAssistantMessage = response.choices[0]?.message?.content || "Sorry, I couldn't process your request.";
 
-      res.json({
-        message: assistantMessage,
-        products: context.products.slice(0, 3), // Return top 3 relevant products
-        sessionId: currentSessionId // Return session ID to client
+      // Generate smart response with all intelligence features
+      const smartResponse = smartResponseService.generateSmartResponse(
+        message,
+        currentSessionId,
+        conversationService.getMessages(currentSessionId) || [],
+        context,
+        baseAssistantMessage
+      );
+
+      // Add assistant response to conversation history with intelligence
+      conversationService.addMessage(
+        currentSessionId, 
+        'assistant', 
+        smartResponse.message, 
+        smartResponse.products,
+        smartResponse.products,
+        intent
+      );
+
+      res.json({ 
+        message: smartResponse.message,
+        products: smartResponse.products,
+        sessionId: currentSessionId,
+        uiElements: smartResponse.uiElements,
+        followUpQuestions: smartResponse.followUpQuestions,
+        actions: smartResponse.actions,
+        insights: {
+          customerType: insights.customerType,
+          purchaseProbability: insights.purchaseProbability,
+          recommendedApproach: insights.recommendedApproach
+        }
       });
     } catch (error) {
       console.error('Chat error:', error);

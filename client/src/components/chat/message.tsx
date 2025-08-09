@@ -1,6 +1,8 @@
 import { Bot, User } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import ProductCard from "./product-card";
+import SmartProductCarousel from "./smart-product-carousel";
+import { Button } from "@/components/ui/button";
 
 interface MessageProps {
   message: ChatMessage;
@@ -26,11 +28,42 @@ export default function Message({ message }: MessageProps) {
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         </div>
         
-        {/* Product Recommendations */}
+        {/* Smart Products Display */}
         {message.products && message.products.length > 0 && (
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-            {message.products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          <div className="mt-3">
+            {message.uiElements?.showCarousel ? (
+              <SmartProductCarousel 
+                products={message.products} 
+                uiElements={message.uiElements}
+                onProductAction={(action, productId, extra) => {
+                  console.log('Product action:', action, productId, extra);
+                }}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {message.products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Follow-up Questions */}
+        {message.followUpQuestions && message.followUpQuestions.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {message.followUpQuestions.map((question, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="text-sm border-primary/20 hover:border-primary hover:bg-primary/5"
+                onClick={() => {
+                  console.log('Follow-up question clicked:', question);
+                }}
+              >
+                {question}
+              </Button>
             ))}
           </div>
         )}

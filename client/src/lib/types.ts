@@ -4,6 +4,16 @@ export interface ChatMessage {
   content: string;
   products?: ProductRecommendation[];
   timestamp: Date;
+  uiElements?: {
+    showCarousel?: boolean;
+    showFilters?: boolean;
+    showComparison?: boolean;
+    quickActions?: string[];
+    urgencyIndicators?: string[];
+    socialProof?: string[];
+  };
+  followUpQuestions?: string[];
+  actions?: string[];
 }
 
 export interface ProductRecommendation {
@@ -21,4 +31,19 @@ export interface ChatResponse {
   message: string;
   products?: ProductRecommendation[];
   sessionId?: string;
+  uiElements?: {
+    showCarousel?: boolean;
+    showFilters?: boolean;
+    showComparison?: boolean;
+    quickActions?: string[];
+    urgencyIndicators?: string[];
+    socialProof?: string[];
+  };
+  followUpQuestions?: string[];
+  actions?: string[];
+  insights?: {
+    customerType: string;
+    purchaseProbability: number;
+    recommendedApproach: string;
+  };
 }

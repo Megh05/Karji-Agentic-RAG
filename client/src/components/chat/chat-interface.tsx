@@ -6,6 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import type { ChatMessage, ChatResponse } from "@/lib/types";
 import Message from "./message";
+import ContextualFollowUps from "./contextual-follow-ups";
+import QuickActions from "./quick-actions";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ChatInterface() {
@@ -20,6 +22,7 @@ export default function ChatInterface() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -56,7 +59,10 @@ export default function ChatInterface() {
         type: 'assistant',
         content: data.message,
         products: data.products,
-        timestamp: new Date()
+        timestamp: new Date(),
+        uiElements: data.uiElements,
+        followUpQuestions: data.followUpQuestions,
+        actions: data.actions
       };
       setMessages(prev => [...prev, assistantMessage]);
     },
@@ -137,6 +143,38 @@ export default function ChatInterface() {
             </div>
           </div>
         )}
+
+        {/* Contextual Follow-ups */}
+        {sessionId && (
+          <div className="mb-4">
+            <ContextualFollowUps
+              sessionId={sessionId}
+              conversationLength={messages.length}
+              userProfile={userProfile}
+              onFollowUpClick={(followUp) => {
+                setInput(followUp.message);
+              }}
+              onActionClick={(action) => {
+                handleSendMessage(action);
+              }}
+            />
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        {messages.length > 1 && (
+          <div className="mb-4">
+            <QuickActions
+              products={messages.slice(-1)[0]?.products}
+              userProfile={userProfile}
+              conversationContext={input}
+              onActionClick={(action, context) => {
+                handleSendMessage(action.label);
+              }}
+            />
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 

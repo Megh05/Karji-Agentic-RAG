@@ -48,12 +48,18 @@ class ConversationService {
 
   private cleanupExpiredSessions(): void {
     const now = new Date();
-    for (const [sessionId, session] of this.sessions) {
+    const sessionsToDelete: string[] = [];
+    
+    this.sessions.forEach((session, sessionId) => {
       if (now.getTime() - session.lastActivity.getTime() > this.SESSION_TIMEOUT) {
-        this.sessions.delete(sessionId);
-        console.log(`Cleaned up expired session: ${sessionId}`);
+        sessionsToDelete.push(sessionId);
       }
-    }
+    });
+    
+    sessionsToDelete.forEach(sessionId => {
+      this.sessions.delete(sessionId);
+      console.log(`Cleaned up expired session: ${sessionId}`);
+    });
   }
 
   public getOrCreateSession(sessionId?: string): string {
@@ -222,6 +228,11 @@ class ConversationService {
     return session ? session.preferences : null;
   }
 
+  public getMessages(sessionId: string): ConversationMessage[] {
+    const session = this.sessions.get(sessionId);
+    return session ? session.messages : [];
+  }
+
   public clearSession(sessionId: string): void {
     this.sessions.delete(sessionId);
     console.log(`Cleared session: ${sessionId}`);
@@ -229,9 +240,9 @@ class ConversationService {
 
   public getSessionStats(): { totalSessions: number; activeMessages: number } {
     let totalMessages = 0;
-    for (const session of this.sessions.values()) {
+    this.sessions.forEach(session => {
       totalMessages += session.messages.length;
-    }
+    });
 
     return {
       totalSessions: this.sessions.size,
