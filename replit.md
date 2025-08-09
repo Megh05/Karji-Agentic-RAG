@@ -55,10 +55,11 @@ Preferred communication style: Simple, everyday language.
 - **Data Persistence**: All scraped data, documents, and file metadata stored in JSON files
 
 ## Chat System Architecture
-- **Message Flow**: User input → RAG context retrieval → LLM processing → Structured response
-- **Product Recommendations**: Integrated product cards within chat responses
-- **Streaming**: Designed for real-time message streaming
-- **Context Management**: Maintains conversation history and relevant product context
+- **Message Flow**: User input → Session management → RAG context retrieval → Conversational context → LLM processing → Structured response
+- **Product Recommendations**: Integrated product cards within chat responses with preference-based filtering
+- **Conversational Memory**: Full session-based conversation history with user preference learning
+- **Context Management**: Maintains conversation history, user preferences, and relevant product context across sessions
+- **Session Management**: Automatic session creation, preference tracking, and cleanup with 30-minute timeout
 
 ## Admin Panel Features
 - **API Configuration**: OpenRouter API key setup with live model fetching (400+ models), connection testing, and parameter tuning

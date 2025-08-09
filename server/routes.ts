@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
 import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema } from "@shared/schema";
 import { ragService } from "./services/ragService.js";
+import { conversationService } from "./services/conversationService.js";
 import { documentProcessor } from "./services/documentProcessor.js";
 import { fileStorageService } from "./services/fileStorage.js";
 import multer from "multer";
@@ -52,13 +53,16 @@ async function callOpenRouterAPI(messages: any[], config: any) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
-  // Chat endpoint
+  // Chat endpoint with conversation memory
   app.post("/api/chat", async (req, res) => {
     try {
-      const { message } = req.body;
+      const { message, sessionId } = req.body;
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
       }
+
+      // Get or create conversation session
+      const currentSessionId = conversationService.getOrCreateSession(sessionId);
 
       const config = await storage.getApiConfig();
       console.log('Chat config check:', { hasApiKey: !!config?.openrouterKey, selectedModel: config?.selectedModel });
@@ -67,7 +71,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "OpenRouter API key not configured" });
       }
 
-      // Find relevant context using enhanced RAG with stricter limits
+      // Add user message to conversation history
+      conversationService.addMessage(currentSessionId, 'user', message);
+
+      // Get user preferences from conversation history
+      const userPreferences = conversationService.getUserPreferences(currentSessionId);
+      const conversationContext = conversationService.getContextualPrompt(currentSessionId);
+
+      // Find relevant context using enhanced RAG with user preferences
       const context = await ragService.findRelevantContext(message, {
         maxDocuments: 2,
         maxProducts: 3,
@@ -82,24 +93,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalDocumentsText: context.documents.map(d => d.content || '').join('').length
       });
       
-      // Create system prompt with context
+      // Create system prompt with context and conversation history
       const systemPrompt = `You are a helpful and persuasive shopping assistant for KarjiStore.com, an online store with thousands of products, including many discounted offers. Your goal is to engage customers naturally and assist them in finding products they want while encouraging purchases, especially highlighting discounts and special offers.
 
 Use the context provided from product data, offers, and knowledge base documents to answer user queries accurately and helpfully.
 
+IMPORTANT - CONVERSATION CONTEXT: You have access to the customer's conversation history and preferences. Use this context to provide personalized recommendations and maintain conversation continuity. When a customer asks vague questions like "show me more" or "what about preferences", refer to their previous interactions to understand what they're looking for.
+
+${conversationContext}
+
 When recommending products:
-- Prioritize items that are currently discounted or have special offers.
-- Present products clearly with their name, short description, discount or price if available.
-- Encourage users to explore and buy these products.
-- If multiple relevant products are available, mention the top 2-3 best matches.
-- Format product recommendations as natural part of your conversation.
-- If product cards are supported in the UI, provide data to render cards with product name, short description, image URL, and product page URL.
+- Use customer's established preferences from conversation history
+- Prioritize items that match their shown interests (categories, brands, budget, quality level)
+- Present products clearly with their name, short description, discount or price if available
+- Reference previous conversation when relevant ("Based on your interest in luxury perfumes..." or "Following up on the watches you asked about...")
+- Encourage users to explore and buy these products
+- If multiple relevant products are available, mention the top 2-3 best matches
+- Format product recommendations as natural part of your conversation
 
-Always keep your tone friendly, professional, and conversational. Avoid sounding robotic or overly salesy. Answer questions fully but concisely.
+Always keep your tone friendly, professional, and conversational. Maintain conversation flow by referencing previous messages when appropriate.
 
-If you do not have relevant information in context, politely let the user know and offer general assistance or ask clarifying questions.
+If you do not have relevant information in context, politely let the user know and offer general assistance or ask clarifying questions based on their conversation history.
 
-Remember: your main objective is to help users find and buy products at KarjiStore.com while providing an excellent chat experience.
+Remember: your main objective is to help users find and buy products at KarjiStore.com while providing an excellent, personalized chat experience using their conversation history.
 
 AVAILABLE PRODUCT CONTEXT:
 ${context.products.slice(0, 3).map(p => `- ${p.title}: ${(p.description || '').substring(0, 200)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Discounted: ${p.discountPrice}` : ''}) [Link: ${p.link || 'N/A'}]`).join('\n')}
@@ -136,13 +152,62 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       const response = await callOpenRouterAPI(messages, config);
       console.log('OpenRouter API response received');
       
+      const assistantMessage = response.choices[0]?.message?.content || "Sorry, I couldn't process your request.";
+      
+      // Add assistant message to conversation history
+      conversationService.addMessage(currentSessionId, 'assistant', assistantMessage, context.products.slice(0, 3));
+
       res.json({
-        message: response.choices[0]?.message?.content || "Sorry, I couldn't process your request.",
-        products: context.products.slice(0, 3) // Return top 3 relevant products
+        message: assistantMessage,
+        products: context.products.slice(0, 3), // Return top 3 relevant products
+        sessionId: currentSessionId // Return session ID to client
       });
     } catch (error) {
       console.error('Chat error:', error);
       res.status(500).json({ error: "Failed to process chat message" });
+    }
+  });
+
+  // Conversation management endpoints
+  app.get("/api/conversation/:sessionId", async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const { limit } = req.query;
+      
+      const history = conversationService.getConversationHistory(
+        sessionId, 
+        limit ? parseInt(limit as string) : undefined
+      );
+      
+      res.json({ 
+        sessionId, 
+        messages: history,
+        preferences: conversationService.getUserPreferences(sessionId)
+      });
+    } catch (error) {
+      console.error('Error fetching conversation:', error);
+      res.status(500).json({ error: "Failed to fetch conversation history" });
+    }
+  });
+
+  app.delete("/api/conversation/:sessionId", async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      conversationService.clearSession(sessionId);
+      res.json({ success: true, message: "Session cleared" });
+    } catch (error) {
+      console.error('Error clearing session:', error);
+      res.status(500).json({ error: "Failed to clear session" });
+    }
+  });
+
+  app.get("/api/conversation-stats", async (req, res) => {
+    try {
+      const stats = conversationService.getSessionStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting stats:', error);
+      res.status(500).json({ error: "Failed to get conversation stats" });
     }
   });
 

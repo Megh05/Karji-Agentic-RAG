@@ -20,4 +20,5 @@ export interface ProductRecommendation {
 export interface ChatResponse {
   message: string;
   products?: ProductRecommendation[];
+  sessionId?: string;
 }

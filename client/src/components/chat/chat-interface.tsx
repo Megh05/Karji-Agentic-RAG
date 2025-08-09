@@ -19,6 +19,7 @@ export default function ChatInterface() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -32,7 +33,10 @@ export default function ChatInterface() {
 
   const chatMutation = useMutation({
     mutationFn: async (message: string): Promise<ChatResponse> => {
-      const response = await apiRequest("POST", "/api/chat", { message });
+      const response = await apiRequest("POST", "/api/chat", { 
+        message, 
+        sessionId: sessionId || undefined 
+      });
       return response.json();
     },
     onMutate: () => {
@@ -40,6 +44,13 @@ export default function ChatInterface() {
     },
     onSuccess: (data) => {
       setIsTyping(false);
+      
+      // Update session ID if received from server
+      if (data.sessionId && data.sessionId !== sessionId) {
+        setSessionId(data.sessionId);
+        console.log('Session established:', data.sessionId);
+      }
+      
       const assistantMessage: ChatMessage = {
         id: Date.now().toString(),
         type: 'assistant',
