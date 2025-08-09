@@ -43,9 +43,11 @@ export default function ContextualFollowUps({
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
       if (!Array.from(shownFollowUps).includes(followUp.trigger)) {
-        // Clear previous follow-ups and show new one
-        setActiveFollowUps([{ ...followUp, id: uniqueId }]);
-        setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
+        // Clear previous follow-ups and show new one after a short delay
+        setTimeout(() => {
+          setActiveFollowUps([{ ...followUp, id: uniqueId }]);
+          setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
+        }, 1000); // 1 second delay to let previous response settle
       }
     }
 
@@ -54,26 +56,56 @@ export default function ContextualFollowUps({
   const generateFollowUps = (): ContextualFollowUp[] => {
     const followUps: ContextualFollowUp[] = [];
 
-    // Only show one relevant follow-up based on conversation context
-    if (conversationLength > 5) {
+    // Show different follow-ups based on conversation length and context
+    if (conversationLength === 2) {
       followUps.push({
-        id: 'smart_suggestion',
+        id: 'welcome_help',
         type: 'recommendation',
-        trigger: 'conversation_context',
+        trigger: 'initial_help',
+        message: "I can help you find exactly what you're looking for. What's most important to you?",
+        timing: 0,
+        priority: 'medium',
+        actions: ['Price Range', 'Brand Preference', 'Product Type']
+      });
+    } else if (conversationLength === 4) {
+      followUps.push({
+        id: 'discovery_help',
+        type: 'recommendation',
+        trigger: 'discovery_assist',
+        message: "Would you like me to show you some curated collections or help filter products?",
+        timing: 0,
+        priority: 'medium',
+        actions: ['Show Collections', 'Filter Products', 'Popular Items']
+      });
+    } else if (conversationLength === 6) {
+      followUps.push({
+        id: 'personalized_help',
+        type: 'recommendation',
+        trigger: 'personalization',
         message: "Based on our conversation, would you like me to create a personalized recommendation list?",
         timing: 0,
         priority: 'high',
         actions: ['Create Personal List', 'Show Best Matches', 'Get Expert Picks']
       });
-    } else if (conversationLength > 3) {
+    } else if (conversationLength === 8) {
       followUps.push({
-        id: 'help_narrow',
-        type: 'recommendation',
-        trigger: 'browsing_help',
-        message: "I can help you find exactly what you're looking for. What's most important to you?",
+        id: 'purchase_assist',
+        type: 'offer',
+        trigger: 'purchase_guidance',
+        message: "Ready to make a decision? I can help with final comparisons or special offers.",
+        timing: 0,
+        priority: 'high',
+        actions: ['Compare Options', 'Check Special Offers', 'Purchase Assistance']
+      });
+    } else if (conversationLength > 9) {
+      followUps.push({
+        id: 'closing_help',
+        type: 'service',
+        trigger: 'closing_assistance',
+        message: "Is there anything specific I can help you decide on or any questions about our products?",
         timing: 0,
         priority: 'medium',
-        actions: ['Price Range', 'Brand Preference', 'Style/Type']
+        actions: ['Final Questions', 'Product Details', 'Purchase Support']
       });
     }
 
@@ -100,13 +132,15 @@ export default function ContextualFollowUps({
   };
 
   const handleFollowUpClick = (followUp: ContextualFollowUp) => {
-    // Don't remove the follow-up immediately, let parent handle it
+    // Remove the follow-up after clicking the message
+    setActiveFollowUps(prev => prev.filter(f => f.id !== followUp.id));
     onFollowUpClick?.(followUp);
   };
 
   const handleActionClick = (action: string, followUp: ContextualFollowUp) => {
     console.log('Action clicked:', action, followUp);
-    // Don't remove the follow-up immediately, let parent handle it
+    // Remove the follow-up after action is clicked
+    setActiveFollowUps(prev => prev.filter(f => f.id !== followUp.id));
     onActionClick?.(action);
   };
 
