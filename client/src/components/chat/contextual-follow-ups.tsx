@@ -35,9 +35,6 @@ export default function ContextualFollowUps({
 
   // Generate contextual follow-ups based on conversation state
   useEffect(() => {
-    // Clear existing follow-ups first
-    setActiveFollowUps([]);
-    
     const newFollowUps = generateFollowUps();
     
     // Only show one follow-up at a time and ensure unique keys
@@ -46,10 +43,9 @@ export default function ContextualFollowUps({
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
       if (!shownFollowUps.has(followUp.trigger)) {
-        setTimeout(() => {
-          setActiveFollowUps([{ ...followUp, id: uniqueId }]);
-          setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
-        }, followUp.timing * 1000);
+        // Clear previous follow-ups and show new one
+        setActiveFollowUps([{ ...followUp, id: uniqueId }]);
+        setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
       }
     }
 
@@ -104,15 +100,13 @@ export default function ContextualFollowUps({
   };
 
   const handleFollowUpClick = (followUp: ContextualFollowUp) => {
-    // Remove the follow-up after clicking
-    setActiveFollowUps(prev => prev.filter(f => f.id !== followUp.id));
+    // Don't remove the follow-up immediately, let parent handle it
     onFollowUpClick?.(followUp);
   };
 
   const handleActionClick = (action: string, followUp: ContextualFollowUp) => {
     console.log('Action clicked:', action, followUp);
-    // Remove the follow-up after action
-    setActiveFollowUps(prev => prev.filter(f => f.id !== followUp.id));
+    // Don't remove the follow-up immediately, let parent handle it
     onActionClick?.(action);
   };
 
@@ -131,7 +125,10 @@ export default function ContextualFollowUps({
         >
           <div className="flex items-center space-x-2 mb-2">
             {getIcon(followUp.type)}
-            <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+            <p 
+              className="text-sm text-gray-700 dark:text-gray-300 flex-1 cursor-pointer hover:text-primary"
+              onClick={() => handleFollowUpClick(followUp)}
+            >
               {followUp.message}
             </p>
           </div>

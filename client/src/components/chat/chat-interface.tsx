@@ -152,13 +152,22 @@ export default function ChatInterface() {
               conversationLength={messages.length}
               userProfile={userProfile}
               onFollowUpClick={(followUp) => {
-                setInput(followUp.message);
-                setTimeout(() => handleSend(), 100);
+                // Send the message directly as a request
+                const messageToSend = followUp.message;
+                setInput('');
+                chatMutation.mutate({ 
+                  message: messageToSend, 
+                  sessionId: sessionId || '' 
+                });
               }}
               onActionClick={(action) => {
                 console.log('Follow-up action received:', action);
-                setInput(action);
-                setTimeout(() => handleSend(), 100);
+                // Send the action directly as a request
+                setInput('');
+                chatMutation.mutate({ 
+                  message: action, 
+                  sessionId: sessionId || '' 
+                });
               }}
             />
           </div>
@@ -177,8 +186,12 @@ export default function ChatInterface() {
               userProfile={userProfile}
               conversationContext={input}
               onActionClick={(action, context) => {
-                setInput(action.label);
-                setTimeout(() => handleSend(), 100);
+                // Send the action directly as a request
+                setInput('');
+                chatMutation.mutate({ 
+                  message: action.label, 
+                  sessionId: sessionId || '' 
+                });
               }}
             />
           </div>
