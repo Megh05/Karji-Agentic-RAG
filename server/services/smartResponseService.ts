@@ -185,8 +185,8 @@ class SmartResponseService {
     }
 
     // Recency and popularity (if available in product data)
-    if (product.additionalFields?.popularity) {
-      score += product.additionalFields.popularity * 2;
+    if (product.additionalFields && 'popularity' in product.additionalFields && product.additionalFields.popularity) {
+      score += Number(product.additionalFields.popularity) * 2;
     }
 
     return score;
@@ -238,13 +238,29 @@ class SmartResponseService {
 
   private generateSmartFollowUps(intent: any, profile: any, conversationHistory: any[]): string[] {
     const followUps: string[] = [];
-    const hasProducts = conversationHistory.some((msg: any) => msg.content.includes('Product:') || msg.content.includes('here are'));
+    const hasProducts = conversationHistory.some((msg: any) => 
+      msg.type === 'assistant' && (msg.content?.includes('AED') || msg.content?.includes('Price:') || msg.content?.includes('product')));
     const recentMessages = conversationHistory.slice(-3);
     const isNewUser = conversationHistory.length <= 2;
     const askedAboutCategories = conversationHistory.some((msg: any) => 
       msg.content.toLowerCase().includes('categories') || 
       msg.content.toLowerCase().includes('what products') ||
       msg.content.toLowerCase().includes('what do you sell'));
+    
+    // Check if user confirmed purchase intent
+    const userMessage = conversationHistory[conversationHistory.length - 1]?.content?.toLowerCase() || '';
+    const isPurchaseConfirmation = userMessage.includes('yes, i want to buy') || 
+                                  userMessage.includes('yes i want to buy') ||
+                                  intent.actions.includes('confirm_purchase_intent');
+
+    // Priority 1: If user confirmed purchase intent, provide purchase-related options
+    if (isPurchaseConfirmation) {
+      followUps.push("Add to cart and checkout");
+      followUps.push("I need help choosing the right size/option");
+      followUps.push("Tell me about shipping and delivery");
+      followUps.push("I have questions about this product");
+      return followUps;
+    }
 
     // For completely new users - proactively show product categories
     if (isNewUser && !askedAboutCategories) {

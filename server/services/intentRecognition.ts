@@ -35,13 +35,19 @@ class IntentRecognitionService {
     const lowercaseMessage = message.toLowerCase();
     
     // Enhanced intent classification patterns
-    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'price', 'cost', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this'];
+    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'price', 'cost', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
     const browsingSignals = ['show me', 'what do you have', 'browse', 'look at', 'see more', 'options', 'selection', 'suggest', 'recommend'];
     const comparingSignals = ['compare', 'difference', 'versus', 'vs', 'better', 'best', 'which one', 'recommend', 'deciding between'];
     const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns'];
     const supportSignals = ['help', 'problem', 'issue', 'support', 'contact', 'return', 'refund', 'shipping'];
     const satisfactionSignals = ['perfect', 'these look great', 'exactly what i need', 'love these', 'these are good', 'satisfied', 'happy with these'];
     const preferencesSignals = ['for myself', 'for someone special', 'budget-friendly', 'premium quality', 'floral', 'woody', 'musky', 'everyday', 'special occasion'];
+    
+    // Check if user is confirming a purchase intent from previous products shown
+    const purchaseConfirmationSignals = ['yes, i want to buy this', 'yes i want to buy', 'i want to purchase', 'proceed with purchase'];
+    const hasProductsInHistory = conversationHistory.some((msg: any) => 
+      msg.type === 'assistant' && (msg.content?.includes('AED') || msg.content?.includes('Price:') || msg.content?.includes('product')));
+    const isPurchaseConfirmation = this.calculateSignalScore(lowercaseMessage, purchaseConfirmationSignals) > 0.5;
 
     // Calculate intent scores including new patterns
     const buyingScore = this.calculateSignalScore(lowercaseMessage, buyingSignals);
@@ -52,14 +58,23 @@ class IntentRecognitionService {
     const satisfactionScore = this.calculateSignalScore(lowercaseMessage, satisfactionSignals);
     const preferencesScore = this.calculateSignalScore(lowercaseMessage, preferencesSignals);
 
-    // If satisfaction signals are strong, prioritize buying intent
+    // Priority 1: Purchase confirmation after products were shown
+    if (isPurchaseConfirmation && hasProductsInHistory) {
+      return {
+        category: 'buying' as UserIntent['category'],
+        confidence: 0.95,
+        entities: this.extractEntities(message),
+        actions: ['confirm_purchase_intent', 'guide_to_checkout', 'provide_purchase_assistance']
+      };
+    }
+
+    // Priority 2: If satisfaction signals are strong, prioritize buying intent
     if (satisfactionScore > 0.3) {
       return {
         category: 'buying' as UserIntent['category'],
         confidence: Math.max(0.8, satisfactionScore),
         entities: this.extractEntities(message),
-        actions: ['guide_to_purchase', 'check_inventory', 'provide_purchase_assistance'],
-        // satisfactionIndicated: true
+        actions: ['guide_to_purchase', 'check_inventory', 'provide_purchase_assistance']
       };
     }
 

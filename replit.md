@@ -2,6 +2,14 @@
 
 This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It features an intelligent sales assistant that combines Retrieval-Augmented Generation (RAG) with product recommendations. The system includes a React-based chat interface and an admin dashboard for managing knowledge base content, product data, and AI configuration.
 
+## Recent Changes (August 2025)
+- ✅ Fixed conversation flow imperfections at purchase confirmation stage
+- ✅ Enhanced gender filtering to properly exclude opposite-gender products 
+- ✅ Implemented purchase confirmation detection to prevent unrelated product searches
+- ✅ Updated intent recognition to handle "Yes, I want to buy this" properly
+- ✅ Improved follow-up suggestions to be contextually appropriate for purchase flow
+- ✅ Added purchase-specific system prompts to guide checkout assistance instead of product browsing
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

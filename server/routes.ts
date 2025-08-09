@@ -82,12 +82,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const conversationContext = conversationService.getContextualPrompt(currentSessionId);
 
 
-      // Find relevant context using enhanced RAG with user preferences
-      const context = await ragService.findRelevantContext(message, {
-        maxDocuments: 2,
-        maxProducts: 4,
-        similarityThreshold: 0.3
-      });
+      // Analyze user intent first to determine if we need to search for products
+      const intent = intentRecognitionService.analyzeIntent(message, conversationService.getMessages(currentSessionId) || []);
+      
+      // Check if this is a purchase confirmation - if so, don't search for new products
+      const isPurchaseConfirmation = intent.actions.includes('confirm_purchase_intent') || 
+                                   message.toLowerCase().includes('yes, i want to buy') ||
+                                   message.toLowerCase().includes('yes i want to buy');
+      
+      let context;
+      if (isPurchaseConfirmation) {
+        // For purchase confirmation, don't search for new products - use empty context
+        context = {
+          products: [],
+          documents: [],
+          totalTokens: 0
+        };
+      } else {
+        // Find relevant context using enhanced RAG with user preferences
+        context = await ragService.findRelevantContext(message, {
+          maxDocuments: 2,
+          maxProducts: 4,
+          similarityThreshold: 0.3
+        });
+      }
       
       // Log context sizes for debugging
       console.log('Context sizes:', {
@@ -97,8 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalDocumentsText: context.documents.map(d => d.content || '').join('').length
       });
       
-      // Analyze user intent and generate intelligent insights
-      const intent = intentRecognitionService.analyzeIntent(message, conversationService.getMessages(currentSessionId) || []);
+      // Update user profile from message and intent analysis
       userProfileService.updateProfileFromMessage(currentSessionId, message, intent);
       
       const profile = userProfileService.getOrCreateProfile(currentSessionId);
@@ -131,11 +148,26 @@ MOTIVATIONS: ${insights.motivations?.join(', ') || 'General interest'}
 BEHAVIORAL TRIGGERS:
 ${insights.keyTriggers?.map((trigger: string) => `- ${trigger}`).join('\n') || '- Standard approach'}
 
+${isPurchaseConfirmation ? `
+PURCHASE CONFIRMATION MODE:
+The customer has confirmed their intent to purchase. DO NOT show new products. Instead:
+1. Acknowledge their purchase intent positively
+2. Provide helpful purchase assistance (sizes, shipping, payment options)
+3. Guide them to the next steps in the purchase process
+4. Ask if they need help with anything specific about their chosen product(s)
+5. Be supportive and helpful with the transaction process
+
+DO NOT search for or recommend different products at this stage.
+` : `
 CONVERSATION FLOW LOGIC:
 1. PREFERENCE GATHERING PHASE: Ask minimal, focused questions to understand customer needs quickly
 2. PRODUCT PRESENTATION PHASE: Show exactly 4 products matching their preferences 
 3. SATISFACTION CHECK PHASE: After showing products, ask if they're satisfied or need different options
 4. PURCHASE GUIDANCE PHASE: If satisfied, guide them toward purchase decision and provide purchase assistance
+
+SMART PRODUCT RECOMMENDATIONS:
+${context.products.slice(0, 4).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 150)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''}) ${p.availability === 'in_stock' ? '[IN STOCK]' : '[LIMITED]'}`).join('\n')}
+`}
 
 INSTRUCTIONS:
 1. Follow the conversation flow logic above - don't skip phases
@@ -147,9 +179,6 @@ INSTRUCTIONS:
 7. Use the appropriate communication tone (${recommendations.communicationTone})
 8. Create urgency if urgency level is high (${profile.emotionalProfile.urgencyLevel > 0.7 ? 'YES' : 'NO'})
 9. Build trust if trust level is low (${profile.emotionalProfile.trustLevel < 0.5 ? 'YES' : 'NO'})
-
-SMART PRODUCT RECOMMENDATIONS:
-${context.products.slice(0, 4).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 150)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''}) ${p.availability === 'in_stock' ? '[IN STOCK]' : '[LIMITED]'}`).join('\n')}
 
 KNOWLEDGE BASE:
 ${context.documents.slice(0, 2).map((d: any) => (d.content || '').substring(0, 200)).join('\n')}
@@ -201,7 +230,6 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
         currentSessionId, 
         'assistant', 
         smartResponse.message, 
-        smartResponse.products,
         smartResponse.products,
         intent
       );
