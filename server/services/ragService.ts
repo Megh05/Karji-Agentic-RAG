@@ -335,25 +335,11 @@ export class RAGService {
       const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
       const brandLower = (product.brand || '').toLowerCase();
       
-      // Gender-specific filtering - exclude products for opposite gender FIRST
+      // Gender-aware scoring (boost matching products, let algorithm handle the rest)
       const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens'].includes(hint)) ||
                               intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens'].includes(term));
       const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
                              intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term));
-      
-      if (hasGenderRequest) {
-        // When men's products are requested, exclude all women's products
-        if (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women') || titleLower.includes('her majesty')) {
-          return { ...product, searchScore: 0 }; 
-        }
-      }
-      
-      if (hasWomenRequest) {
-        // When women's products are requested, exclude all men's products
-        if (categoryLower.includes('men') && !categoryLower.includes('women')) {
-          return { ...product, searchScore: 0 }; 
-        }
-      }
       
       // Apply price filter (strict filtering)
       if (intent.priceFilter && product.price) {
@@ -387,7 +373,7 @@ export class RAGService {
         score += 15; // Strong boost for gender match
       }
       
-      if (hasWomenRequest && (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women'))) {
+      if (hasWomenRequest && (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women') || titleLower.includes('her majesty'))) {
         score += 15; // Strong boost for gender match
       }
       
