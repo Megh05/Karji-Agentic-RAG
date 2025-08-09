@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
+// import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "@langchain/core/documents";
 import { chromaVectorDBService } from './chromaVectorDB.js';
@@ -17,7 +17,7 @@ export interface ProcessedDocument {
 export class LangchainRAGService {
   private static instance: LangchainRAGService;
   private textSplitter: RecursiveCharacterTextSplitter;
-  private embeddings!: HuggingFaceTransformersEmbeddings;
+  // private embeddings!: HuggingFaceTransformersEmbeddings;
   private vectorStore!: MemoryVectorStore;
   private isInitialized = false;
   private lastVectorSave: number = 0;
@@ -45,13 +45,17 @@ export class LangchainRAGService {
     try {
       console.log('Initializing Langchain RAG service...');
       
-      // Initialize HuggingFace Transformers embeddings (local)
-      this.embeddings = new HuggingFaceTransformersEmbeddings({
-        model: "Xenova/all-MiniLM-L6-v2",
-      });
+      // Initialize HuggingFace Transformers embeddings (local) - temporarily disabled due to dependency conflicts
+      // this.embeddings = new HuggingFaceTransformersEmbeddings({
+      //   model: "Xenova/all-MiniLM-L6-v2",
+      // });
 
-      // Initialize memory vector store
-      this.vectorStore = new MemoryVectorStore(this.embeddings);
+      // Initialize memory vector store with simple embeddings for now
+      const { OpenAIEmbeddings } = await import("@langchain/openai");
+      const openaiEmbeddings = new OpenAIEmbeddings({
+        openAIApiKey: process.env.OPENAI_API_KEY || 'placeholder',
+      });
+      this.vectorStore = new MemoryVectorStore(openaiEmbeddings);
       
       // Load persisted vector store data if exists
       await this.loadPersistedVectorStore();
