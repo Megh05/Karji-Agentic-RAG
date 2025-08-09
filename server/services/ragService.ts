@@ -419,18 +419,11 @@ export class RAGService {
     
     // Return products with score > 0, sorted by score
     const filteredProducts = scoredProducts
-      .filter(product => {
-        if (product.searchScore <= 0) {
-          console.log(`Excluded product: ${product.title} (score: ${product.searchScore})`);
-          return false;
-        }
-        return true;
-      })
+      .filter(product => product.searchScore > 0)
       .sort((a, b) => b.searchScore - a.searchScore)
       .slice(0, maxProducts);
     
     console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
-    filteredProducts.forEach(p => console.log(`Included: ${p.title} (score: ${p.searchScore})`));
     return filteredProducts;
   }
 
