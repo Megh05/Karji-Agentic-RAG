@@ -103,7 +103,7 @@ export class RAGService {
 
     const { 
       maxDocuments = 3, 
-      maxProducts = 5, 
+      maxProducts = 4, 
       similarityThreshold = 0.1 
     } = options || {};
 

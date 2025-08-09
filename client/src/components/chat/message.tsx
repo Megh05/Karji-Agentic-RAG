@@ -1,8 +1,37 @@
 import { Bot, User } from "lucide-react";
 import type { ChatMessage } from "@/lib/types";
 import ProductCard from "./product-card";
-import SmartProductCarousel from "./smart-product-carousel";
+import { ProductCarousel } from "../ui/product-carousel";
 import { Button } from "@/components/ui/button";
+import type { Product } from "@shared/schema";
+
+// Helper function to determine if products should be shown in carousel
+function shouldShowCarousel(products: any[]): boolean {
+  if (products.length < 3) return false;
+  
+  // Check if at least 3 products share the same category
+  const categories = products.map(p => p.category?.toLowerCase()).filter(Boolean);
+  const categoryCount = categories.reduce((acc, cat) => {
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  return Object.values(categoryCount).some(count => count >= 3);
+}
+
+// Helper function to get carousel title based on common category
+function getCarouselTitle(products: any[]): string {
+  const categories = products.map(p => p.category).filter(Boolean);
+  const categoryCount = categories.reduce((acc, cat) => {
+    acc[cat!] = (acc[cat!] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const mostCommonCategory = Object.entries(categoryCount)
+    .sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0];
+  
+  return mostCommonCategory ? `${mostCommonCategory} Collection` : 'Product Collection';
+}
 
 interface MessageProps {
   message: ChatMessage;
@@ -31,13 +60,10 @@ export default function Message({ message }: MessageProps) {
         {/* Smart Products Display */}
         {message.products && message.products.length > 0 && (
           <div className="mt-3">
-            {message.uiElements?.showCarousel ? (
-              <SmartProductCarousel 
+            {shouldShowCarousel(message.products) ? (
+              <ProductCarousel 
                 products={message.products} 
-                uiElements={message.uiElements}
-                onProductAction={(action, productId, extra) => {
-                  console.log('Product action:', action, productId, extra);
-                }}
+                title={getCarouselTitle(message.products)}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

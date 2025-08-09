@@ -97,46 +97,27 @@ class SmartResponseService {
     insights: any,
     conversationHistory: any[]
   ): string {
+    // Keep responses concise and conversational
     let enhanced = baseResponse;
 
-    // Add personalization based on profile
+    // Limit response length to be more concise
+    if (enhanced.length > 150) {
+      enhanced = enhanced.substring(0, 150).trim();
+      // Ensure we end at a complete sentence
+      const lastPeriod = enhanced.lastIndexOf('.');
+      if (lastPeriod > 50) {
+        enhanced = enhanced.substring(0, lastPeriod + 1);
+      }
+    }
+
+    // Add brief personalization only if needed
     if (profile.preferences.categories && Object.keys(profile.preferences.categories).length > 0) {
       const topCategory = Object.entries(profile.preferences.categories)
         .sort(([,a], [,b]) => (b as number) - (a as number))[0][0];
       
-      if (conversationHistory.length > 2 && !baseResponse.includes(topCategory)) {
-        enhanced = `Based on your interest in ${topCategory}, ${enhanced.toLowerCase()}`;
+      if (conversationHistory.length > 3 && !enhanced.includes(topCategory)) {
+        enhanced = `Perfect for ${topCategory} enthusiasts! ` + enhanced;
       }
-    }
-
-    // Add emotional intelligence
-    if (profile.emotionalProfile.currentMood === 'excited') {
-      enhanced = enhanced.replace(/\./g, '! ').replace(/! $/, '!');
-    } else if (profile.emotionalProfile.currentMood === 'frustrated') {
-      enhanced = `I understand this can be overwhelming. ${enhanced}`;
-    }
-
-    // Add urgency if needed
-    if (profile.emotionalProfile.urgencyLevel > 0.7) {
-      enhanced += " Since you're looking for something quickly, I've prioritized items that are currently in stock and available for immediate shipping.";
-    }
-
-    // Add trust-building elements for skeptical users
-    if (profile.emotionalProfile.trustLevel < 0.5) {
-      enhanced += " All our products come with genuine quality guarantees and hassle-free returns.";
-    }
-
-    // Reference conversation history for continuity
-    if (conversationHistory.length > 3) {
-      const previousInterests = this.extractPreviousInterests(conversationHistory);
-      if (previousInterests.length > 0) {
-        enhanced = `Following up on your previous interest in ${previousInterests[0]}, ${enhanced.toLowerCase()}`;
-      }
-    }
-
-    // Add social proof for high-value items
-    if (intent.entities?.priceRange?.max && intent.entities.priceRange.max > 500) {
-      enhanced += " This is one of our most popular premium items with excellent customer reviews.";
     }
 
     return enhanced;
@@ -154,8 +135,8 @@ class SmartResponseService {
     scoredProducts.sort((a, b) => b.score - a.score);
     
     // Limit based on user browsing style
-    const limit = profile.behaviorPatterns.browsingStyle === 'quick_decision' ? 2 : 
-                  profile.behaviorPatterns.browsingStyle === 'research_heavy' ? 5 : 3;
+    const limit = profile.behaviorPatterns.browsingStyle === 'quick_decision' ? 3 : 
+                  profile.behaviorPatterns.browsingStyle === 'research_heavy' ? 4 : 4;
     
     return scoredProducts.slice(0, limit);
   }

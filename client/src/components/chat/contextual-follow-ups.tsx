@@ -42,12 +42,12 @@ export default function ContextualFollowUps({
       const followUp = newFollowUps[0];
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
-      if (!Array.from(shownFollowUps).includes(followUp.trigger)) {
+      if (![...shownFollowUps].includes(followUp.trigger)) {
         // Clear previous follow-ups and show new one after a short delay
         setTimeout(() => {
           setActiveFollowUps([{ ...followUp, id: uniqueId }]);
           setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
-        }, 1000); // 1 second delay to let previous response settle
+        }, 2000); // 2 second delay to let previous response settle
       }
     }
 
@@ -100,7 +100,7 @@ export default function ContextualFollowUps({
     } else if (conversationLength > 9) {
       followUps.push({
         id: 'closing_help',
-        type: 'service',
+        type: 'recommendation',
         trigger: 'closing_assistance',
         message: "Is there anything specific I can help you decide on or any questions about our products?",
         timing: 0,
