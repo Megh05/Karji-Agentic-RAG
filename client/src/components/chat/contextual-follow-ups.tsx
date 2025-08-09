@@ -110,6 +110,7 @@ export default function ContextualFollowUps({
   };
 
   const handleActionClick = (action: string, followUp: ContextualFollowUp) => {
+    console.log('Action clicked:', action, followUp);
     // Remove the follow-up after action
     setActiveFollowUps(prev => prev.filter(f => f.id !== followUp.id));
     onActionClick?.(action);
@@ -124,60 +125,39 @@ export default function ContextualFollowUps({
   return (
     <div className="space-y-3">
       {activeFollowUps.map((followUp) => (
-        <Card 
+        <div 
           key={followUp.id} 
-          className={`${getPriorityColor(followUp.priority)} border-l-4 shadow-sm animate-slide-in-bottom`}
+          className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
         >
-          <CardContent className="p-4">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
-                {getIcon(followUp.type)}
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline" className="text-xs">
-                    {followUp.type.replace('_', ' ').toUpperCase()}
-                  </Badge>
-                  
-                  {followUp.expiresAt && (
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {Math.round((followUp.expiresAt.getTime() - Date.now()) / 60000)}m left
-                    </div>
-                  )}
-                </div>
-                
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                  {followUp.message}
-                </p>
-                
-                <div className="flex flex-wrap gap-2">
-                  {followUp.actions?.map((action, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs h-7"
-                      onClick={() => handleActionClick(action, followUp)}
-                    >
-                      {action}
-                    </Button>
-                  ))}
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs h-7 text-gray-500 hover:text-gray-700"
-                    onClick={() => dismissFollowUp(followUp.id)}
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="flex items-center space-x-2 mb-2">
+            {getIcon(followUp.type)}
+            <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+              {followUp.message}
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {followUp.actions?.map((action, index) => (
+              <button
+                key={`${followUp.id}-${index}`}
+                className="px-3 py-1 text-xs bg-primary text-white rounded-md hover:bg-primary/90 transition-colors cursor-pointer"
+                onClick={() => {
+                  console.log('Action button clicked:', action);
+                  handleActionClick(action, followUp);
+                }}
+              >
+                {action}
+              </button>
+            ))}
+            
+            <button
+              className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
+              onClick={() => dismissFollowUp(followUp.id)}
+            >
+              ✕ Dismiss
+            </button>
+          </div>
+        </div>
       ))}
     </div>
   );

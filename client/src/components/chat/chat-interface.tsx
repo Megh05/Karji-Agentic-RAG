@@ -156,6 +156,7 @@ export default function ChatInterface() {
                 setTimeout(() => handleSend(), 100);
               }}
               onActionClick={(action) => {
+                console.log('Follow-up action received:', action);
                 setInput(action);
                 setTimeout(() => handleSend(), 100);
               }}
