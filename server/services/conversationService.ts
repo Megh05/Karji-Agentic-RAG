@@ -216,7 +216,8 @@ class ConversationService {
     if (recentMessages.length > 0) {
       context += '\n\nRecent conversation:\n';
       recentMessages.forEach(msg => {
-        context += `${msg.role}: ${msg.content.substring(0, 200)}${msg.content.length > 200 ? '...' : ''}\n`;
+        const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content || '');
+        context += `${msg.role}: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''}\n`;
       });
     }
 

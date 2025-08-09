@@ -92,6 +92,19 @@ export default function ChatInterface() {
     chatMutation.mutate(message);
   };
 
+  const sendDirectMessage = (message: string) => {
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: message,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput("");
+    chatMutation.mutate(message);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -153,21 +166,12 @@ export default function ChatInterface() {
               userProfile={userProfile}
               onFollowUpClick={(followUp) => {
                 // Send the message directly as a request
-                const messageToSend = followUp.message;
-                setInput('');
-                chatMutation.mutate({ 
-                  message: messageToSend, 
-                  sessionId: sessionId || '' 
-                });
+                sendDirectMessage(followUp.message);
               }}
               onActionClick={(action) => {
                 console.log('Follow-up action received:', action);
                 // Send the action directly as a request
-                setInput('');
-                chatMutation.mutate({ 
-                  message: action, 
-                  sessionId: sessionId || '' 
-                });
+                sendDirectMessage(action);
               }}
             />
           </div>
@@ -187,11 +191,7 @@ export default function ChatInterface() {
               conversationContext={input}
               onActionClick={(action, context) => {
                 // Send the action directly as a request
-                setInput('');
-                chatMutation.mutate({ 
-                  message: action.label, 
-                  sessionId: sessionId || '' 
-                });
+                sendDirectMessage(action.label);
               }}
             />
           </div>

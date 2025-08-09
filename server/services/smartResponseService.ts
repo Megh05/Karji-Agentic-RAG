@@ -375,7 +375,11 @@ class SmartResponseService {
     const recentMessages = conversationHistory.slice(-3);
     
     recentMessages.forEach(message => {
-      const content = message.content?.toLowerCase() || '';
+      const content = typeof message.content === 'string' 
+        ? message.content.toLowerCase() 
+        : typeof message.content === 'object' 
+          ? JSON.stringify(message.content).toLowerCase() 
+          : '';
       ['perfume', 'watch', 'jewelry', 'skincare'].forEach(category => {
         if (content.includes(category) && !interests.includes(category)) {
           interests.push(category);

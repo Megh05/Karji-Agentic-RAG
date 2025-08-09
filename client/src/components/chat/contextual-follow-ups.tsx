@@ -42,7 +42,7 @@ export default function ContextualFollowUps({
       const followUp = newFollowUps[0];
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
-      if (!shownFollowUps.has(followUp.trigger)) {
+      if (!Array.from(shownFollowUps).includes(followUp.trigger)) {
         // Clear previous follow-ups and show new one
         setActiveFollowUps([{ ...followUp, id: uniqueId }]);
         setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
