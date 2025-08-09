@@ -138,7 +138,11 @@ export default function ChatInterface() {
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((message) => (
-          <Message key={message.id} message={message} />
+          <Message 
+            key={message.id} 
+            message={message} 
+            onFollowUpClick={sendDirectMessage}
+          />
         ))}
         
         {/* Typing Indicator */}

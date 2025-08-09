@@ -35,9 +35,10 @@ function getCarouselTitle(products: any[]): string {
 
 interface MessageProps {
   message: ChatMessage;
+  onFollowUpClick?: (message: string) => void;
 }
 
-export default function Message({ message }: MessageProps) {
+export default function Message({ message, onFollowUpClick }: MessageProps) {
   const isUser = message.type === 'user';
 
   return (
@@ -86,6 +87,7 @@ export default function Message({ message }: MessageProps) {
                 className="text-sm border-primary/20 hover:border-primary hover:bg-primary/5"
                 onClick={() => {
                   console.log('Follow-up question clicked:', question);
+                  onFollowUpClick?.(question);
                 }}
               >
                 {question}
