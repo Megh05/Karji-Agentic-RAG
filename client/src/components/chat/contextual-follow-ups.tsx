@@ -43,11 +43,11 @@ export default function ContextualFollowUps({
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
       if (![...shownFollowUps].includes(followUp.trigger)) {
-        // Clear previous follow-ups and show new one after a short delay
+        // Clear previous follow-ups and show new one after system response is fully displayed
         setTimeout(() => {
           setActiveFollowUps([{ ...followUp, id: uniqueId }]);
           setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
-        }, 2000); // 2 second delay to let previous response settle
+        }, 3500); // Increased delay to 3.5 seconds to ensure system response is fully displayed
       }
     }
 
@@ -65,7 +65,7 @@ export default function ContextualFollowUps({
         message: "I can help you find exactly what you're looking for. What's most important to you?",
         timing: 0,
         priority: 'medium',
-        actions: ['Price Range', 'Brand Preference', 'Product Type']
+        actions: ['Show me perfumes', 'I want to see watches', 'Browse fragrances for men', 'I\'m looking for women\'s perfumes']
       });
     } else if (conversationLength === 4) {
       followUps.push({
@@ -75,7 +75,7 @@ export default function ContextualFollowUps({
         message: "Would you like me to show you some curated collections or help filter products?",
         timing: 0,
         priority: 'medium',
-        actions: ['Show Collections', 'Filter Products', 'Popular Items']
+        actions: ['Show me popular perfumes', 'I want luxury fragrances', 'Browse budget-friendly options', 'I need gift recommendations']
       });
     } else if (conversationLength === 6) {
       followUps.push({
@@ -85,7 +85,7 @@ export default function ContextualFollowUps({
         message: "Based on our conversation, would you like me to create a personalized recommendation list?",
         timing: 0,
         priority: 'high',
-        actions: ['Create Personal List', 'Show Best Matches', 'Get Expert Picks']
+        actions: ['I prefer floral scents', 'I like woody/musky fragrances', 'I want something for everyday wear', 'I\'m looking for special occasion perfume']
       });
     } else if (conversationLength === 8) {
       followUps.push({

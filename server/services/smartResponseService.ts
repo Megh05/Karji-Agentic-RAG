@@ -240,9 +240,25 @@ class SmartResponseService {
     const followUps: string[] = [];
     const hasProducts = conversationHistory.some((msg: any) => msg.content.includes('Product:') || msg.content.includes('here are'));
     const recentMessages = conversationHistory.slice(-3);
+    const isNewUser = conversationHistory.length <= 2;
+    const askedAboutCategories = conversationHistory.some((msg: any) => 
+      msg.content.toLowerCase().includes('categories') || 
+      msg.content.toLowerCase().includes('what products') ||
+      msg.content.toLowerCase().includes('what do you sell'));
 
-    // Enhanced conversational follow-ups based on context
-    if (intent.category === 'browsing' && !hasProducts) {
+    // For completely new users - proactively show product categories
+    if (isNewUser && !askedAboutCategories) {
+      followUps.push("Show me perfumes");
+      followUps.push("I want to see watches");
+      followUps.push("Browse fragrances for men");
+      followUps.push("I'm looking for women's perfumes");
+    } else if (askedAboutCategories && !hasProducts) {
+      // User asked about categories - help them navigate
+      followUps.push("Show me popular perfumes");
+      followUps.push("I want luxury fragrances");
+      followUps.push("Browse budget-friendly options");
+      followUps.push("I need gift recommendations");
+    } else if (intent.category === 'browsing' && !hasProducts) {
       // Initial preference gathering - conversational style
       followUps.push("I'm buying for myself");
       followUps.push("I'm looking for someone special");
