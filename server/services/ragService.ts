@@ -325,6 +325,15 @@ export class RAGService {
     const intent = this.parseUserIntent(query);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
+    // Detect gender-specific requests
+    const queryLower = query.toLowerCase();
+    const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens'].includes(hint)) ||
+                            intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens'].includes(term)) ||
+                            queryLower.includes('men');
+    const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
+                           intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term)) ||
+                           queryLower.includes('women');
+    
     // Score products based on relevance
     const scoredProducts = products.map(product => {
       let score = 0;
@@ -335,11 +344,43 @@ export class RAGService {
       const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
       const brandLower = (product.brand || '').toLowerCase();
       
-      // Gender-aware scoring (boost matching products, let algorithm handle the rest)
-      const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens'].includes(hint)) ||
-                              intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens'].includes(term));
-      const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
-                             intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term));
+      // Essential scoring - any perfume/fragrance product starts with base score
+      if (categoryLower.includes('fragrance') || categoryLower.includes('perfume') || 
+          titleLower.includes('edp') || titleLower.includes('edt') || titleLower.includes('cologne') || 
+          titleLower.includes('perfume') || titleLower.includes('fragrance')) {
+        score += 10; // Base score for fragrance products
+      }
+      
+      // Gender-specific filtering and scoring - FIXED VERSION
+      if (hasWomenRequest) {
+        // For women's requests, give massive boost to women's products
+        if (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women')) {
+          score += 50; // Massive boost for women's products
+        }
+        // Also boost unisex products
+        if (categoryLower.includes('unisex')) {
+          score += 20;
+        }
+        // Only penalize clearly men-specific items
+        if (categoryLower.includes('men') && !categoryLower.includes('women') && !categoryLower.includes('unisex')) {
+          score -= 20; // Penalty for men's products in women's search
+        }
+      }
+      
+      if (hasGenderRequest && !hasWomenRequest) {
+        // For men's requests, give massive boost to men's products  
+        if (categoryLower.includes('men') || titleLower.includes('men') || titleLower.includes('for men')) {
+          score += 50; // Massive boost for men's products
+        }
+        // Also boost unisex products
+        if (categoryLower.includes('unisex')) {
+          score += 20;
+        }
+        // Only penalize clearly women-specific items
+        if (categoryLower.includes('women') && !categoryLower.includes('men') && !categoryLower.includes('unisex')) {
+          score -= 20; // Penalty for women's products in men's search
+        }
+      }
       
       // Apply price filter (strict filtering)
       if (intent.priceFilter && product.price) {
@@ -354,6 +395,7 @@ export class RAGService {
         score += 5; // Bonus for matching price criteria
       }
       
+      // Search terms matching
       intent.searchTerms.forEach(term => {
         if (titleLower.includes(term)) score += 4; // Title matches are most important
         if (brandLower.includes(term)) score += 3; // Brand matches are important
@@ -361,21 +403,12 @@ export class RAGService {
         if (descLower.includes(term)) score += 2; // Description matches
       });
       
-      // Category hints bonus with gender filtering
+      // Category hints bonus
       intent.categoryHints.forEach(hint => {
         if (titleLower.includes(hint)) score += 2;
         if (categoryLower.includes(hint)) score += 3;
         if (descLower.includes(hint)) score += 1;
       });
-      
-      // Gender scoring boost for matching products
-      if (hasGenderRequest && (categoryLower.includes('men') || titleLower.includes('men') || titleLower.includes('for men') || titleLower.includes('his majesty'))) {
-        score += 15; // Strong boost for gender match
-      }
-      
-      if (hasWomenRequest && (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women') || titleLower.includes('her majesty'))) {
-        score += 15; // Strong boost for gender match
-      }
       
       // Brand preference bonus
       intent.brandPreferences.forEach(brand => {

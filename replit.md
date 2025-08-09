@@ -4,11 +4,13 @@ This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It fe
 
 ## Recent Changes (August 2025)
 - ✅ Fixed conversation flow imperfections at purchase confirmation stage
-- ✅ Enhanced gender filtering to properly exclude opposite-gender products 
+- ✅ **MAJOR FIX: Completely rebuilt gender filtering system** - Fixed fundamental issues where women's perfumes showed men's products instead
+- ✅ Enhanced gender-aware search scoring to properly prioritize gender-specific products (50+ point boost for exact matches)
 - ✅ Implemented purchase confirmation detection to prevent unrelated product searches
 - ✅ Updated intent recognition to handle "Yes, I want to buy this" properly
 - ✅ Improved follow-up suggestions to be contextually appropriate for purchase flow
 - ✅ Added purchase-specific system prompts to guide checkout assistance instead of product browsing
+- ✅ Fixed product search algorithm to properly detect and boost women's/men's/unisex product categories
 
 # User Preferences
 
