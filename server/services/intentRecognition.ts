@@ -34,23 +34,38 @@ class IntentRecognitionService {
   public analyzeIntent(message: string, conversationHistory: any[]): UserIntent {
     const lowercaseMessage = message.toLowerCase();
     
-    // Intent classification patterns
-    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'price', 'cost', 'available', 'in stock'];
-    const browsingSignals = ['show me', 'what do you have', 'browse', 'look at', 'see more', 'options', 'selection'];
-    const comparingSignals = ['compare', 'difference', 'versus', 'vs', 'better', 'best', 'which one', 'recommend'];
-    const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details'];
+    // Enhanced intent classification patterns
+    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'price', 'cost', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this'];
+    const browsingSignals = ['show me', 'what do you have', 'browse', 'look at', 'see more', 'options', 'selection', 'suggest', 'recommend'];
+    const comparingSignals = ['compare', 'difference', 'versus', 'vs', 'better', 'best', 'which one', 'recommend', 'deciding between'];
+    const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns'];
     const supportSignals = ['help', 'problem', 'issue', 'support', 'contact', 'return', 'refund', 'shipping'];
+    const satisfactionSignals = ['perfect', 'these look great', 'exactly what i need', 'love these', 'these are good', 'satisfied', 'happy with these'];
+    const preferencesSignals = ['for myself', 'for someone special', 'budget-friendly', 'premium quality', 'floral', 'woody', 'musky', 'everyday', 'special occasion'];
 
-    // Calculate intent scores
+    // Calculate intent scores including new patterns
     const buyingScore = this.calculateSignalScore(lowercaseMessage, buyingSignals);
     const browsingScore = this.calculateSignalScore(lowercaseMessage, browsingSignals);
     const comparingScore = this.calculateSignalScore(lowercaseMessage, comparingSignals);
     const informationScore = this.calculateSignalScore(lowercaseMessage, informationSignals);
     const supportScore = this.calculateSignalScore(lowercaseMessage, supportSignals);
+    const satisfactionScore = this.calculateSignalScore(lowercaseMessage, satisfactionSignals);
+    const preferencesScore = this.calculateSignalScore(lowercaseMessage, preferencesSignals);
+
+    // If satisfaction signals are strong, prioritize buying intent
+    if (satisfactionScore > 0.3) {
+      return {
+        category: 'buying' as UserIntent['category'],
+        confidence: Math.max(0.8, satisfactionScore),
+        entities: this.extractEntities(message),
+        actions: ['guide_to_purchase', 'check_inventory', 'provide_purchase_assistance'],
+        // satisfactionIndicated: true
+      };
+    }
 
     // Determine primary intent
     const scores = { buying: buyingScore, browsing: browsingScore, comparing: comparingScore, information: informationScore, support: supportScore };
-    const primaryIntent = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b)[0] as UserIntent['category'];
+    const primaryIntent = Object.entries(scores).reduce((a, b) => scores[a[0] as keyof typeof scores] > scores[b[0] as keyof typeof scores] ? a : b)[0] as UserIntent['category'];
 
     // Extract entities
     const entities = this.extractEntities(message);

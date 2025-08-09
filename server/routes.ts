@@ -85,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Find relevant context using enhanced RAG with user preferences
       const context = await ragService.findRelevantContext(message, {
         maxDocuments: 2,
-        maxProducts: 3,
+        maxProducts: 4,
         similarityThreshold: 0.3
       });
       
@@ -131,17 +131,25 @@ MOTIVATIONS: ${insights.motivations?.join(', ') || 'General interest'}
 BEHAVIORAL TRIGGERS:
 ${insights.keyTriggers?.map((trigger: string) => `- ${trigger}`).join('\n') || '- Standard approach'}
 
+CONVERSATION FLOW LOGIC:
+1. PREFERENCE GATHERING PHASE: Ask minimal, focused questions to understand customer needs quickly
+2. PRODUCT PRESENTATION PHASE: Show exactly 4 products matching their preferences 
+3. SATISFACTION CHECK PHASE: After showing products, ask if they're satisfied or need different options
+4. PURCHASE GUIDANCE PHASE: If satisfied, guide them toward purchase decision and provide purchase assistance
+
 INSTRUCTIONS:
-1. Respond according to the customer type and recommended approach
-2. Address any detected objections proactively
-3. Use the appropriate communication tone (${recommendations.communicationTone})
-4. Reference conversation history naturally for continuity
-5. Apply behavioral triggers strategically
-6. Create urgency if urgency level is high (${profile.emotionalProfile.urgencyLevel > 0.7 ? 'YES' : 'NO'})
-7. Build trust if trust level is low (${profile.emotionalProfile.trustLevel < 0.5 ? 'YES' : 'NO'})
+1. Follow the conversation flow logic above - don't skip phases
+2. When showing products, ALWAYS present exactly 4 options for optimal choice
+3. After presenting products, check customer satisfaction before offering more
+4. If customer indicates satisfaction ("perfect", "these look great", etc.), immediately guide toward purchase
+5. Use conversational follow-up suggestions that sound like natural customer responses
+6. Address any detected objections proactively
+7. Use the appropriate communication tone (${recommendations.communicationTone})
+8. Create urgency if urgency level is high (${profile.emotionalProfile.urgencyLevel > 0.7 ? 'YES' : 'NO'})
+9. Build trust if trust level is low (${profile.emotionalProfile.trustLevel < 0.5 ? 'YES' : 'NO'})
 
 SMART PRODUCT RECOMMENDATIONS:
-${context.products.slice(0, 3).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 150)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''}) ${p.availability === 'in_stock' ? '[IN STOCK]' : '[LIMITED]'}`).join('\n')}
+${context.products.slice(0, 4).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 150)} (Price: ${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''}) ${p.availability === 'in_stock' ? '[IN STOCK]' : '[LIMITED]'}`).join('\n')}
 
 KNOWLEDGE BASE:
 ${context.documents.slice(0, 2).map((d: any) => (d.content || '').substring(0, 200)).join('\n')}

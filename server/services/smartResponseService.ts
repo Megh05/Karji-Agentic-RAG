@@ -134,9 +134,8 @@ class SmartResponseService {
     // Sort by score and return top products
     scoredProducts.sort((a, b) => b.score - a.score);
     
-    // Limit based on user browsing style
-    const limit = profile.behaviorPatterns.browsingStyle === 'quick_decision' ? 3 : 
-                  profile.behaviorPatterns.browsingStyle === 'research_heavy' ? 4 : 4;
+    // Show 4 products consistently for better user choice
+    const limit = 4;
     
     return scoredProducts.slice(0, limit);
   }
@@ -239,34 +238,51 @@ class SmartResponseService {
 
   private generateSmartFollowUps(intent: any, profile: any, conversationHistory: any[]): string[] {
     const followUps: string[] = [];
+    const hasProducts = conversationHistory.some((msg: any) => msg.content.includes('Product:') || msg.content.includes('here are'));
+    const recentMessages = conversationHistory.slice(-3);
 
-    // Intent-based follow-ups
-    if (intent.category === 'browsing') {
-      followUps.push("Would you like to see products in a specific price range?");
-      followUps.push("Are you looking for any particular brand?");
-    } else if (intent.category === 'buying') {
-      followUps.push("Would you like to know about our current shipping options?");
-      followUps.push("Are you interested in our protection plan for this item?");
+    // Enhanced conversational follow-ups based on context
+    if (intent.category === 'browsing' && !hasProducts) {
+      // Initial preference gathering - conversational style
+      followUps.push("I'm buying for myself");
+      followUps.push("I'm looking for someone special");
+      followUps.push("I want something budget-friendly");
+      followUps.push("I prefer premium quality");
+    } else if (hasProducts && intent.category === 'browsing') {
+      // After showing products - check satisfaction and guide toward purchase
+      followUps.push("These look perfect for what I need");
+      followUps.push("I'd like to see more options");
+      followUps.push("I want to compare these products");
+      followUps.push("I'm ready to make a purchase");
+    } else if (intent.category === 'buying' || recentMessages.some((msg: any) => msg.content.toLowerCase().includes('perfect') || msg.content.toLowerCase().includes('ready'))) {
+      // Buying intent or satisfaction indicated - guide to purchase
+      followUps.push("Yes, I want to buy this");
+      followUps.push("I need help deciding between options");
+      followUps.push("I want to know about shipping and returns");
+      followUps.push("I have some questions first");
     }
 
-    // Profile-based follow-ups
-    if (profile.preferences.categories && Object.keys(profile.preferences.categories).length > 0) {
-      const topCategory = Object.entries(profile.preferences.categories)
-        .sort(([,a], [,b]) => (b as number) - (a as number))[0][0];
-      followUps.push(`I noticed you're interested in ${topCategory}. Would you like to see our latest arrivals?`);
+    // Context-specific preference gathering
+    if (profile.preferences.categories?.perfume || intent.entities.categories?.includes('perfume')) {
+      followUps.push("I prefer floral scents");
+      followUps.push("I like woody/musky fragrances");
+      followUps.push("I want something for everyday wear");
+      followUps.push("I'm looking for special occasion perfume");
     }
 
-    // Contextual follow-ups based on conversation stage
-    if (conversationHistory.length > 5) {
-      followUps.push("Based on our conversation, would you like me to create a personalized recommendation list?");
+    // Enhance based on conversation length
+    if (conversationHistory.length > 4 && !hasProducts) {
+      followUps.push("I need help narrowing down my choices");
+      followUps.push("I want personalized recommendations");
     }
 
-    // Objection handling follow-ups
-    if (profile.contextualState.objections.includes('price')) {
-      followUps.push("Would you like to see similar items at a lower price point?");
+    // Price sensitivity context
+    if (profile.contextualState?.objections?.includes('price') || intent.entities.priceRange) {
+      followUps.push("I want the best value for money");
+      followUps.push("I'm flexible with my budget");
     }
 
-    return followUps.slice(0, 2); // Limit to 2 follow-ups to avoid overwhelming
+    return followUps.slice(0, 4); // Show up to 4 conversational options
   }
 
   private generateUIElements(intent: any, profile: any, products: Product[]): SmartResponse['uiElements'] {
