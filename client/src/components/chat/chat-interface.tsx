@@ -155,7 +155,8 @@ export default function ChatInterface() {
                 setInput(followUp.message);
               }}
               onActionClick={(action) => {
-                handleSendMessage(action);
+                setInput(action);
+                handleSend();
               }}
             />
           </div>
@@ -169,7 +170,8 @@ export default function ChatInterface() {
               userProfile={userProfile}
               conversationContext={input}
               onActionClick={(action, context) => {
-                handleSendMessage(action.label);
+                setInput(action.label);
+                setTimeout(() => handleSend(), 100);
               }}
             />
           </div>
