@@ -35,103 +35,49 @@ export default function ContextualFollowUps({
 
   // Generate contextual follow-ups based on conversation state
   useEffect(() => {
+    // Clear existing follow-ups first
+    setActiveFollowUps([]);
+    
     const newFollowUps = generateFollowUps();
     
-    // Filter out already shown follow-ups and apply timing
-    const pendingFollowUps = newFollowUps.filter(followUp => 
-      !shownFollowUps.has(followUp.id)
-    );
+    // Only show one follow-up at a time and ensure unique keys
+    if (newFollowUps.length > 0) {
+      const followUp = newFollowUps[0];
+      const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
+      
+      if (!shownFollowUps.has(followUp.trigger)) {
+        setTimeout(() => {
+          setActiveFollowUps([{ ...followUp, id: uniqueId }]);
+          setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
+        }, followUp.timing * 1000);
+      }
+    }
 
-    pendingFollowUps.forEach(followUp => {
-      setTimeout(() => {
-        if (!shownFollowUps.has(followUp.id)) {
-          setActiveFollowUps(prev => [...prev, followUp]);
-          setShownFollowUps(prev => new Set([...prev, followUp.id]));
-        }
-      }, followUp.timing * 1000);
-    });
-
-  }, [conversationLength, userProfile]);
+  }, [conversationLength]);
 
   const generateFollowUps = (): ContextualFollowUp[] => {
     const followUps: ContextualFollowUp[] = [];
 
-    // Browsing hesitation trigger
-    if (conversationLength > 3 && !userProfile?.recentPurchaseIntent) {
+    // Only show one relevant follow-up based on conversation context
+    if (conversationLength > 5) {
       followUps.push({
-        id: 'browsing_hesitation',
-        type: 'nudge',
-        trigger: 'browsing_pattern',
-        message: "I can help narrow down your options! Would you like me to show you our most popular items in your preferred category?",
-        timing: 30,
-        priority: 'medium',
-        actions: ['Show Popular Items', 'Filter by Preference', 'Get Recommendations']
-      });
-    }
-
-    // High engagement opportunity
-    if (conversationLength > 5 && userProfile?.enthusiasmLevel > 0.7) {
-      followUps.push({
-        id: 'high_engagement',
-        type: 'offer',
-        trigger: 'engagement_spike',
-        message: "You seem really interested! I can offer you an exclusive 15% discount if you decide today.",
-        timing: 20,
-        priority: 'high',
-        actions: ['Apply Discount', 'View Exclusive Items', 'Add to Cart'],
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
-      });
-    }
-
-    // Price sensitivity response
-    if (userProfile?.priceObjections) {
-      followUps.push({
-        id: 'price_alternative',
+        id: 'smart_suggestion',
         type: 'recommendation',
-        trigger: 'price_concern',
-        message: "I understand budget is important. Let me show you our best value options with similar quality.",
-        timing: 5,
+        trigger: 'conversation_context',
+        message: "Based on our conversation, would you like me to create a personalized recommendation list?",
+        timing: 0,
         priority: 'high',
-        actions: ['Show Budget Options', 'Compare Value', 'Apply Coupon']
+        actions: ['Create Personal List', 'Show Best Matches', 'Get Expert Picks']
       });
-    }
-
-    // Urgency creation
-    if (userProfile?.urgencyLevel > 0.6) {
+    } else if (conversationLength > 3) {
       followUps.push({
-        id: 'urgency_stocks',
-        type: 'urgency',
-        trigger: 'stock_alert',
-        message: "Quick update: Some of the items you're viewing have limited stock. Would you like me to check availability?",
-        timing: 15,
-        priority: 'high',
-        actions: ['Check Stock', 'Reserve Item', 'Quick Order']
-      });
-    }
-
-    // Gift opportunity
-    if (userProfile?.giftIntent) {
-      followUps.push({
-        id: 'gift_service',
+        id: 'help_narrow',
         type: 'recommendation',
-        trigger: 'gift_context',
-        message: "Shopping for a gift? I can help with gift wrapping and include a personalized message!",
-        timing: 8,
+        trigger: 'browsing_help',
+        message: "I can help you find exactly what you're looking for. What's most important to you?",
+        timing: 0,
         priority: 'medium',
-        actions: ['Gift Options', 'Add Gift Wrap', 'Write Message']
-      });
-    }
-
-    // Social proof boost
-    if (conversationLength > 2) {
-      followUps.push({
-        id: 'social_proof',
-        type: 'social_proof',
-        trigger: 'popularity',
-        message: "These items you're looking at are trending! 50+ people viewed them in the last hour.",
-        timing: 25,
-        priority: 'low',
-        actions: ['See Why Popular', 'Join Trend', 'Get Updates']
+        actions: ['Price Range', 'Brand Preference', 'Style/Type']
       });
     }
 

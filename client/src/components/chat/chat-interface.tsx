@@ -153,18 +153,24 @@ export default function ChatInterface() {
               userProfile={userProfile}
               onFollowUpClick={(followUp) => {
                 setInput(followUp.message);
+                setTimeout(() => handleSend(), 100);
               }}
               onActionClick={(action) => {
                 setInput(action);
-                handleSend();
+                setTimeout(() => handleSend(), 100);
               }}
             />
           </div>
         )}
 
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Message Input */}
+      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
         {/* Quick Actions */}
         {messages.length > 1 && (
-          <div className="mb-4">
+          <div className="mb-3">
             <QuickActions
               products={messages.slice(-1)[0]?.products}
               userProfile={userProfile}
@@ -177,11 +183,6 @@ export default function ChatInterface() {
           </div>
         )}
 
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Message Input */}
-      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="flex space-x-4">
           <div className="flex-1">
             <div className="relative">
