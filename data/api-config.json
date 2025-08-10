@@ -1,7 +1,8 @@
 {
   "727d560e-a36e-4708-81c4-5685e73440ab": {
-    "openrouterKey": "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",
+    "openrouterKey": "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",
     "selectedModel": "mistralai/mistral-small-3.2-24b-instruct:free",
-    "id": "727d560e-a36e-4708-81c4-5685e73440ab"
+    "id": "727d560e-a36e-4708-81c4-5685e73440ab",
+    "maxTokens": 1500
   }
 }
