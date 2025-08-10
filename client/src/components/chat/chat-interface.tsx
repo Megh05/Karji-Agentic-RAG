@@ -15,8 +15,14 @@ export default function ChatInterface() {
     {
       id: '1',
       type: 'assistant',
-      content: '👋 Welcome to KarjiStore! I\'m your AI sales assistant. I can help you find products, answer questions about our inventory, and recommend the best deals. How can I assist you today?',
-      timestamp: new Date()
+      content: '👋 Welcome to KarjiStore! We specialize in premium fragrances from top designers like Roberto Cavalli and Tom Ford. I\'m here to help you find the perfect scent - whether you\'re shopping for yourself or looking for a gift. What brings you here today?',
+      timestamp: new Date(),
+      followUpQuestions: [
+        "Browse women's fragrances",
+        "Show me men's cologne",
+        "I need gift recommendations",
+        "What's popular right now?"
+      ]
     }
   ]);
   const [input, setInput] = useState("");

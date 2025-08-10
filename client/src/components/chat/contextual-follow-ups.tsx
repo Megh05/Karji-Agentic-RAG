@@ -42,11 +42,11 @@ export default function ContextualFollowUps({
       const followUp = newFollowUps[0];
       const uniqueId = `${followUp.id}_${conversationLength}_${Date.now()}`;
       
-      if (![...shownFollowUps].includes(followUp.trigger)) {
+      if (!Array.from(shownFollowUps).includes(followUp.trigger)) {
         // Clear previous follow-ups and show new one after system response is fully displayed
         setTimeout(() => {
           setActiveFollowUps([{ ...followUp, id: uniqueId }]);
-          setShownFollowUps(prev => new Set([...prev, followUp.trigger]));
+          setShownFollowUps(prev => new Set(Array.from(prev).concat(followUp.trigger)));
         }, 3500); // Increased delay to 3.5 seconds to ensure system response is fully displayed
       }
     }

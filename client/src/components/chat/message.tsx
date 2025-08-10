@@ -3,6 +3,7 @@ import type { ChatMessage } from "@/lib/types";
 import ProductCard from "./product-card";
 import { ProductCarousel } from "../ui/product-carousel";
 import { Button } from "@/components/ui/button";
+import WelcomeGuide from "./welcome-guide";
 import type { Product } from "@shared/schema";
 
 // Helper function to determine if products should be shown in carousel
@@ -16,7 +17,7 @@ function shouldShowCarousel(products: any[]): boolean {
     return acc;
   }, {} as Record<string, number>);
   
-  return Object.values(categoryCount).some(count => count >= 3);
+  return Object.values(categoryCount).some(count => (count as number) >= 3);
 }
 
 // Helper function to get carousel title based on common category
@@ -58,21 +59,24 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         </div>
         
+        {/* Welcome Guide for first message */}
+        {!isUser && message.id === '1' && (
+          <div className="mt-3">
+            <WelcomeGuide 
+              onCategorySelect={(category) => onFollowUpClick?.(category)}
+              onQuestionSelect={(question) => onFollowUpClick?.(question)}
+            />
+          </div>
+        )}
+
         {/* Smart Products Display */}
         {message.products && message.products.length > 0 && (
           <div className="mt-3">
-            {shouldShowCarousel(message.products) ? (
-              <ProductCarousel 
-                products={message.products} 
-                title={getCarouselTitle(message.products)}
-              />
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {message.products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {message.products.map((product: any) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
         )}
 
