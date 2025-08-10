@@ -1,1 +1,67 @@
-{}
+[
+  {
+    "id": "offer-001",
+    "productId": "https://www.karjistore.com/roberto-cavalli-paradiso-edp-75ml",
+    "title": "Roberto Cavalli Paradiso EDP 75ml",
+    "originalPrice": "525.00 AED",
+    "discountPrice": "399.00 AED",
+    "discountPercentage": "24%",
+    "brand": "Roberto Cavalli",
+    "category": "Fragrance > Perfumes > Women",
+    "startDate": "2025-08-10",
+    "endDate": "2025-08-24",
+    "description": "Limited time offer on this Mediterranean-inspired fragrance with notes of citrus and jasmine"
+  },
+  {
+    "id": "offer-002",
+    "productId": "https://www.karjistore.com/roberto-cavalli-uomo-edt-100ml",
+    "title": "Roberto Cavalli Uomo EDT 100ml",
+    "originalPrice": "465.00 AED",
+    "discountPrice": "349.00 AED",
+    "discountPercentage": "25%",
+    "brand": "Roberto Cavalli",
+    "category": "Fragrance > Perfumes > Men",
+    "startDate": "2025-08-10",
+    "endDate": "2025-08-24",
+    "description": "Sophisticated aromatic oriental woody fragrance - perfect for the modern gentleman"
+  },
+  {
+    "id": "offer-003",
+    "productId": "https://www.karjistore.com/tom-ford-ombre-leather-edp",
+    "title": "Tom Ford Ombre Leather EDP",
+    "originalPrice": "890.00 AED",
+    "discountPrice": "712.00 AED",
+    "discountPercentage": "20%",
+    "brand": "Tom Ford",
+    "category": "Fragrance > Perfumes > Unisex",
+    "startDate": "2025-08-10",
+    "endDate": "2025-08-31",
+    "description": "Iconic leather scent with smoky black tea - summer special pricing"
+  },
+  {
+    "id": "offer-004",
+    "productId": "https://www.karjistore.com/aigner-fashion-leather-men-bracelet-m-aj77073",
+    "title": "Aigner Fashion Leather Men Bracelet M Aj77073",
+    "originalPrice": "406.00 AED",
+    "discountPrice": "325.00 AED",
+    "discountPercentage": "20%",
+    "brand": "Aigner",
+    "category": "Accessories > Jewelry > Bracelet > Men",
+    "startDate": "2025-08-10",
+    "endDate": "2025-08-24",
+    "description": "Premium leather bracelet with signature Aigner craftsmanship"
+  },
+  {
+    "id": "offer-005",
+    "productId": "gift-set-001",
+    "title": "Roberto Cavalli Paradiso Gift Set",
+    "originalPrice": "680.00 AED",
+    "discountPrice": "544.00 AED",
+    "discountPercentage": "20%",
+    "brand": "Roberto Cavalli",
+    "category": "Gift Sets > Fragrance > Women",
+    "startDate": "2025-08-10",
+    "endDate": "2025-08-24",
+    "description": "Complete set with EDP 75ml + Body Lotion 150ml + Travel Size 10ml"
+  }
+]
