@@ -351,6 +351,7 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: any) => (d.content || ''
     const explicitlyAskedForProducts = lowercaseMessage.includes('show me') && 
                                       (lowercaseMessage.includes('perfume') || 
                                        lowercaseMessage.includes('fragrance') ||
+                                       lowercaseMessage.includes('cologne') ||
                                        lowercaseMessage.includes('product'));
     
     const isBuyingIntent = intent.category === 'buying';

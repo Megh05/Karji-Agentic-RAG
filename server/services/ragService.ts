@@ -158,7 +158,12 @@ export class RAGService {
       if (consolidatedProducts.length === 0) {
         console.log('No consolidated products found, falling back to intelligent product search');
         const allProducts = await storage.getProducts();
-        // Search products based on title, description, and product_type
+        console.log(`RAG Service: Loaded ${allProducts.length} products from JSON storage for intelligent search`);
+        if (allProducts.length > 0) {
+          console.log(`First product sample: ${allProducts[0].title} (${allProducts[0].additionalFields?.product_type})`);
+        }
+        // Search products based on title, description, and product_type  
+        console.log(`Calling searchProductsIntelligently with maxProducts=${maxProducts}`);
         const relevantProducts = this.searchProductsIntelligently(query, allProducts, maxProducts);
         return relevantProducts;
       }
@@ -166,6 +171,7 @@ export class RAGService {
       console.log(`Searching ${consolidatedProducts.length} consolidated products intelligently`);
       
       // Use intelligent search on consolidated products
+      console.log(`Calling searchProductsIntelligently with consolidatedProducts, maxProducts=${maxProducts}`);
       const relevantProducts = this.searchProductsIntelligently(query, consolidatedProducts, maxProducts);
       
       console.log(`Found ${relevantProducts.length} products from consolidated file`);
@@ -322,6 +328,7 @@ export class RAGService {
   }
 
   private searchProductsIntelligently(query: string, products: any[], maxProducts: number): any[] {
+    console.log(`Starting intelligent search with maxProducts=${maxProducts}`);
     const intent = this.parseUserIntent(query);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
@@ -337,7 +344,15 @@ export class RAGService {
                            queryLower.includes('women') ||
                            queryLower.includes("women's");
     
-    // Gender detection complete - debug logging disabled for performance
+    // Enable debug logging temporarily to fix the filtering issue
+    console.log('Gender detection debug:', {
+      query: queryLower,
+      hasGenderRequest,
+      hasWomenRequest,
+      categoryHints: intent.categoryHints,
+      searchTerms: intent.searchTerms,
+      productsLength: products.length
+    });
     
     // Score products based on relevance
     const scoredProducts = products.map(product => {
@@ -365,7 +380,14 @@ export class RAGService {
                            (titleLower.includes('cologne') && !titleLower.includes('women'));
       const isUnisexProduct = productTypeField.includes('unisex');
       
-      // Gender filtering complete - debug removed for performance
+      // FINAL DEBUG: Show what's happening with scoring for first few products
+      if (products.indexOf(product) < 2) {
+        console.log(`\n=== FINAL DEBUG FOR ${product.title} ===`);
+        console.log(`Before gender filtering - Score: ${score}`);
+        console.log(`Product type: ${productTypeField}`);
+        console.log(`Is men's: ${isMensProduct}, Is women's: ${isWomensProduct}`);
+        console.log(`Gender request conditions: hasGenderRequest=${hasGenderRequest}, hasWomenRequest=${hasWomenRequest}`);
+      }
       
       // CRITICAL FIX: Strict gender filtering - completely exclude wrong gender products
       if (hasWomenRequest) {
@@ -443,14 +465,30 @@ export class RAGService {
         }
       }
       
+      // Final debug for first few products
+      if (products.indexOf(product) < 2) {
+        console.log(`Final score for ${product.title}: ${score}`);
+        console.log(`=== END DEBUG ===\n`);
+      }
+      
       return { ...product, searchScore: score };
     });
     
+    // Debug: Check what scores products are getting
+    const debugScores = scoredProducts.slice(0, 5).map(p => ({
+      title: p.title.substring(0, 50),
+      score: p.searchScore,
+      productType: p.additionalFields?.product_type
+    }));
+    console.log('Top 5 product scores:', debugScores);
+
     // Return products with score > 0, sorted by score
+    console.log(`Before final filtering: ${scoredProducts.filter(p => p.searchScore > 0).length} products have score > 0`);
     const filteredProducts = scoredProducts
       .filter(product => product.searchScore > 0)
       .sort((a, b) => b.searchScore - a.searchScore)
       .slice(0, maxProducts);
+    console.log(`After final filtering: ${filteredProducts.length} products remain`);
     
     console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
     // Debug logging disabled for performance
