@@ -130,7 +130,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 dark:hover:from-amber-400 dark:hover:via-yellow-400 dark:hover:to-amber-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center"
           aria-label="Open chat"
           data-testid="button-open-chat"
         >
@@ -143,10 +143,10 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
         <div className="karjistore-chat fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-card rounded-3xl shadow-2xl border border-gray-200 dark:border-border flex flex-col z-50 overflow-hidden">
           {/* Header */}
           <div className="bg-white dark:bg-card p-5 rounded-t-3xl relative overflow-hidden border-b border-gray-100/80 dark:border-border">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-50/30 via-yellow-50/20 to-amber-50/10 dark:from-amber-900/10 dark:via-yellow-900/5 dark:to-amber-900/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-karjistore-gainsboro/30 via-karjistore-silver/20 to-karjistore-gainsboro/10 dark:from-karjistore-charcoal/10 dark:via-karjistore-slate/5 dark:to-karjistore-charcoal/10"></div>
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-full flex items-center justify-center shadow-lg">
                   <Bot className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -174,7 +174,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
             {messages.length === 0 && (
               <div className="mb-6">
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                  <div className="w-10 h-10 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                     <Bot className="h-5 w-5 text-white" />
                   </div>
                   <div className="bg-gray-50 dark:bg-muted rounded-2xl rounded-tl-sm p-4 shadow-sm border border-gray-100 dark:border-border max-w-72">
@@ -195,7 +195,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
               >
                 {msg.role === "user" ? (
                   <div className="flex items-start space-x-3 justify-end">
-                    <div className="bg-amber-50 dark:bg-amber-950/20 text-gray-800 dark:text-foreground rounded-2xl rounded-tr-sm p-4 shadow-sm max-w-72 border border-amber-100 dark:border-amber-800/20">
+                    <div className="bg-karjistore-gainsboro/20 dark:bg-karjistore-charcoal/20 text-gray-800 dark:text-foreground rounded-2xl rounded-tr-sm p-4 shadow-sm max-w-72 border border-karjistore-silver/30 dark:border-karjistore-slate/20">
                       <p className="text-sm leading-relaxed" data-testid={`text-user-message-${msg.id}`}>{msg.content}</p>
                     </div>
                     <div className="w-10 h-10 bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600 dark:from-gray-600 dark:via-gray-700 dark:to-gray-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
@@ -204,7 +204,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                   </div>
                 ) : (
                   <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                    <div className="w-10 h-10 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                       <Bot className="h-5 w-5 text-white" />
                     </div>
                     <div className="bg-gray-50 dark:bg-muted rounded-2xl rounded-tl-sm p-4 shadow-sm border border-gray-100 dark:border-border max-w-72">
@@ -219,14 +219,14 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
             {isTyping && (
               <div className="mb-6" data-testid="typing-indicator">
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                  <div className="w-10 h-10 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                     <Bot className="h-5 w-5 text-white" />
                   </div>
                   <div className="bg-gray-50 dark:bg-muted rounded-2xl rounded-tl-sm p-4 shadow-sm border border-gray-100 dark:border-border">
                     <div className="flex space-x-2">
-                      <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce"></div>
-                      <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce delay-100"></div>
-                      <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce delay-200"></div>
+                      <div className="w-3 h-3 bg-karjistore-teal dark:bg-karjistore-teal rounded-full animate-bounce"></div>
+                      <div className="w-3 h-3 bg-karjistore-teal dark:bg-karjistore-teal rounded-full animate-bounce delay-100"></div>
+                      <div className="w-3 h-3 bg-karjistore-teal dark:bg-karjistore-teal rounded-full animate-bounce delay-200"></div>
                     </div>
                   </div>
                 </div>
@@ -246,14 +246,14 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="w-full bg-gray-50 dark:bg-input border border-gray-200 dark:border-border rounded-2xl px-6 py-4 text-sm text-gray-800 dark:text-foreground focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 focus:border-amber-400 dark:focus:border-amber-500 shadow-sm outline-none transition-colors"
+                  className="w-full bg-gray-50 dark:bg-input border border-gray-200 dark:border-border rounded-2xl px-6 py-4 text-sm text-gray-800 dark:text-foreground focus:ring-2 focus:ring-karjistore-teal dark:focus:ring-karjistore-teal focus:border-karjistore-teal dark:focus:border-karjistore-teal shadow-sm outline-none transition-colors"
                   data-testid="input-message"
                 />
               </div>
               <button
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
-                className="bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 dark:hover:from-amber-400 dark:hover:via-yellow-400 dark:hover:to-amber-500 disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:via-gray-600 dark:disabled:to-gray-600 text-white w-12 h-12 rounded-2xl p-0 transition-all duration-300 hover:scale-105 shadow-md disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
+                className="bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:via-gray-600 dark:disabled:to-gray-600 text-white w-12 h-12 rounded-2xl p-0 transition-all duration-300 hover:scale-105 shadow-md disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
                 data-testid="button-send-message"
               >
                 <Send className="h-5 w-5" />
@@ -268,10 +268,10 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                   <button
                     key={action.label}
                     onClick={() => handleQuickAction(action.value)}
-                    className="bg-gray-50 dark:bg-accent hover:bg-amber-50 dark:hover:bg-accent/80 text-gray-800 dark:text-foreground text-xs py-3 px-4 rounded-xl border border-gray-200 dark:border-border hover:border-amber-200 dark:hover:border-amber-800/40 transition-all duration-200 font-medium flex items-center gap-2"
+                    className="bg-gray-50 dark:bg-accent hover:bg-karjistore-gainsboro/20 dark:hover:bg-accent/80 text-gray-800 dark:text-foreground text-xs py-3 px-4 rounded-xl border border-gray-200 dark:border-border hover:border-karjistore-silver/40 dark:hover:border-karjistore-slate/40 transition-all duration-200 font-medium flex items-center gap-2"
                     data-testid={`button-quick-action-${action.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    <IconComponent className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+                    <IconComponent className="h-4 w-4 text-karjistore-teal dark:text-karjistore-teal" />
                     {action.label}
                   </button>
                 );

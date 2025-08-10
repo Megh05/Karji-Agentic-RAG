@@ -25,11 +25,11 @@ export default function Sidebar() {
       {/* Logo Section */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-xl flex items-center justify-center shadow-lg">
             <Store className="text-white text-lg" />
           </div>
           <div>
-            <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-400 dark:via-yellow-400 dark:to-amber-500 bg-clip-text text-transparent">KarjiStore</h1>
+            <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-silver bg-clip-text text-transparent">KarjiStore</h1>
             <p className="text-xs text-muted-foreground">Luxury AI Concierge</p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function Sidebar() {
             <Link key={item.href} href={item.href} className={cn(
               "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200",
               item.active 
-                ? "bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 text-white shadow-lg" 
+                ? "bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal text-white shadow-lg" 
                 : "text-foreground hover:bg-accent hover:shadow-sm"
             )}>
               <Icon className="w-5 h-5" />
