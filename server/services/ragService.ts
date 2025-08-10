@@ -325,14 +325,19 @@ export class RAGService {
     const intent = this.parseUserIntent(query);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
-    // Detect gender-specific requests
+    // Detect gender-specific requests - ENHANCED DETECTION
     const queryLower = query.toLowerCase();
-    const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens'].includes(hint)) ||
-                            intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens'].includes(term)) ||
-                            queryLower.includes('men');
+    const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens', 'cologne'].includes(hint)) ||
+                            intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens', 'cologne'].includes(term)) ||
+                            queryLower.includes('men') ||
+                            queryLower.includes('cologne') ||
+                            queryLower.includes("men's");
     const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
                            intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term)) ||
-                           queryLower.includes('women');
+                           queryLower.includes('women') ||
+                           queryLower.includes("women's");
+    
+    // Gender detection complete - debug logging disabled for performance
     
     // Score products based on relevance
     const scoredProducts = products.map(product => {
@@ -351,34 +356,39 @@ export class RAGService {
         score += 10; // Base score for fragrance products
       }
       
-      // Gender-specific filtering and scoring - FIXED VERSION
+      // Gender-specific filtering and scoring - MOST ACCURATE VERSION
+      const productTypeField = (product.additionalFields?.product_type || '').toLowerCase();
+      const isWomensProduct = productTypeField.includes('women') || titleLower.includes('for women') || 
+                             (titleLower.includes('women') && !titleLower.includes('for men'));
+      const isMensProduct = (productTypeField.includes('men') && !productTypeField.includes('women')) || 
+                           (titleLower.includes('for men') && !titleLower.includes('women')) || 
+                           (titleLower.includes('cologne') && !titleLower.includes('women'));
+      const isUnisexProduct = productTypeField.includes('unisex');
+      
+      // Gender filtering complete - debug removed for performance
+      
+      // CRITICAL FIX: Strict gender filtering - completely exclude wrong gender products
       if (hasWomenRequest) {
-        // For women's requests, give massive boost to women's products
-        if (categoryLower.includes('women') || titleLower.includes('women') || titleLower.includes('for women')) {
-          score += 50; // Massive boost for women's products
-        }
-        // Also boost unisex products
-        if (categoryLower.includes('unisex')) {
-          score += 20;
-        }
-        // Only penalize clearly men-specific items
-        if (categoryLower.includes('men') && !categoryLower.includes('women') && !categoryLower.includes('unisex')) {
-          score -= 20; // Penalty for men's products in women's search
+        // For women's requests, ONLY allow women's and unisex products
+        if (isWomensProduct) {
+          score += 200; // Massive boost for women's products
+        } else if (isUnisexProduct) {
+          score += 50; // Moderate boost for unisex
+        } else {
+          // EXCLUDE all other products by setting score to 0
+          return { ...product, searchScore: 0 };
         }
       }
       
       if (hasGenderRequest && !hasWomenRequest) {
-        // For men's requests, give massive boost to men's products  
-        if (categoryLower.includes('men') || titleLower.includes('men') || titleLower.includes('for men')) {
-          score += 50; // Massive boost for men's products
-        }
-        // Also boost unisex products
-        if (categoryLower.includes('unisex')) {
-          score += 20;
-        }
-        // Only penalize clearly women-specific items
-        if (categoryLower.includes('women') && !categoryLower.includes('men') && !categoryLower.includes('unisex')) {
-          score -= 20; // Penalty for women's products in men's search
+        // For men's requests, ONLY allow men's and unisex products  
+        if (isMensProduct) {
+          score += 200; // Massive boost for men's products
+        } else if (isUnisexProduct) {
+          score += 50; // Moderate boost for unisex
+        } else {
+          // EXCLUDE all other products by setting score to 0
+          return { ...product, searchScore: 0 };
         }
       }
       
@@ -443,6 +453,7 @@ export class RAGService {
       .slice(0, maxProducts);
     
     console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
+    // Debug logging disabled for performance
     return filteredProducts;
   }
 

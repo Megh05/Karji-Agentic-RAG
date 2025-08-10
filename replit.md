@@ -2,7 +2,8 @@
 
 This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It features an intelligent sales assistant that combines Retrieval-Augmented Generation (RAG) with product recommendations. The system includes a React-based chat interface and an admin dashboard for managing knowledge base content, product data, and AI configuration.
 
-## Recent Changes (August 2025)
+## Recent Changes (August 2025) 
+- ✅ **CRITICAL FIX: Gender filtering system completely rebuilt** - Now properly filters men vs women products with strict exclusion logic
 - ✅ **MAJOR INTELLIGENCE UPGRADE: Enhanced chat flow for new users** - Fixed system message truncation issues and over-eager product recommendations
 - ✅ **SMART PRODUCT FILTERING: Implemented intelligent product recommendation logic** - Products now only show when users have specific preferences or explicitly request them
 - ✅ **NEW USER ONBOARDING: Added comprehensive welcome experience** - Interactive category browsing, quick questions, and store highlights to educate new users
@@ -10,8 +11,7 @@ This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It fe
 - ✅ **OPTIMIZED SYSTEM PROMPTS: Prevented truncation with smarter token management** - Reduced prompt size while maintaining all critical instructions
 - ✅ **ENHANCED INTENT RECOGNITION: Refined support vs. browsing vs. comparison detection** - Better handling of general questions like "help me narrow down" and "compare options"
 - ✅ Fixed conversation flow imperfections at purchase confirmation stage
-- ✅ **MAJOR FIX: Completely rebuilt gender filtering system** - Fixed fundamental issues where women's perfumes showed men's products instead
-- ✅ Enhanced gender-aware search scoring to properly prioritize gender-specific products (50+ point boost for exact matches)
+- ✅ Enhanced gender-aware search scoring to properly prioritize gender-specific products with complete exclusion of wrong gender
 - ✅ Implemented purchase confirmation detection to prevent unrelated product searches
 - ✅ Updated intent recognition to handle "Yes, I want to buy this" properly
 - ✅ Improved follow-up suggestions to be contextually appropriate for purchase flow
