@@ -37,7 +37,7 @@ export default function Sidebar() {
             <Link key={item.href} href={item.href} className={cn(
               "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200",
               item.active 
-                ? "bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal text-white shadow-lg" 
+                ? "bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal text-karjistore-gainsboro shadow-lg" 
                 : "text-foreground hover:bg-accent hover:shadow-sm"
             )}>
               <Icon className="w-5 h-5" />
@@ -50,7 +50,7 @@ export default function Sidebar() {
       {/* Status Indicator */}
       <div className="p-4 border-t border-border">
         <div className="flex items-center space-x-2 text-sm">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
+          <div className="w-2 h-2 bg-karjistore-teal rounded-full animate-pulse shadow-sm"></div>
           <span className="text-muted-foreground">Luxury Assistant Online</span>
         </div>
       </div>
