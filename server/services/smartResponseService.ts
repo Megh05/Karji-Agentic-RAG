@@ -111,7 +111,7 @@ class SmartResponseService {
     }
 
     // Add brief personalization only if needed
-    if (profile.preferences.categories && Object.keys(profile.preferences.categories).length > 0) {
+    if (profile.preferences.categories && typeof profile.preferences.categories === 'object' && Object.keys(profile.preferences.categories).length > 0) {
       const topCategory = Object.entries(profile.preferences.categories)
         .sort(([,a], [,b]) => (b as number) - (a as number))[0][0];
       

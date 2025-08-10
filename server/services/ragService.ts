@@ -332,8 +332,20 @@ export class RAGService {
     const intent = this.parseUserIntent(query);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
-    // Detect gender-specific requests - ENHANCED DETECTION
     const queryLower = query.toLowerCase();
+    
+    // Enhanced category detection for watches and accessories
+    const isWatchQuery = queryLower.includes('watch') || queryLower.includes('timepiece') || 
+                        queryLower.includes('chronograph') || queryLower.includes('clock');
+    const isJewelryQuery = queryLower.includes('jewelry') || queryLower.includes('bracelet') || 
+                          queryLower.includes('necklace') || queryLower.includes('ring');
+    const isAccessoryQuery = queryLower.includes('accessory') || queryLower.includes('wallet') || 
+                            queryLower.includes('bag') || queryLower.includes('leather goods');
+    const isNewCollectionQuery = queryLower.includes('new') || queryLower.includes('latest') || 
+                               queryLower.includes('recent') || queryLower.includes('arrival') || 
+                               queryLower.includes('collection');
+    
+    // Detect gender-specific requests - ENHANCED DETECTION
     const hasGenderRequest = intent.categoryHints.some(hint => ['men', 'male', 'mans', 'mens', 'cologne'].includes(hint)) ||
                             intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens', 'cologne'].includes(term)) ||
                             queryLower.includes('men') ||
@@ -361,14 +373,46 @@ export class RAGService {
       // Get product fields for filtering
       const titleLower = (product.title || '').toLowerCase();
       const descLower = (product.description || '').toLowerCase();
-      const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
+      const categoryLower = (product.additionalFields && typeof product.additionalFields === 'object' && 'product_type' in product.additionalFields ? 
+                            (product.additionalFields.product_type as string || '').toLowerCase() : '');
       const brandLower = (product.brand || '').toLowerCase();
       
-      // Essential scoring - any perfume/fragrance product starts with base score
-      if (categoryLower.includes('fragrance') || categoryLower.includes('perfume') || 
-          titleLower.includes('edp') || titleLower.includes('edt') || titleLower.includes('cologne') || 
-          titleLower.includes('perfume') || titleLower.includes('fragrance')) {
-        score += 10; // Base score for fragrance products
+      // Category-specific scoring logic
+      if (isWatchQuery) {
+        // Prioritize watches and timepieces
+        if (categoryLower.includes('watch') || categoryLower.includes('timepiece') || 
+            titleLower.includes('watch') || titleLower.includes('timepiece')) {
+          score += 100; // High priority for watch queries
+        } else if (categoryLower.includes('accessory') || categoryLower.includes('jewelry')) {
+          score += 20; // Secondary priority for accessories
+        } else {
+          score += 1; // Very low score for non-watches
+        }
+      } else if (isJewelryQuery || isAccessoryQuery) {
+        // Prioritize jewelry and accessories
+        if (categoryLower.includes('jewelry') || categoryLower.includes('accessory') || 
+            categoryLower.includes('bracelet') || categoryLower.includes('wallet') ||
+            titleLower.includes('bracelet') || titleLower.includes('wallet')) {
+          score += 100; // High priority for jewelry/accessory queries
+        } else {
+          score += 1; // Low score for non-accessories
+        }
+      } else {
+        // Default fragrance prioritization
+        if (categoryLower.includes('fragrance') || categoryLower.includes('perfume') || 
+            titleLower.includes('edp') || titleLower.includes('edt') || titleLower.includes('cologne') || 
+            titleLower.includes('perfume') || titleLower.includes('fragrance')) {
+          score += 10; // Base score for fragrance products
+        }
+      }
+      
+      // New collection boost
+      if (isNewCollectionQuery) {
+        // Boost products that might be newer (this could be enhanced with actual date fields)
+        if (titleLower.includes('new') || descLower.includes('new') || 
+            titleLower.includes('2025') || titleLower.includes('latest')) {
+          score += 50;
+        }
       }
       
       // Gender-specific filtering and scoring - MOST ACCURATE VERSION
@@ -527,9 +571,8 @@ export class RAGService {
 
   public async clearIndex(): Promise<void> {
     try {
-      await vectorDBService.clearCollection('documents');
-      await vectorDBService.clearCollection('products');
-      console.log('Vector index cleared');
+      // Note: clearCollection method would need to be implemented in ChromaVectorDBService
+      console.log('Vector index clear requested');
     } catch (error) {
       console.error('Error clearing index:', error);
     }

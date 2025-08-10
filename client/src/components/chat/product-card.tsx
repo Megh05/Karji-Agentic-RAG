@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Tag, Percent } from "lucide-react";
 import type { ProductRecommendation } from "@/lib/types";
 
 interface ProductCardProps {
@@ -28,7 +28,13 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discount = calculateDiscount();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
+      {discount && (
+        <div className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs font-bold z-10 shadow-lg">
+          <Tag className="w-3 h-3" />
+          {discount}% OFF
+        </div>
+      )}
       {product.imageLink && (
         <img 
           src={product.imageLink} 
@@ -46,24 +52,31 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </p>
         )}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            {product.discountPrice ? (
-              <>
-                <span className="text-sm font-bold text-primary">{product.discountPrice}</span>
-                {product.price && (
-                  <span className="text-xs text-gray-500 line-through">{product.price}</span>
-                )}
-              </>
-            ) : (
-              <span className="text-sm font-bold text-primary">{product.price || 'Price not available'}</span>
-            )}
+        <div className="flex flex-col space-y-2 mb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              {product.discountPrice ? (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg font-bold text-karjistore-teal">{product.discountPrice}</span>
+                    {discount && (
+                      <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700 text-xs">
+                        <Percent className="w-3 h-3 mr-1" />
+                        SAVE {discount}%
+                      </Badge>
+                    )}
+                  </div>
+                  {product.price && (
+                    <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                      Was {product.price}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-lg font-bold text-karjistore-teal">{product.price || 'Price not available'}</span>
+              )}
+            </div>
           </div>
-          {discount && (
-            <Badge variant="secondary" className="bg-accent text-white">
-              {discount}% OFF
-            </Badge>
-          )}
         </div>
         <Button 
           onClick={handleViewProduct} 
