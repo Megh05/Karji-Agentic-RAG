@@ -7,12 +7,6 @@ export default function Sidebar() {
 
   const navItems = [
     {
-      href: "/",
-      label: "Chat Interface",
-      icon: MessageCircle,
-      active: location === "/"
-    },
-    {
       href: "/admin",
       label: "Admin Dashboard", 
       icon: Settings,
