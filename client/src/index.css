@@ -3,99 +3,95 @@
 @tailwind utilities;
 
 :root {
-  /* Emerald Elite - Refined Wealth Color Scheme */
-  --background: hsl(50 20% 98%);
-  --foreground: hsl(160 15% 15%);
-  --card: hsl(160 10% 96%);
-  --card-foreground: hsl(160 15% 15%);
-  --popover: hsl(50 20% 98%);
-  --popover-foreground: hsl(160 15% 15%);
-  --primary: hsl(160 84% 25%);
-  --primary-foreground: hsl(50 20% 98%);
-  --secondary: hsl(160 25% 92%);
-  --secondary-foreground: hsl(160 84% 20%);
-  --muted: hsl(160 15% 94%);
-  --muted-foreground: hsl(160 20% 40%);
-  --accent: hsl(160 25% 88%);
-  --accent-foreground: hsl(160 84% 25%);
+  /* Soft Elegance - Muted Luxury Color Scheme */
+  --background: hsl(310 100% 98%);
+  --foreground: hsl(217 17% 38%);
+  --card: hsl(240 100% 99%);
+  --card-foreground: hsl(217 17% 38%);
+  --popover: hsl(310 100% 98%);
+  --popover-foreground: hsl(217 17% 38%);
+  --primary: hsl(217 17% 62%);
+  --primary-foreground: hsl(310 100% 98%);
+  --secondary: hsl(240 100% 95%);
+  --secondary-foreground: hsl(217 17% 45%);
+  --muted: hsl(240 100% 97%);
+  --muted-foreground: hsl(217 17% 55%);
+  --accent: hsl(240 100% 93%);
+  --accent-foreground: hsl(217 17% 62%);
   --destructive: hsl(356 90% 54%);
-  --destructive-foreground: hsl(50 20% 98%);
-  --border: hsl(160 15% 85%);
-  --input: hsl(160 15% 95%);
-  --ring: hsl(160 84% 25%);
-  --chart-1: hsl(160 84% 25%);
-  --chart-2: hsl(15 75% 70%);
-  --chart-3: hsl(25 80% 45%);
-  --chart-4: hsl(160 60% 45%);
-  --chart-5: hsl(45 70% 60%);
-  --sidebar: hsl(160 10% 96%);
-  --sidebar-foreground: hsl(160 15% 15%);
-  --sidebar-primary: hsl(160 84% 25%);
-  --sidebar-primary-foreground: hsl(50 20% 98%);
-  --sidebar-accent: hsl(160 25% 88%);
-  --sidebar-accent-foreground: hsl(160 84% 25%);
-  --sidebar-border: hsl(160 15% 85%);
-  --sidebar-ring: hsl(160 84% 25%);
+  --destructive-foreground: hsl(310 100% 98%);
+  --border: hsl(312 38% 90%);
+  --input: hsl(240 100% 96%);
+  --ring: hsl(217 17% 62%);
+  --chart-1: hsl(217 17% 62%);
+  --chart-2: hsl(312 38% 80%);
+  --chart-3: hsl(6 35% 88%);
+  --chart-4: hsl(310 100% 95%);
+  --chart-5: hsl(240 100% 93%);
+  --sidebar: hsl(240 100% 99%);
+  --sidebar-foreground: hsl(217 17% 38%);
+  --sidebar-primary: hsl(217 17% 62%);
+  --sidebar-primary-foreground: hsl(310 100% 98%);
+  --sidebar-accent: hsl(240 100% 93%);
+  --sidebar-accent-foreground: hsl(217 17% 62%);
+  --sidebar-border: hsl(312 38% 90%);
+  --sidebar-ring: hsl(217 17% 62%);
   --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius: 1.2rem;
-  --karjistore-emerald: hsl(160 84% 25%);
-  --karjistore-emerald-light: hsl(160 60% 45%);
-  --karjistore-emerald-dark: hsl(160 84% 20%);
-  --karjistore-sage: hsl(160 25% 75%);
-  --karjistore-rose-gold: hsl(15 75% 70%);
-  --karjistore-copper: hsl(25 80% 45%);
-  --karjistore-ivory: hsl(50 20% 98%);
-  --luxury-gradient: linear-gradient(135deg, hsl(160 84% 25%) 0%, hsl(160 60% 45%) 50%, hsl(15 75% 70%) 100%);
+  --karjistore-cool-gray: hsl(217 17% 62%);
+  --karjistore-thistle: hsl(312 38% 80%);
+  --karjistore-misty-rose: hsl(6 35% 88%);
+  --karjistore-pale-purple: hsl(310 100% 95%);
+  --karjistore-lavender: hsl(240 100% 93%);
+  --luxury-gradient: linear-gradient(135deg, hsl(217 17% 62%) 0%, hsl(312 38% 80%) 30%, hsl(6 35% 88%) 60%, hsl(240 100% 93%) 100%);
 }
 
 .dark {
-  /* Emerald Elite Dark - Deep Forest Theme */
-  --background: hsl(160 30% 10%);
-  --foreground: hsl(160 10% 92%);
-  --card: hsl(160 25% 14%);
-  --card-foreground: hsl(160 8% 88%);
-  --popover: hsl(160 30% 10%);
-  --popover-foreground: hsl(160 10% 92%);
-  --primary: hsl(160 70% 45%);
-  --primary-foreground: hsl(160 30% 10%);
-  --secondary: hsl(160 20% 18%);
-  --secondary-foreground: hsl(160 70% 70%);
-  --muted: hsl(160 15% 22%);
-  --muted-foreground: hsl(160 8% 65%);
-  --accent: hsl(160 20% 25%);
-  --accent-foreground: hsl(160 70% 60%);
+  /* Soft Elegance Dark - Sophisticated Muted Theme */
+  --background: hsl(217 25% 12%);
+  --foreground: hsl(240 15% 88%);
+  --card: hsl(217 20% 15%);
+  --card-foreground: hsl(240 12% 85%);
+  --popover: hsl(217 25% 12%);
+  --popover-foreground: hsl(240 15% 88%);
+  --primary: hsl(217 20% 70%);
+  --primary-foreground: hsl(217 25% 12%);
+  --secondary: hsl(217 15% 20%);
+  --secondary-foreground: hsl(240 12% 75%);
+  --muted: hsl(217 12% 25%);
+  --muted-foreground: hsl(240 8% 65%);
+  --accent: hsl(217 15% 30%);
+  --accent-foreground: hsl(240 12% 80%);
   --destructive: hsl(356 90% 54%);
-  --destructive-foreground: hsl(160 10% 92%);
-  --border: hsl(160 15% 28%);
-  --input: hsl(160 20% 18%);
-  --ring: hsl(160 70% 45%);
-  --chart-1: hsl(160 70% 45%);
-  --chart-2: hsl(15 75% 70%);
-  --chart-3: hsl(25 80% 55%);
-  --chart-4: hsl(160 50% 55%);
-  --chart-5: hsl(45 70% 65%);
-  --sidebar: hsl(160 25% 14%);
-  --sidebar-foreground: hsl(160 8% 88%);
-  --sidebar-primary: hsl(160 70% 45%);
-  --sidebar-primary-foreground: hsl(160 30% 10%);
-  --sidebar-accent: hsl(160 20% 25%);
-  --sidebar-accent-foreground: hsl(160 70% 60%);
-  --sidebar-border: hsl(160 15% 28%);
-  --sidebar-ring: hsl(160 70% 45%);
+  --destructive-foreground: hsl(240 15% 88%);
+  --border: hsl(217 12% 28%);
+  --input: hsl(217 15% 20%);
+  --ring: hsl(217 20% 70%);
+  --chart-1: hsl(217 20% 70%);
+  --chart-2: hsl(312 30% 60%);
+  --chart-3: hsl(6 25% 70%);
+  --chart-4: hsl(310 40% 60%);
+  --chart-5: hsl(240 40% 70%);
+  --sidebar: hsl(217 20% 15%);
+  --sidebar-foreground: hsl(240 12% 85%);
+  --sidebar-primary: hsl(217 20% 70%);
+  --sidebar-primary-foreground: hsl(217 25% 12%);
+  --sidebar-accent: hsl(217 15% 30%);
+  --sidebar-accent-foreground: hsl(240 12% 80%);
+  --sidebar-border: hsl(217 12% 28%);
+  --sidebar-ring: hsl(217 20% 70%);
   --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius: 1.2rem;
-  --karjistore-emerald: hsl(160 70% 45%);
-  --karjistore-emerald-light: hsl(160 60% 55%);
-  --karjistore-emerald-dark: hsl(160 70% 35%);
-  --karjistore-sage: hsl(160 25% 35%);
-  --karjistore-rose-gold: hsl(15 75% 70%);
-  --karjistore-copper: hsl(25 80% 55%);
-  --karjistore-ivory: hsl(160 20% 18%);
-  --luxury-gradient: linear-gradient(135deg, hsl(160 70% 45%) 0%, hsl(160 60% 55%) 50%, hsl(15 75% 70%) 100%);
+  --karjistore-cool-gray: hsl(217 20% 70%);
+  --karjistore-thistle: hsl(312 30% 60%);
+  --karjistore-misty-rose: hsl(6 25% 70%);
+  --karjistore-pale-purple: hsl(310 40% 60%);
+  --karjistore-lavender: hsl(240 40% 70%);
+  --luxury-gradient: linear-gradient(135deg, hsl(217 20% 70%) 0%, hsl(312 30% 60%) 30%, hsl(6 25% 70%) 60%, hsl(240 40% 70%) 100%);
 }
 
 @layer base {
@@ -165,12 +161,12 @@
 }
 
 .karjistore-chat .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: hsl(var(--karjistore-emerald));
+  background: hsl(var(--karjistore-cool-gray));
   border-radius: 3px;
 }
 
 .karjistore-chat .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--karjistore-emerald-dark));
+  background: hsl(var(--karjistore-thistle));
 }
 
 /* Luxury gradient utility class */
