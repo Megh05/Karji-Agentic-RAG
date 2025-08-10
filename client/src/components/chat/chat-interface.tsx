@@ -121,28 +121,31 @@ export default function ChatInterface() {
   return (
     <>
       {/* Chat Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-card dark:bg-card border-b border-border px-6 py-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-50/30 via-yellow-50/20 to-orange-50/10 dark:from-amber-900/10 dark:via-yellow-900/5 dark:to-amber-900/10"></div>
+        <div className="relative flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
-              <Bot className="text-white w-5 h-5" />
+            <div className="w-12 h-12 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Bot className="text-white w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold">AI Sales Assistant</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Ready to help you find the perfect products</p>
+              <h2 className="text-xl font-bold text-foreground">Luxury AI Concierge</h2>
+              <p className="text-sm text-muted-foreground">Ready to help you discover premium fragrances & timepieces</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Button size="sm" variant="outline" className="bg-secondary text-white border-secondary hover:bg-secondary/90">
-              <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-              Online
-            </Button>
+            <div className="bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 text-white px-4 py-2 rounded-xl shadow-md">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">Online</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-background dark:bg-background">
         {messages.map((message) => (
           <Message 
             key={message.id} 
@@ -154,14 +157,14 @@ export default function ChatInterface() {
         {/* Typing Indicator */}
         {isTyping && (
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center flex-shrink-0">
-              <Bot className="text-white w-4 h-4" />
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+              <Bot className="text-white w-5 h-5" />
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="bg-card dark:bg-card rounded-2xl rounded-tl-sm p-4 shadow-sm border border-border">
+              <div className="flex space-x-2">
+                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce"></div>
+                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -191,7 +194,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Message Input */}
-      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-card dark:bg-card border-t border-border p-4">
         {/* Quick Actions */}
         {messages.length > 1 && (
           <div className="mb-3">

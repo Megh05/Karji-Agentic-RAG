@@ -21,16 +21,16 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+    <div className="w-64 bg-card dark:bg-card border-r border-border flex flex-col">
       {/* Logo Section */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+      <div className="p-6 border-b border-border">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
             <Store className="text-white text-lg" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">KarjiStore</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">AI Sales Assistant</p>
+            <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-400 dark:via-yellow-400 dark:to-amber-500 bg-clip-text text-transparent">KarjiStore</h1>
+            <p className="text-xs text-muted-foreground">Luxury AI Concierge</p>
           </div>
         </div>
       </div>
@@ -41,23 +41,23 @@ export default function Sidebar() {
           const Icon = item.icon;
           return (
             <Link key={item.href} href={item.href} className={cn(
-              "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+              "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200",
               item.active 
-                ? "bg-primary text-white" 
-                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 text-white shadow-lg" 
+                : "text-foreground hover:bg-accent hover:shadow-sm"
             )}>
               <Icon className="w-5 h-5" />
-              <span>{item.label}</span>
+              <span className="font-medium">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Status Indicator */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-border">
         <div className="flex items-center space-x-2 text-sm">
-          <div className="w-2 h-2 bg-secondary rounded-full animate-pulse"></div>
-          <span className="text-gray-600 dark:text-gray-400">AI Assistant Online</span>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
+          <span className="text-muted-foreground">Luxury Assistant Online</span>
         </div>
       </div>
     </div>
