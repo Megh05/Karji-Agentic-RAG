@@ -13,7 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@huggingface/transformers": "^3.7.1",
-    "@jridgewell/trace-mapping": "^0.3.25",
+    "@jridgewell/trace-mapping": "^0.3.29",
     "@langchain/core": "^0.3.68",
     "@langchain/textsplitters": "^0.1.0",
     "@neondatabase/serverless": "^0.10.4",
@@ -63,6 +63,7 @@
     "framer-motion": "^11.13.1",
     "input-otp": "^1.4.2",
     "langchain": "^0.3.30",
+    "langsmith": "^0.2.15",
     "lucide-react": "^0.453.0",
     "mammoth": "^1.10.0",
     "memorystore": "^1.6.7",
