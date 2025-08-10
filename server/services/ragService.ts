@@ -296,10 +296,12 @@ export class RAGService {
         !numbers.includes(parseInt(word))
       );
     
-    // Extract brand preferences
+    // Extract brand preferences - include Tom Ford and other luxury brands
     const commonBrands = [
-      'michael kors', 'calvin klein', 'roberto cavalli', 'dunhill', 'lencia',
-      'fabian', 'police', 'cerruti', 'boadicea', 'nasamat', 'zenology'
+      'tom ford', 'michael kors', 'calvin klein', 'roberto cavalli', 'dunhill', 'lencia',
+      'fabian', 'police', 'cerruti', 'boadicea', 'nasamat', 'zenology', 'hugo boss',
+      'emporio armani', 'giorgio armani', 'versace', 'gucci', 'prada', 'dior', 'chanel',
+      'dolce gabbana', 'jean paul gaultier', 'yves saint laurent', 'cartier', 'elie saab'
     ];
     
     const brandPreferences = commonBrands.filter(brand => 
@@ -325,6 +327,85 @@ export class RAGService {
     }
     
     return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
+  }
+
+  private searchProductsWithIntent(query: string, products: any[], intent: any, maxProducts: number): any[] {
+    console.log(`Searching with provided intent for ${maxProducts} products`);
+    
+    // Gender-aware filtering
+    const genderDebug = this.detectGenderRequest(query, intent.categoryHints, intent.searchTerms, products.length);
+    console.log('Gender detection debug:', genderDebug);
+    
+    // Score products based on various factors
+    const scoredProducts = products.map(product => {
+      let score = 10; // Base score
+      
+      // Brand matching (high priority)
+      if (intent.brandPreferences.length > 0) {
+        const brandMatch = intent.brandPreferences.some(brand => 
+          product.brand?.toLowerCase().includes(brand.toLowerCase()) ||
+          product.title?.toLowerCase().includes(brand.toLowerCase())
+        );
+        if (brandMatch) score += 100;
+      }
+      
+      // Category matching
+      intent.categoryHints.forEach(category => {
+        if (product.title?.toLowerCase().includes(category.toLowerCase()) || 
+            product.description?.toLowerCase().includes(category.toLowerCase()) ||
+            product.additionalFields?.product_type?.toLowerCase().includes(category.toLowerCase())) {
+          score += 20;
+        }
+      });
+      
+      // Price range filtering
+      if (intent.priceFilter) {
+        const productPrice = parseFloat(product.price?.replace(/[^0-9.]/g, '') || '0');
+        const { min = 0, max = Infinity } = intent.priceFilter;
+        if (productPrice >= min && productPrice <= max) {
+          score += 30;
+        } else {
+          score = 0; // Exclude products outside price range
+        }
+      }
+      
+      // Quality level matching
+      if (intent.qualityLevel === 'luxury') {
+        if (product.title?.toLowerCase().includes('luxury') || 
+            product.title?.toLowerCase().includes('premium') ||
+            parseFloat(product.price?.replace(/[^0-9.]/g, '') || '0') > 800) {
+          score += 40;
+        }
+      }
+      
+      // Gender filtering
+      if (genderDebug.hasGenderRequest) {
+        const productType = product.additionalFields?.product_type?.toLowerCase() || '';
+        const isMens = productType.includes('men') && !productType.includes('women');
+        const isWomens = productType.includes('women') && !productType.includes('men');
+        const isUnisex = productType.includes('unisex') || (!isMens && !isWomens);
+        
+        if (genderDebug.hasWomenRequest && !isWomens && !isUnisex) {
+          score = 0; // Exclude men's products for women's requests
+        } else if (!genderDebug.hasWomenRequest && genderDebug.hasGenderRequest && !isMens && !isUnisex) {
+          score = 0; // Exclude women's products for men's requests
+        } else if (genderDebug.hasWomenRequest && (isWomens || isUnisex)) {
+          score += 200; // Boost women's and unisex products
+        } else if (!genderDebug.hasWomenRequest && genderDebug.hasGenderRequest && (isMens || isUnisex)) {
+          score += 200; // Boost men's and unisex products
+        }
+      }
+      
+      return { ...product, searchScore: score };
+    });
+    
+    // Filter products with score > 0 and sort by score
+    const filteredProducts = scoredProducts
+      .filter(product => product.searchScore > 0)
+      .sort((a, b) => b.searchScore - a.searchScore)
+      .slice(0, maxProducts);
+    
+    return filteredProducts;
   }
 
   private async searchProductsIntelligently(query: string, products: any[], maxProducts: number): Promise<any[]> {
@@ -569,6 +650,30 @@ export class RAGService {
     // Apply offer pricing to products before returning
     const productsWithOffers = await this.applyOfferPricing(filteredProducts);
     console.log(`Applied offer pricing to ${productsWithOffers.length} products`);
+    
+    // If no products found and user had specific brand preferences or Tom Ford mentioned, suggest alternatives
+    const hasTomFordRequest = query.toLowerCase().includes('tom ford');
+    const hasLuxuryBrandRequest = intent.brandPreferences.length > 0 || hasTomFordRequest;
+    
+    if (productsWithOffers.length === 0 && hasLuxuryBrandRequest) {
+      const brandName = hasTomFordRequest ? 'Tom Ford' : intent.brandPreferences.join(', ');
+      console.log(`No products found for brand: ${brandName}, searching for alternatives in same price range`);
+      
+      // Remove brand preference and search again for alternative suggestions
+      const altIntent = { ...intent, brandPreferences: [] };
+      const alternativeProducts = this.searchProductsWithIntent(query, products, altIntent, maxProducts);
+      const alternativesWithOffers = await this.applyOfferPricing(alternativeProducts);
+      console.log(`Found ${alternativesWithOffers.length} alternative products in same criteria`);
+      
+      // Mark products as alternatives for intelligent messaging
+      const markedAlternatives = alternativesWithOffers.map(product => ({
+        ...product,
+        isAlternativeTo: brandName,
+        alternativeReason: `${brandName} products typically start from 600+ AED. Here are excellent alternatives in your budget:`
+      }));
+      
+      return markedAlternatives;
+    }
     
     return productsWithOffers;
   }

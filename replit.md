@@ -31,6 +31,10 @@ This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It fe
 - ✅ Improved follow-up suggestions to be contextually appropriate for purchase flow
 - ✅ Added purchase-specific system prompts to guide checkout assistance instead of product browsing
 - ✅ Fixed product search algorithm to properly detect and boost women's/men/unisex product categories
+- ✅ **CRITICAL FIX (August 2025): Eliminated system response truncation** - Responses no longer cut off mid-sentence, increased limit to 500 characters with intelligent sentence boundary detection
+- ✅ **COMPREHENSIVE DISCOUNT SYSTEM IMPLEMENTED** - Products with offers now show strikethrough original pricing, discount badges, savings percentages, and offer details
+- ✅ **INTELLIGENT ALTERNATIVE SUGGESTIONS** - When specific brands (like Tom Ford) aren't available in requested price ranges, system suggests alternatives with explanatory messaging
+- ✅ **ENHANCED BRAND DETECTION** - Expanded brand recognition to include Tom Ford, luxury designers, and multi-word brand names with proper scoring priorities
 
 
 
