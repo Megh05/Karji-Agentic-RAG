@@ -68,7 +68,7 @@ class SmartResponseService {
     const actions = this.generateContextualActions(intent, profile, insights);
 
     // Generate follow-up questions
-    const followUpQuestions = this.generateSmartFollowUps(intent, profile, conversationHistory);
+    const followUpQuestions = this.generateSmartFollowUps(intent, profile, conversationHistory, userMessage, aiResponse, smartProducts);
 
     // Generate UI elements
     const uiElements = this.generateUIElements(intent, profile, smartProducts);
@@ -189,7 +189,7 @@ class SmartResponseService {
     }
 
     // Recency and popularity (if available in product data)
-    if (product.additionalFields && product.additionalFields && 'popularity' in product.additionalFields && product.additionalFields.popularity) {
+    if (product.additionalFields && typeof product.additionalFields === 'object' && product.additionalFields && 'popularity' in product.additionalFields && product.additionalFields.popularity) {
       score += Number(product.additionalFields.popularity) * 2;
     }
 
@@ -240,24 +240,19 @@ class SmartResponseService {
     return actions;
   }
 
-  private generateSmartFollowUps(intent: any, profile: any, conversationHistory: any[]): string[] {
+  private generateSmartFollowUps(intent: any, profile: any, conversationHistory: any[], userMessage: string, aiResponse: string, products: any[] = []): string[] {
     const followUps: string[] = [];
-    const hasProducts = conversationHistory.some((msg: any) => 
-      msg.type === 'assistant' && (msg.content?.includes('AED') || msg.content?.includes('Price:') || msg.content?.includes('product')));
-    const recentMessages = conversationHistory.slice(-3);
-    const isNewUser = conversationHistory.length <= 2;
-    const askedAboutCategories = conversationHistory.some((msg: any) => 
-      msg.content.toLowerCase().includes('categories') || 
-      msg.content.toLowerCase().includes('what products') ||
-      msg.content.toLowerCase().includes('what do you sell'));
     
-    // Check if user confirmed purchase intent
-    const userMessage = conversationHistory[conversationHistory.length - 1]?.content?.toLowerCase() || '';
-    const isPurchaseConfirmation = userMessage.includes('yes, i want to buy') || 
-                                  userMessage.includes('yes i want to buy') ||
+    // Extract key information from the AI response to generate contextual follow-ups
+    const aiResponseLower = aiResponse.toLowerCase();
+    const userMessageLower = userMessage.toLowerCase();
+    
+    // Check for purchase confirmation
+    const isPurchaseConfirmation = userMessageLower.includes('yes, i want to buy') || 
+                                  userMessageLower.includes('yes i want to buy') ||
                                   intent.actions.includes('confirm_purchase_intent');
 
-    // Priority 1: If user confirmed purchase intent, provide purchase-related options
+    // Priority 1: Purchase confirmation responses
     if (isPurchaseConfirmation) {
       followUps.push("Add to cart and checkout");
       followUps.push("I need help choosing the right size/option");
@@ -266,59 +261,151 @@ class SmartResponseService {
       return followUps;
     }
 
-    // For completely new users - proactively show product categories
-    if (isNewUser && !askedAboutCategories) {
-      followUps.push("Show me perfumes");
-      followUps.push("I want to see watches");
-      followUps.push("Browse fragrances for men");
-      followUps.push("I'm looking for women's perfumes");
-    } else if (askedAboutCategories && !hasProducts) {
-      // User asked about categories - help them navigate
-      followUps.push("Show me popular perfumes");
-      followUps.push("I want luxury fragrances");
-      followUps.push("Browse budget-friendly options");
-      followUps.push("I need gift recommendations");
-    } else if (intent.category === 'browsing' && !hasProducts) {
-      // Initial preference gathering - conversational style
-      followUps.push("I'm buying for myself");
-      followUps.push("I'm looking for someone special");
-      followUps.push("I want something budget-friendly");
-      followUps.push("I prefer premium quality");
-    } else if (hasProducts && intent.category === 'browsing') {
-      // After showing products - check satisfaction and guide toward purchase
-      followUps.push("These look perfect for what I need");
-      followUps.push("I'd like to see more options");
-      followUps.push("I want to compare these products");
-      followUps.push("I'm ready to make a purchase");
-    } else if (intent.category === 'buying' || recentMessages.some((msg: any) => msg.content.toLowerCase().includes('perfect') || msg.content.toLowerCase().includes('ready'))) {
-      // Buying intent or satisfaction indicated - guide to purchase
-      followUps.push("Yes, I want to buy this");
-      followUps.push("I need help deciding between options");
-      followUps.push("I want to know about shipping and returns");
-      followUps.push("I have some questions first");
+    // Analyze AI response content to generate dynamic follow-ups
+    const responseAnalysis = this.analyzeResponseContent(aiResponse, userMessage, products);
+    
+    // Generate contextual follow-ups based on response analysis
+    if (responseAnalysis.showedProducts && products.length > 0) {
+      // AI showed products - generate product-specific follow-ups
+      const productNames = products.slice(0, 2).map(p => p.title || 'this product');
+      
+      if (products.length > 1) {
+        followUps.push("These look perfect for what I need");
+        followUps.push(`Tell me more about ${productNames[0]}`);
+        followUps.push("I want to compare these options");
+        followUps.push("Show me similar products");
+      } else {
+        followUps.push("This looks perfect for what I need");
+        followUps.push("Tell me more about this product");
+        followUps.push("I want to see similar options");
+        followUps.push("I'm ready to purchase this");
+      }
+    } else if (responseAnalysis.askedQuestion) {
+      // AI asked a question - generate answers based on the question type
+      if (responseAnalysis.questionType === 'preference') {
+        followUps.push("I prefer something fresh and light");
+        followUps.push("I like woody or musky scents");
+        followUps.push("I'm buying for myself");
+        followUps.push("I'm looking for a gift");
+      } else if (responseAnalysis.questionType === 'price') {
+        followUps.push("Under 200 AED");
+        followUps.push("Between 200-500 AED");
+        followUps.push("I'm flexible with budget");
+        followUps.push("Show me the best deals");
+      } else if (responseAnalysis.questionType === 'gender') {
+        followUps.push("Men's fragrances");
+        followUps.push("Women's perfumes");
+        followUps.push("Unisex options");
+        followUps.push("It's for someone else");
+      }
+    } else if (responseAnalysis.providedInformation) {
+      // AI provided information - generate follow-up exploration
+      if (responseAnalysis.topicMentioned.includes('brand')) {
+        followUps.push("Tell me about other brands you carry");
+        followUps.push("I want to see products from this brand");
+        followUps.push("What makes this brand special?");
+        followUps.push("Do you have any deals on this brand?");
+      } else if (responseAnalysis.topicMentioned.includes('shipping')) {
+        followUps.push("What are the shipping costs?");
+        followUps.push("How fast is delivery to my area?");
+        followUps.push("Do you offer express shipping?");
+        followUps.push("Let's continue browsing products");
+      } else if (responseAnalysis.topicMentioned.includes('categories')) {
+        followUps.push("Show me men's fragrances");
+        followUps.push("I want to see women's perfumes");
+        followUps.push("What are your most popular items?");
+        followUps.push("Tell me about current offers");
+      }
+    } else if (responseAnalysis.isWelcomeMessage) {
+      // Welcome message - help user navigate
+      followUps.push("Show me your best-selling perfumes");
+      followUps.push("I'm looking for something under 300 AED");
+      followUps.push("What's good for everyday wear?");
+      followUps.push("I need a gift recommendation");
     }
 
-    // Context-specific preference gathering
-    if (profile.preferences.categories?.perfume || intent.entities.categories?.includes('perfume')) {
-      followUps.push("I prefer floral scents");
-      followUps.push("I like woody/musky fragrances");
-      followUps.push("I want something for everyday wear");
-      followUps.push("I'm looking for special occasion perfume");
+    // If no specific follow-ups were generated, create contextual ones based on conversation stage
+    if (followUps.length === 0) {
+      const isNewUser = conversationHistory.length <= 2;
+      
+      if (isNewUser) {
+        followUps.push("Show me your bestsellers");
+        followUps.push("I'm looking for men's cologne");
+        followUps.push("I want women's perfumes");
+        followUps.push("What are your current deals?");
+      } else {
+        followUps.push("I need help choosing");
+        followUps.push("Tell me about shipping");
+        followUps.push("Show me more options");
+        followUps.push("I'm ready to buy");
+      }
     }
 
-    // Enhance based on conversation length
-    if (conversationHistory.length > 4 && !hasProducts) {
-      followUps.push("I need help narrowing down my choices");
-      followUps.push("I want personalized recommendations");
-    }
+    return followUps.slice(0, 4); // Show up to 4 contextual options
+  }
 
-    // Price sensitivity context
-    if (profile.contextualState?.objections?.includes('price') || intent.entities.priceRange) {
-      followUps.push("I want the best value for money");
-      followUps.push("I'm flexible with my budget");
+  private analyzeResponseContent(aiResponse: string, userMessage: string, products: any[]): {
+    showedProducts: boolean;
+    askedQuestion: boolean;
+    questionType: 'preference' | 'price' | 'gender' | 'general' | null;
+    providedInformation: boolean;
+    topicMentioned: string[];
+    isWelcomeMessage: boolean;
+  } {
+    const responseLower = aiResponse.toLowerCase();
+    const userLower = userMessage.toLowerCase();
+    
+    // Check if AI showed products
+    const showedProducts = products.length > 0 || 
+                          responseLower.includes('aed') || 
+                          responseLower.includes('price:') ||
+                          responseLower.includes('here are');
+    
+    // Check if AI asked a question
+    const askedQuestion = responseLower.includes('?') || 
+                         responseLower.includes('what are you looking for') ||
+                         responseLower.includes('would you prefer') ||
+                         responseLower.includes('are you interested in');
+    
+    // Determine question type
+    let questionType: 'preference' | 'price' | 'gender' | 'general' | null = null;
+    if (askedQuestion) {
+      if (responseLower.includes('prefer') || responseLower.includes('scent') || responseLower.includes('fragrance type')) {
+        questionType = 'preference';
+      } else if (responseLower.includes('budget') || responseLower.includes('price') || responseLower.includes('spend')) {
+        questionType = 'price';
+      } else if (responseLower.includes('men') || responseLower.includes('women') || responseLower.includes('gender')) {
+        questionType = 'gender';
+      } else {
+        questionType = 'general';
+      }
     }
-
-    return followUps.slice(0, 4); // Show up to 4 conversational options
+    
+    // Check if AI provided information
+    const providedInformation = responseLower.includes('karjistore') || 
+                               responseLower.includes('we offer') ||
+                               responseLower.includes('our store') ||
+                               responseLower.includes('specialize in');
+    
+    // Extract topics mentioned
+    const topicMentioned: string[] = [];
+    if (responseLower.includes('brand') || responseLower.includes('designer')) topicMentioned.push('brand');
+    if (responseLower.includes('shipping') || responseLower.includes('delivery')) topicMentioned.push('shipping');
+    if (responseLower.includes('categories') || responseLower.includes('perfume') || responseLower.includes('fragrance')) topicMentioned.push('categories');
+    if (responseLower.includes('deal') || responseLower.includes('offer') || responseLower.includes('discount')) topicMentioned.push('deals');
+    
+    // Check if it's a welcome message
+    const isWelcomeMessage = (userLower.includes('hi') || userLower.includes('hello') || userLower === '') &&
+                            (responseLower.includes('welcome') || responseLower.includes('how can i help'));
+    
+    return {
+      showedProducts,
+      askedQuestion,
+      questionType,
+      providedInformation,
+      topicMentioned,
+      isWelcomeMessage
+    };
   }
 
   private generateUIElements(intent: any, profile: any, products: Product[]): SmartResponse['uiElements'] {
