@@ -164,7 +164,7 @@ export class RAGService {
         }
         // Search products based on title, description, and product_type  
         console.log(`Calling searchProductsIntelligently with maxProducts=${maxProducts}`);
-        const relevantProducts = this.searchProductsIntelligently(query, allProducts, maxProducts);
+        const relevantProducts = await this.searchProductsIntelligently(query, allProducts, maxProducts);
         return relevantProducts;
       }
 
@@ -172,7 +172,7 @@ export class RAGService {
       
       // Use intelligent search on consolidated products
       console.log(`Calling searchProductsIntelligently with consolidatedProducts, maxProducts=${maxProducts}`);
-      const relevantProducts = this.searchProductsIntelligently(query, consolidatedProducts, maxProducts);
+      const relevantProducts = await this.searchProductsIntelligently(query, consolidatedProducts, maxProducts);
       
       console.log(`Found ${relevantProducts.length} products from consolidated file`);
       return relevantProducts;
@@ -327,7 +327,7 @@ export class RAGService {
     return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
   }
 
-  private searchProductsIntelligently(query: string, products: any[], maxProducts: number): any[] {
+  private async searchProductsIntelligently(query: string, products: any[], maxProducts: number): Promise<any[]> {
     console.log(`Starting intelligent search with maxProducts=${maxProducts}`);
     const intent = this.parseUserIntent(query);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
@@ -565,8 +565,12 @@ export class RAGService {
     console.log(`After final filtering: ${filteredProducts.length} products remain`);
     
     console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
-    // Debug logging disabled for performance
-    return filteredProducts;
+    
+    // Apply offer pricing to products before returning
+    const productsWithOffers = await this.applyOfferPricing(filteredProducts);
+    console.log(`Applied offer pricing to ${productsWithOffers.length} products`);
+    
+    return productsWithOffers;
   }
 
   public async clearIndex(): Promise<void> {
@@ -575,6 +579,43 @@ export class RAGService {
       console.log('Vector index clear requested');
     } catch (error) {
       console.error('Error clearing index:', error);
+    }
+  }
+
+  private async applyOfferPricing(products: any[]): Promise<any[]> {
+    try {
+      const offers = await storage.getOffers();
+      console.log(`Applying offers to ${products.length} products, ${offers.length} offers available`);
+      
+      return products.map(product => {
+        // Find matching offer
+        const matchingOffer = offers.find(offer => 
+          offer.productId === product.id || 
+          offer.productId === product.link ||
+          (product.link && product.link.includes(offer.productId)) ||
+          (product.id && product.id.includes(offer.productId))
+        );
+        
+        if (matchingOffer) {
+          console.log(`Found offer for ${product.title}: ${(matchingOffer as any).originalPrice} -> ${matchingOffer.discountPrice}`);
+          return {
+            ...product,
+            discountPrice: matchingOffer.discountPrice,
+            originalPrice: (matchingOffer as any).originalPrice || product.price,
+            offerDetails: {
+              discountPercentage: (matchingOffer as any).discountPercentage,
+              startDate: (matchingOffer as any).startDate,
+              endDate: (matchingOffer as any).endDate,
+              description: (matchingOffer as any).description || matchingOffer.offerDesc
+            }
+          };
+        }
+        
+        return product;
+      });
+    } catch (error) {
+      console.error('Error applying offer pricing:', error);
+      return products;
     }
   }
 
