@@ -99,12 +99,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           totalTokens: 0
         };
       } else {
-        // Find relevant context using enhanced RAG with user preferences
-        context = await ragService.findRelevantContext(message, {
-          maxDocuments: 2,
-          maxProducts: 4,
-          similarityThreshold: 0.3
-        });
+        // Determine if we should search for products based on intent and user specificity
+        const shouldSearchProducts = shouldSearchForProducts(intent, message, conversationService.getMessages(currentSessionId) || []);
+        
+        if (shouldSearchProducts) {
+          // Find relevant context using enhanced RAG with user preferences
+          context = await ragService.findRelevantContext(message, {
+            maxDocuments: 2,
+            maxProducts: 4,
+            similarityThreshold: 0.3
+          });
+        } else {
+          // For general questions, only get documents (knowledge base) but not products
+          context = await ragService.findRelevantContext(message, {
+            maxDocuments: 2,
+            maxProducts: 0, // Don't search for products
+            similarityThreshold: 0.3
+          });
+        }
       }
       
       // Log context sizes for debugging
@@ -211,19 +223,53 @@ Remember: You're not just providing information - you're creating a personalized
 CUSTOM INSTRUCTIONS:
 ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || d.name.toLowerCase().includes('prompt')).map(d => (d.content || '').substring(0, 500)).join('\n').substring(0, 1000)}`;
 
-      // Estimate token count (rough approximation: 4 characters = 1 token)
-      const estimatedTokens = Math.ceil((systemPrompt.length + message.length) / 4);
+      // Estimate token count more accurately (approximately 3.5 chars = 1 token for typical content)
+      const estimatedTokens = Math.ceil((systemPrompt.length + message.length) / 3.5);
       console.log('Estimated tokens:', estimatedTokens);
       
       let messages;
-      if (estimatedTokens > 120000) { // Leave buffer for max context of 131k
-        console.warn('System prompt too long, truncating...');
-        const maxSystemLength = 120000 * 4 - message.length - 1000; // Buffer
-        const truncatedPrompt = systemPrompt.substring(0, maxSystemLength) + '\n\n[Content truncated due to length]';
-        console.log('Truncated system prompt length:', truncatedPrompt.length);
+      // Use smaller buffer and smarter truncation to avoid losing critical instructions
+      if (estimatedTokens > 28000) { // Much lower threshold to prevent truncation issues
+        console.warn('System prompt too long, optimizing...');
+        
+        // Create optimized system prompt by prioritizing core instructions
+        const coreSystemPrompt = `You are an advanced AI shopping assistant for KarjiStore.com specializing in premium fragrances and luxury perfumes.
+
+STORE OVERVIEW: KarjiStore offers designer perfumes (Roberto Cavalli, Tom Ford), niche fragrances, gift sets, with competitive pricing and fast UAE shipping.
+
+CUSTOMER INTELLIGENCE:
+- Customer Type: ${insights.customerType}
+- Purchase Probability: ${(insights.purchaseProbability * 100).toFixed(0)}%
+- Is New User: ${conversationService.getMessages(currentSessionId)?.length <= 2 ? 'YES - Needs introduction' : 'NO'}
+- Communication Tone: ${recommendations.communicationTone}
+
+${isPurchaseConfirmation ? `
+PURCHASE CONFIRMATION MODE: Customer confirmed intent to purchase. DO NOT show new products. Provide purchase assistance only.
+` : `
+CONVERSATION STRATEGY:
+${conversationService.getMessages(currentSessionId)?.length <= 2 ? `
+NEW USER PRIORITY: Warmly welcome, introduce store specialization, ask ONE simple question about preferences, offer 2-3 categories to explore. AVOID showing products immediately.
+` : `
+GENERAL FLOW: 1) Gather preferences through questions 2) Present 4 matching products 3) Check satisfaction 4) Guide to purchase
+`}
+
+SMART PRODUCT CONTEXT:
+${context.products.slice(0, 3).map((p: any) => `- ${p.title}: ${(p.description || '').substring(0, 100)} (${p.price || 'N/A'})`).join('\n')}
+
+INSTRUCTIONS:
+1. For general questions like "help me narrow down" or "compare options", ASK clarifying questions rather than showing products
+2. Only show products when user gives specific preferences or requests them
+3. Use conversational tone: ${recommendations.communicationTone}
+4. Build trust and create urgency when appropriate
+5. Explain KarjiStore's unique value (premium brands, competitive prices, UAE shipping)
+`}
+
+KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: any) => (d.content || '').substring(0, 300)).join('\n')}`;
+        
+        console.log('Optimized system prompt length:', coreSystemPrompt.length);
         
         messages = [
-          { role: "system", content: truncatedPrompt },
+          { role: "system", content: coreSystemPrompt },
           { role: "user", content: message }
         ];
       } else {
@@ -275,6 +321,46 @@ ${context.documents.filter(d => d.name.toLowerCase().includes('instruction') || 
       res.status(500).json({ error: "Failed to process chat message" });
     }
   });
+
+  // Helper function to determine if we should search for products
+  function shouldSearchForProducts(intent: any, message: string, conversationHistory: any[]): boolean {
+    const lowercaseMessage = message.toLowerCase();
+    
+    // Never search for products if user is asking for help or clarification
+    if (intent.category === 'support' && (
+      lowercaseMessage.includes('help me narrow down') ||
+      lowercaseMessage.includes('help me choose') ||
+      lowercaseMessage.includes('help me decide') ||
+      lowercaseMessage.includes('compare options') ||
+      lowercaseMessage.includes('i need help')
+    )) {
+      return false;
+    }
+    
+    // Search for products only if:
+    // 1. User has specific preferences (categories, brands, price)
+    // 2. User explicitly asks to see products
+    // 3. User is in buying mode
+    // 4. User is comparing specific products and there are products in history
+    
+    const hasSpecificPreferences = intent.entities.categories.length > 0 || 
+                                  intent.entities.brands.length > 0 || 
+                                  intent.entities.priceRange ||
+                                  intent.entities.products.length > 0;
+    
+    const explicitlyAskedForProducts = lowercaseMessage.includes('show me') && 
+                                      (lowercaseMessage.includes('perfume') || 
+                                       lowercaseMessage.includes('fragrance') ||
+                                       lowercaseMessage.includes('product'));
+    
+    const isBuyingIntent = intent.category === 'buying';
+    
+    const isComparingWithContext = intent.category === 'comparing' && 
+                                  conversationHistory.some((msg: any) => 
+                                    msg.type === 'assistant' && msg.content?.includes('AED'));
+    
+    return hasSpecificPreferences || explicitlyAskedForProducts || isBuyingIntent || isComparingWithContext;
+  }
 
   // Conversation management endpoints
   app.get("/api/conversation/:sessionId", async (req, res) => {

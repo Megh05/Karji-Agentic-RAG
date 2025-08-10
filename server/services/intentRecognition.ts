@@ -35,11 +35,11 @@ class IntentRecognitionService {
     const lowercaseMessage = message.toLowerCase();
     
     // Enhanced intent classification patterns
-    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'price', 'cost', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
-    const browsingSignals = ['show me', 'what do you have', 'browse', 'look at', 'see more', 'options', 'selection', 'suggest', 'recommend'];
-    const comparingSignals = ['compare', 'difference', 'versus', 'vs', 'better', 'best', 'which one', 'recommend', 'deciding between'];
-    const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns'];
-    const supportSignals = ['help', 'problem', 'issue', 'support', 'contact', 'return', 'refund', 'shipping'];
+    const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
+    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes'];
+    const comparingSignals = ['compare these', 'difference between these', 'versus', 'vs', 'which of these is better', 'deciding between these products'];
+    const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns', 'price', 'cost'];
+    const supportSignals = ['help me choose', 'help me decide', 'help me narrow down', 'help me find', 'need help', 'i need assistance', 'can you help'];
     const satisfactionSignals = ['perfect', 'these look great', 'exactly what i need', 'love these', 'these are good', 'satisfied', 'happy with these'];
     const preferencesSignals = ['for myself', 'for someone special', 'budget-friendly', 'premium quality', 'floral', 'woody', 'musky', 'everyday', 'special occasion'];
     
@@ -162,21 +162,34 @@ class IntentRecognitionService {
 
     switch (intent) {
       case 'browsing':
-        actions.push('show_product_carousel', 'suggest_categories', 'apply_smart_filters');
-        if (entities.categories.length > 0) actions.push('show_category_products');
+        // Only show products if user has specific preferences or explicitly requests to see products
+        if (entities.categories.length > 0 || entities.brands.length > 0 || entities.priceRange) {
+          actions.push('show_product_carousel', 'show_category_products');
+        } else {
+          actions.push('ask_preferences', 'suggest_categories', 'gather_requirements');
+        }
         break;
       case 'buying':
         actions.push('show_purchase_options', 'check_inventory', 'apply_discounts', 'create_urgency');
         if (entities.priceRange) actions.push('filter_by_price');
         break;
       case 'comparing':
-        actions.push('show_comparison_table', 'highlight_differences', 'recommend_best_choice');
+        // Only show comparison if there are specific products to compare
+        const hasProductsInHistory = history.some((msg: any) => msg.type === 'assistant' && msg.content?.includes('AED'));
+        if (hasProductsInHistory) {
+          actions.push('show_comparison_table', 'highlight_differences', 'recommend_best_choice');
+        } else {
+          actions.push('ask_comparison_criteria', 'gather_preferences_for_comparison');
+        }
         break;
       case 'information':
-        actions.push('provide_detailed_info', 'suggest_related_products');
+        actions.push('provide_detailed_info');
+        // Only suggest products if specific info was requested about products
+        if (entities.products.length > 0) actions.push('suggest_related_products');
         break;
       case 'support':
-        actions.push('offer_assistance', 'provide_contact_info', 'resolve_issue');
+        actions.push('ask_clarifying_questions', 'gather_preferences', 'provide_guidance');
+        // Don't immediately show products for support requests
         break;
     }
 

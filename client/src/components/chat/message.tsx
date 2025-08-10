@@ -4,6 +4,7 @@ import ProductCard from "./product-card";
 import { ProductCarousel } from "../ui/product-carousel";
 import { Button } from "@/components/ui/button";
 import WelcomeGuide from "./welcome-guide";
+import ProductComparison from "./product-comparison";
 import type { Product } from "@shared/schema";
 
 // Helper function to determine if products should be shown in carousel
@@ -72,11 +73,20 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
         {/* Smart Products Display */}
         {message.products && message.products.length > 0 && (
           <div className="mt-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {message.products.map((product: any) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            {/* Show comparison view if message content suggests comparison */}
+            {message.content.toLowerCase().includes('compar') && message.products.length >= 2 ? (
+              <ProductComparison 
+                products={message.products} 
+                onSelectProduct={(productId) => onFollowUpClick?.(`Tell me more about ${message.products.find(p => p.id === productId)?.title}`)}
+                onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products.find(p => p.id === productId)?.title} to my wishlist`)}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {message.products.map((product: any) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
