@@ -465,6 +465,30 @@ export class RAGService {
         }
       }
       
+      // Enhanced deal/discount detection and offers integration
+      const dealKeywords = ['deal', 'deals', 'sale', 'discount', 'offer', 'special', 'promo', 'cheap', 'affordable', 'save', 'savings'];
+      const isDealQuery = dealKeywords.some(keyword => queryLower.includes(keyword));
+      
+      if (isDealQuery) {
+        // Check if this product has an active offer (check our offers data)
+        const hasOffer = this.checkProductOffer(product);
+        if (hasOffer) {
+          score += 150; // Major boost for products with offers
+        } else {
+          // Still boost products that might be discounted based on title/description
+          if (titleLower.includes('sale') || titleLower.includes('discount') || descLower.includes('special')) {
+            score += 30;
+          }
+          // Boost based on budget-friendly prices
+          if (product.price) {
+            const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
+            if (productPrice <= 500) { // Consider under 500 AED as deal-worthy
+              score += 20;
+            }
+          }
+        }
+      }
+      
       // Final debug for first few products
       if (products.indexOf(product) < 2) {
         console.log(`Final score for ${product.title}: ${score}`);
@@ -482,10 +506,16 @@ export class RAGService {
     }));
     console.log('Top 5 product scores:', debugScores);
 
-    // Return products with score > 0, sorted by score
-    console.log(`Before final filtering: ${scoredProducts.filter(p => p.searchScore > 0).length} products have score > 0`);
+    // For deal queries, if no products scored high, lower the threshold
+    const isDealQuery = ['deal', 'deals', 'sale', 'discount', 'offer', 'special', 'promo', 'cheap', 'affordable'].some(keyword => 
+      queryLower.includes(keyword));
+    
+    const minScore = isDealQuery ? 5 : 0; // Lower threshold for deal queries
+    
+    // Return products with score > minScore, sorted by score
+    console.log(`Before final filtering: ${scoredProducts.filter(p => p.searchScore > minScore).length} products have score > ${minScore}`);
     const filteredProducts = scoredProducts
-      .filter(product => product.searchScore > 0)
+      .filter(product => product.searchScore > minScore)
       .sort((a, b) => b.searchScore - a.searchScore)
       .slice(0, maxProducts);
     console.log(`After final filtering: ${filteredProducts.length} products remain`);
@@ -503,6 +533,20 @@ export class RAGService {
     } catch (error) {
       console.error('Error clearing index:', error);
     }
+  }
+
+  private checkProductOffer(product: any): boolean {
+    // This is a simplified check - in production this would query the offers database
+    // For now, check if product matches our demo offers
+    const demoOfferIds = [
+      'https://www.karjistore.com/roberto-cavalli-paradiso-edp-75ml',
+      'https://www.karjistore.com/roberto-cavalli-uomo-edt-100ml',
+      'https://www.karjistore.com/tom-ford-ombre-leather-edp',
+      'https://www.karjistore.com/aigner-fashion-leather-men-bracelet-m-aj77073',
+      'gift-set-001'
+    ];
+    
+    return demoOfferIds.includes(product.id) || demoOfferIds.includes(product.link);
   }
 
   public async reindexAll(): Promise<void> {

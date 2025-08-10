@@ -185,7 +185,7 @@ class SmartResponseService {
     }
 
     // Recency and popularity (if available in product data)
-    if (product.additionalFields && 'popularity' in product.additionalFields && product.additionalFields.popularity) {
+    if (product.additionalFields && product.additionalFields && 'popularity' in product.additionalFields && product.additionalFields.popularity) {
       score += Number(product.additionalFields.popularity) * 2;
     }
 

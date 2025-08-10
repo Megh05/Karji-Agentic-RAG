@@ -326,6 +326,14 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: any) => (d.content || ''
   function shouldSearchForProducts(intent: any, message: string, conversationHistory: any[]): boolean {
     const lowercaseMessage = message.toLowerCase();
     
+    // Always search for deals/discount queries - this is a priority use case
+    const isDealQuery = ['deal', 'deals', 'sale', 'discount', 'offer', 'special', 'promo', 'cheap', 'affordable'].some(keyword => 
+      lowercaseMessage.includes(keyword));
+    
+    if (isDealQuery) {
+      return true; // Always show products for deal queries
+    }
+    
     // Never search for products if user is asking for help or clarification
     if (intent.category === 'support' && (
       lowercaseMessage.includes('help me narrow down') ||
