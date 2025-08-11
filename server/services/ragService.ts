@@ -586,6 +586,29 @@ export class RAGService {
           if (descLower.includes(term) || titleLower.includes(term)) {
             score += 80; // Even stronger boost for specialized fragrance notes like oud
           }
+          
+          // CRITICAL FIX: Also boost if product description contains the fragrance note
+          // This is essential for finding oriental/oud products that have these terms in descriptions
+          const productDescLower = (product.description || '').toLowerCase();
+          if (productDescLower.includes(term.toLowerCase())) {
+            score += 200; // Maximum boost for description matches
+            console.log(`BOOSTED ${product.title} by 200 for ${term} match in description`);
+          }
+        }
+        
+        // SPECIAL HANDLING FOR OUD/INCENSE QUERIES - broader matching
+        if (['oud', 'incense', 'sticks'].includes(term.toLowerCase())) {
+          const productDescLower = (product.description || '').toLowerCase();
+          const productTitleLower = titleLower;
+          
+          // Boost products with oriental, amber, woody, sandalwood, bakhoor in description
+          const orientalTerms = ['oriental', 'amber', 'woody', 'sandalwood', 'agarwood', 'bakhoor', 'attar'];
+          orientalTerms.forEach(orientalTerm => {
+            if (productDescLower.includes(orientalTerm) || productTitleLower.includes(orientalTerm)) {
+              score += 150; // Major boost for related oriental terms
+              console.log(`BOOSTED ${product.title} by 150 for oriental term: ${orientalTerm}`);
+            }
+          });
         }
       });
       
@@ -669,7 +692,7 @@ export class RAGService {
       ['oud', 'incense', 'oriental', 'amber', 'sandalwood', 'agarwood', 'bakhoor', 'attar'].includes(term.toLowerCase())
     );
     
-    const minScore = isDealQuery ? 5 : isSpecializedFragranceSearch ? 2 : 0; // Much lower threshold for specialized searches
+    const minScore = isDealQuery ? 5 : isSpecializedFragranceSearch ? 10 : 0; // Higher threshold to find actual matches
     console.log(`Specialized fragrance search detected: ${isSpecializedFragranceSearch}, using minScore: ${minScore}`);
     
     // Return products with score > minScore, sorted by score
