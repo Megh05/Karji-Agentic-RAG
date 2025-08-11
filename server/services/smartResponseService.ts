@@ -100,16 +100,16 @@ class SmartResponseService {
     // Keep responses concise and conversational
     let enhanced = baseResponse;
 
-    // Don't truncate responses unless they're extremely long (over 500 characters)
-    if (enhanced.length > 500) {
-      enhanced = enhanced.substring(0, 480).trim();
+    // Don't truncate responses unless they're extremely long (over 800 characters)
+    if (enhanced.length > 800) {
+      enhanced = enhanced.substring(0, 750).trim();
       // Ensure we end at a complete sentence
       const lastPeriod = enhanced.lastIndexOf('.');
       const lastExclamation = enhanced.lastIndexOf('!');
       const lastQuestion = enhanced.lastIndexOf('?');
       const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion);
       
-      if (lastSentenceEnd > 200) {
+      if (lastSentenceEnd > 400) {
         enhanced = enhanced.substring(0, lastSentenceEnd + 1);
       }
     }
