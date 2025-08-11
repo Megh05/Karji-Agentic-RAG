@@ -457,15 +457,8 @@ export class RAGService {
                            queryLower.includes('women') ||
                            queryLower.includes("women's");
     
-    // Enable debug logging temporarily to fix the filtering issue
-    console.log('Gender detection debug:', {
-      query: queryLower,
-      hasGenderRequest,
-      hasWomenRequest,
-      categoryHints: intent.categoryHints,
-      searchTerms: intent.searchTerms,
-      productsLength: products.length
-    });
+
+
     
     // Score products based on relevance
     const scoredProducts = products.map(product => {
@@ -525,14 +518,7 @@ export class RAGService {
                            (titleLower.includes('cologne') && !titleLower.includes('women'));
       const isUnisexProduct = productTypeField.includes('unisex');
       
-      // FINAL DEBUG: Show what's happening with scoring for first few products
-      if (products.indexOf(product) < 2) {
-        console.log(`\n=== FINAL DEBUG FOR ${product.title} ===`);
-        console.log(`Before gender filtering - Score: ${score}`);
-        console.log(`Product type: ${productTypeField}`);
-        console.log(`Is men's: ${isMensProduct}, Is women's: ${isWomensProduct}`);
-        console.log(`Gender request conditions: hasGenderRequest=${hasGenderRequest}, hasWomenRequest=${hasWomenRequest}`);
-      }
+
       
       // CRITICAL FIX: Strict gender filtering - completely exclude wrong gender products
       if (hasWomenRequest) {
@@ -667,10 +653,7 @@ export class RAGService {
       }
       
       // Final debug for first few products
-      if (products.indexOf(product) < 2) {
-        console.log(`Final score for ${product.title}: ${score}`);
-        console.log(`=== END DEBUG ===\n`);
-      }
+
       
       return { ...product, searchScore: score };
     });
@@ -846,17 +829,30 @@ export class RAGService {
       const extractedCategories = new Set<string>();
       const extractedBrands = new Set<string>();
       const priceRanges: number[] = [];
+      const extractedGenders = new Set<string>();
       
-      previousProducts.forEach(product => {
+      previousProducts.forEach((product, index) => {
         // Extract categories from title and description
         const text = `${product.title || ''} ${product.description || ''}`.toLowerCase();
+        const productType = ((product as any).additionalFields?.product_type || '').toLowerCase();
         
         // Category extraction
         if (text.includes('perfume') || text.includes('fragrance')) extractedCategories.add('perfume');
-        if (text.includes('women') || text.includes('female')) extractedCategories.add('women');
-        if (text.includes('men') || text.includes('male') || text.includes('homme')) extractedCategories.add('men');
         if (text.includes('watch')) extractedCategories.add('watch');
         if (text.includes('jewelry')) extractedCategories.add('jewelry');
+        
+        // CRITICAL: Gender extraction from both text and product_type
+        if (text.includes('women') || text.includes('female') || productType.includes('women')) {
+          extractedGenders.add('women');
+          extractedCategories.add('women');
+        }
+        if (text.includes('men') || text.includes('male') || text.includes('homme') || text.includes('cologne') || productType.includes('men')) {
+          extractedGenders.add('men');
+          extractedCategories.add('men');
+        }
+        if (productType.includes('unisex')) {
+          extractedGenders.add('unisex');
+        }
         
         // Brand extraction
         if (product.brand) extractedBrands.add(product.brand.toLowerCase());
@@ -871,7 +867,7 @@ export class RAGService {
       // Calculate average price range for similarity
       const avgPrice = priceRanges.length > 0 ? priceRanges.reduce((a, b) => a + b, 0) / priceRanges.length : null;
       
-      console.log(`Extracted characteristics - Categories: ${Array.from(extractedCategories).join(', ')}, Brands: ${Array.from(extractedBrands).join(', ')}, Avg Price: ${avgPrice}`);
+      console.log(`Extracted characteristics - Categories: ${Array.from(extractedCategories).join(', ')}, Brands: ${Array.from(extractedBrands).join(', ')}, Genders: ${Array.from(extractedGenders).join(', ')}, Avg Price: ${avgPrice}`);
 
       // Score products based on similarity to previously shown ones
       const scoredProducts = allProducts
@@ -879,6 +875,43 @@ export class RAGService {
         .map(product => {
           let score = 0;
           const productText = `${product.title || ''} ${product.description || ''}`.toLowerCase();
+          const productType = ((product as any).additionalFields?.product_type || '').toLowerCase();
+          
+          // CRITICAL: Gender filtering - must match the gender of previously shown products
+          const isWomensProduct = productText.includes('women') || productText.includes('female') || productType.includes('women') || 
+                                 productText.includes('woman') || productText.includes('her ') || productText.includes(' her') ||
+                                 productText.includes('she ') || productText.includes('ladies');
+          const isMensProduct = (productText.includes('men') && !productText.includes('women')) || 
+                               (productText.includes('male') && !productText.includes('female')) || 
+                               productText.includes('homme') || productText.includes('cologne') || 
+                               productType.includes('men') || 
+                               (productText.includes('man ') && !productText.includes('woman')) ||
+                               productText.includes('his ') || productText.includes(' his') || 
+                               productText.includes('he ') || productText.includes('gentleman');
+          const isUnisexProduct = productType.includes('unisex') && !isWomensProduct && !isMensProduct;
+          
+
+
+          // If previous products had specific gender, enforce strict gender matching
+          if (extractedGenders.has('men') && !extractedGenders.has('women')) {
+            // Previous products were men's only - exclude women's products completely
+            if (isWomensProduct) {
+              return { ...product, similarity: 0 }; // Exclude ALL women's products (including mislabeled ones)
+            }
+            if (isMensProduct) {
+              score += 10; // Strong boost for men's products
+            } else if (isUnisexProduct) {
+              score += 5; // Moderate boost for true unisex products
+            }
+          } else if (extractedGenders.has('women') && !extractedGenders.has('men')) {
+            // Previous products were women's only - exclude men's products
+            if (isMensProduct && !isUnisexProduct) {
+              return { ...product, similarity: 0 }; // Exclude men's products
+            }
+            if (isWomensProduct || isUnisexProduct) {
+              score += 10; // Strong boost for matching gender
+            }
+          }
           
           // Category similarity
           extractedCategories.forEach(category => {

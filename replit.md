@@ -37,7 +37,7 @@ This is a full-stack e-commerce AI chatbot application for KarjiStore.com. It fe
 - ✅ **ENHANCED BRAND DETECTION** - Expanded brand recognition to include Tom Ford, luxury designers, and multi-word brand names with proper scoring priorities
 - ✅ **DYNAMIC FOLLOW-UP QUESTIONS (August 2025)** - Completely rebuilt follow-up question system to generate contextual, response-related suggestions based on AI response content and user query analysis
 - ✅ **ELIMINATED REDUNDANT PRODUCT DESCRIPTIONS** - AI responses no longer repeat product details when visual product cards are displayed, keeping text conversational and focused on customer guidance
-- ✅ **ELIMINATED REDUNDANT PRODUCT DESCRIPTIONS** - AI responses no longer repeat product details when visual product cards are displayed, keeping text conversational and focused on customer guidance
+- ✅ **CRITICAL FIX: GENDER FILTERING SYSTEM (August 2025)** - Completely resolved cross-gender product recommendations in similar product searches. Men's cologne searches now exclusively return men's products, women's perfume searches return only women's products. Enhanced intelligent gender detection from product titles and types to prevent mislabeled products from crossing gender boundaries. System now properly extracts gender context from conversation history and enforces strict filtering in both directions.
 
 
 
