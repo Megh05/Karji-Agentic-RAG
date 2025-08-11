@@ -160,7 +160,7 @@ export class RAGService {
         const allProducts = await storage.getProducts();
         console.log(`RAG Service: Loaded ${allProducts.length} products from JSON storage for intelligent search`);
         if (allProducts.length > 0) {
-          console.log(`First product sample: ${allProducts[0].title} (${allProducts[0].additionalFields?.product_type})`);
+          console.log(`First product sample: ${allProducts[0].title} (${(allProducts[0] as any).additionalFields?.product_type})`);
         }
         // Search products based on title, description, and product_type  
         console.log(`Calling searchProductsIntelligently with maxProducts=${maxProducts}`);
@@ -264,7 +264,11 @@ export class RAGService {
       'wallet', 'bag', 'accessory', 'leather',
       'men', 'women', 'unisex', 'male', 'female', 'mens', 'womens', 'mans', 'womans',
       'luxury', 'premium', 'designer', 'elegant', 'sophisticated',
-      'gift', 'present', 'special', 'occasion'
+      'gift', 'present', 'special', 'occasion',
+      // Fragrance note types - CRITICAL for aquatic detection
+      'aquatic', 'marine', 'ocean', 'sea', 'fresh', 'water', 'blue', 'breeze',
+      'floral', 'citrus', 'woody', 'musky', 'oriental', 'spicy', 'fruity', 'green',
+      'light', 'fresh', 'clean', 'airy', 'crisp', 'refreshing'
     ];
     
     // Add semantic understanding for vague terms
@@ -332,9 +336,15 @@ export class RAGService {
   private searchProductsWithIntent(query: string, products: any[], intent: any, maxProducts: number): any[] {
     console.log(`Searching with provided intent for ${maxProducts} products`);
     
-    // Gender-aware filtering
-    const genderDebug = this.detectGenderRequest(query, intent.categoryHints, intent.searchTerms, products.length);
-    console.log('Gender detection debug:', genderDebug);
+    // Gender-aware filtering debug info
+    console.log('Gender detection debug:', {
+      query,
+      hasGenderRequest: intent.categoryHints.some((hint: string) => ['men', 'women', 'male', 'female'].includes(hint.toLowerCase())),
+      hasWomenRequest: intent.categoryHints.some((hint: string) => ['women', 'female'].includes(hint.toLowerCase())),
+      categoryHints: intent.categoryHints,
+      searchTerms: intent.searchTerms,
+      productsLength: products.length
+    });
     
     // Score products based on various factors
     const scoredProducts = products.map(product => {
@@ -342,7 +352,7 @@ export class RAGService {
       
       // Brand matching (high priority)
       if (intent.brandPreferences.length > 0) {
-        const brandMatch = intent.brandPreferences.some(brand => 
+        const brandMatch = intent.brandPreferences.some((brand: string) => 
           product.brand?.toLowerCase().includes(brand.toLowerCase()) ||
           product.title?.toLowerCase().includes(brand.toLowerCase())
         );
@@ -350,10 +360,10 @@ export class RAGService {
       }
       
       // Category matching
-      intent.categoryHints.forEach(category => {
+      intent.categoryHints.forEach((category: string) => {
         if (product.title?.toLowerCase().includes(category.toLowerCase()) || 
             product.description?.toLowerCase().includes(category.toLowerCase()) ||
-            product.additionalFields?.product_type?.toLowerCase().includes(category.toLowerCase())) {
+            (product as any).additionalFields?.product_type?.toLowerCase().includes(category.toLowerCase())) {
           score += 20;
         }
       });
@@ -552,12 +562,21 @@ export class RAGService {
         score += 5; // Bonus for matching price criteria
       }
       
-      // Search terms matching
+      // Search terms matching with enhanced fragrance note detection
       intent.searchTerms.forEach(term => {
         if (titleLower.includes(term)) score += 4; // Title matches are most important
         if (brandLower.includes(term)) score += 3; // Brand matches are important
         if (categoryLower.includes(term)) score += 3; // Category matches
         if (descLower.includes(term)) score += 2; // Description matches
+        
+        // CRITICAL: Boost for fragrance note matches (aquatic, fresh, etc.)
+        const fragranceNotes = ['aquatic', 'marine', 'ocean', 'sea', 'fresh', 'water', 'blue', 'breeze', 'citrus', 'floral', 'woody', 'musky', 'oriental', 'spicy', 'fruity', 'green', 'light', 'clean', 'airy', 'crisp', 'refreshing'];
+        if (fragranceNotes.includes(term.toLowerCase())) {
+          // Major boost for fragrance note matches in description or title
+          if (descLower.includes(term) || titleLower.includes(term)) {
+            score += 50; // Strong boost for fragrance note matches
+          }
+        }
       });
       
       // Category hints bonus
