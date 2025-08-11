@@ -268,15 +268,22 @@ export class RAGService {
       // Fragrance note types - CRITICAL for aquatic detection
       'aquatic', 'marine', 'ocean', 'sea', 'fresh', 'water', 'blue', 'breeze',
       'floral', 'citrus', 'woody', 'musky', 'oriental', 'spicy', 'fruity', 'green',
-      'light', 'fresh', 'clean', 'airy', 'crisp', 'refreshing'
+      'light', 'fresh', 'clean', 'airy', 'crisp', 'refreshing',
+      // Oud and incense related terms
+      'oud', 'agarwood', 'incense', 'sandalwood', 'amber', 'resin', 'smoky',
+      'bakhoor', 'attar', 'arabic', 'middle eastern', 'traditional'
     ];
     
-    // Add semantic understanding for vague terms
+    // Add semantic understanding for vague terms and specific requests
     const vaguePhrases = {
       'something nice': ['luxury', 'premium', 'elegant'],
       'good quality': ['premium', 'luxury'],
       'affordable': ['budget', 'cheap', 'inexpensive'],
       'expensive': ['luxury', 'premium', 'designer'],
+      'incense sticks': ['oud', 'incense', 'fragrance', 'oriental'], // Map incense requests to oud fragrances
+      'oud incense': ['oud', 'oriental', 'woody', 'amber'], // Semantic expansion for oud requests
+      'traditional fragrance': ['oud', 'oriental', 'arabic', 'amber'],
+      'arabic perfume': ['oud', 'oriental', 'amber', 'sandalwood']
     };
     
     // Check for vague phrases and expand them
@@ -389,19 +396,22 @@ export class RAGService {
       }
       
       // Gender filtering
-      if (genderDebug.hasGenderRequest) {
-        const productType = product.additionalFields?.product_type?.toLowerCase() || '';
+      const hasGenderRequest = intent.categoryHints.some((hint: string) => ['men', 'women', 'male', 'female'].includes(hint.toLowerCase()));
+      const hasWomenRequest = intent.categoryHints.some((hint: string) => ['women', 'female'].includes(hint.toLowerCase()));
+      
+      if (hasGenderRequest) {
+        const productType = (product as any).additionalFields?.product_type?.toLowerCase() || '';
         const isMens = productType.includes('men') && !productType.includes('women');
         const isWomens = productType.includes('women') && !productType.includes('men');
         const isUnisex = productType.includes('unisex') || (!isMens && !isWomens);
         
-        if (genderDebug.hasWomenRequest && !isWomens && !isUnisex) {
+        if (hasWomenRequest && !isWomens && !isUnisex) {
           score = 0; // Exclude men's products for women's requests
-        } else if (!genderDebug.hasWomenRequest && genderDebug.hasGenderRequest && !isMens && !isUnisex) {
+        } else if (!hasWomenRequest && hasGenderRequest && !isMens && !isUnisex) {
           score = 0; // Exclude women's products for men's requests
-        } else if (genderDebug.hasWomenRequest && (isWomens || isUnisex)) {
+        } else if (hasWomenRequest && (isWomens || isUnisex)) {
           score += 200; // Boost women's and unisex products
-        } else if (!genderDebug.hasWomenRequest && genderDebug.hasGenderRequest && (isMens || isUnisex)) {
+        } else if (!hasWomenRequest && hasGenderRequest && (isMens || isUnisex)) {
           score += 200; // Boost men's and unisex products
         }
       }
@@ -569,12 +579,12 @@ export class RAGService {
         if (categoryLower.includes(term)) score += 3; // Category matches
         if (descLower.includes(term)) score += 2; // Description matches
         
-        // CRITICAL: Boost for fragrance note matches (aquatic, fresh, etc.)
-        const fragranceNotes = ['aquatic', 'marine', 'ocean', 'sea', 'fresh', 'water', 'blue', 'breeze', 'citrus', 'floral', 'woody', 'musky', 'oriental', 'spicy', 'fruity', 'green', 'light', 'clean', 'airy', 'crisp', 'refreshing'];
+        // CRITICAL: Boost for fragrance note matches (aquatic, fresh, oud, etc.)
+        const fragranceNotes = ['aquatic', 'marine', 'ocean', 'sea', 'fresh', 'water', 'blue', 'breeze', 'citrus', 'floral', 'woody', 'musky', 'oriental', 'spicy', 'fruity', 'green', 'light', 'clean', 'airy', 'crisp', 'refreshing', 'oud', 'agarwood', 'incense', 'sandalwood', 'amber', 'resin', 'smoky', 'bakhoor', 'attar'];
         if (fragranceNotes.includes(term.toLowerCase())) {
           // Major boost for fragrance note matches in description or title
           if (descLower.includes(term) || titleLower.includes(term)) {
-            score += 50; // Strong boost for fragrance note matches
+            score += 80; // Even stronger boost for specialized fragrance notes like oud
           }
         }
       });
@@ -654,7 +664,13 @@ export class RAGService {
     const isDealQuery = ['deal', 'deals', 'sale', 'discount', 'offer', 'special', 'promo', 'cheap', 'affordable'].some(keyword => 
       queryLower.includes(keyword));
     
-    const minScore = isDealQuery ? 5 : 0; // Lower threshold for deal queries
+    // For specialized searches like oud/incense, lower the threshold significantly
+    const isSpecializedFragranceSearch = intent.searchTerms.some((term: string) => 
+      ['oud', 'incense', 'oriental', 'amber', 'sandalwood', 'agarwood', 'bakhoor', 'attar'].includes(term.toLowerCase())
+    );
+    
+    const minScore = isDealQuery ? 5 : isSpecializedFragranceSearch ? 2 : 0; // Much lower threshold for specialized searches
+    console.log(`Specialized fragrance search detected: ${isSpecializedFragranceSearch}, using minScore: ${minScore}`);
     
     // Return products with score > minScore, sorted by score
     console.log(`Before final filtering: ${scoredProducts.filter(p => p.searchScore > minScore).length} products have score > ${minScore}`);
