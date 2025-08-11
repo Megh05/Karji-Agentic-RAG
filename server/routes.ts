@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
-import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema } from "@shared/schema";
+import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema, type Product, type Document } from "@shared/schema";
 import { ragService } from "./services/ragService.js";
 import { conversationService } from "./services/conversationService.js";
 import { smartResponseService } from "./services/smartResponseService.js";
@@ -103,12 +103,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const shouldSearchProducts = shouldSearchForProducts(intent, message, conversationService.getMessages(currentSessionId) || []);
         
         if (shouldSearchProducts) {
-          // Find relevant context using enhanced RAG with user preferences
-          context = await ragService.findRelevantContext(message, {
-            maxDocuments: 2,
-            maxProducts: 4,
-            similarityThreshold: 0.3
-          });
+          // Check if user is asking for similar products based on previous conversation
+          const isSearchingSimilarProducts = message.toLowerCase().includes('similar') || message.toLowerCase().includes('show me more');
+          
+          if (isSearchingSimilarProducts) {
+            // Get context from previously shown products for similarity search
+            const previousProducts = conversationService.getRecentlyShownProducts(currentSessionId);
+            context = await ragService.findSimilarProducts(message, previousProducts, {
+              maxDocuments: 2,
+              maxProducts: 4,
+              similarityThreshold: 0.3
+            });
+          } else {
+            // Find relevant context using enhanced RAG with user preferences
+            context = await ragService.findRelevantContext(message, {
+              maxDocuments: 2,
+              maxProducts: 4,
+              similarityThreshold: 0.3
+            });
+          }
         } else {
           // For general questions, only get documents (knowledge base) but not products
           context = await ragService.findRelevantContext(message, {
@@ -199,26 +212,31 @@ CONVERSATION FLOW LOGIC:
 4. PURCHASE GUIDANCE PHASE: If satisfied, guide them toward purchase decision and provide purchase assistance
 
 SMART PRODUCT RECOMMENDATIONS:
-${context.products.slice(0, 4).map((p: any) => `- ${p.title} (${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''})`).join('\n')}
+${context.products.slice(0, 4).map((p: Product) => `- ${p.title} (${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''})`).join('\n')}
 
-CRITICAL PRODUCT DISPLAY RULE: When showing products, your text response must be conversational only. DO NOT:
-- Include product names, prices, descriptions, or specifications in your text
-- List products with details like "1. Product Name - Description (Price: X AED)"
-- Repeat any information that appears on the visual product cards
-- Use placeholder text like "[Product cards displayed here]" or similar
+🚨 CRITICAL PRODUCT DISPLAY RULE - READ CAREFULLY 🚨
+When products are being displayed as visual cards, your response MUST follow these strict rules:
 
-Instead, write conversational text like:
-- "Here are some perfect options for you within your budget"
-- "I've selected these fragrances based on your preferences"
-- "These would make excellent choices for what you're looking for"
+❌ NEVER DO THIS:
+- Don't write product names: "Gucci Guilty Pour Femme White EDP Women 90ml"
+- Don't write prices: "665.00 AED" or "Price: 665 AED" 
+- Don't list products: "1. Product A - Description (Price: X)"
+- Don't use placeholder text: "[Product cards displayed here]"
+- Don't repeat ANY details that appear on the visual product cards
 
-The visual product cards handle ALL product information - your text should focus on customer guidance only.
+✅ ALWAYS DO THIS INSTEAD:
+- Write ONLY conversational guidance: "Here are some perfect options for you"
+- Focus on helping the customer: "I've selected these based on your preferences"  
+- Be supportive: "These would make excellent choices for what you're looking for"
+- Guide their decision: "Take a look at these recommendations"
+
+REMEMBER: The visual product cards show ALL product details (names, prices, descriptions). Your job is to provide friendly guidance and context, NOT to repeat product information.
 `}
 
 INSTRUCTIONS:
 1. ${conversationService.getMessages(currentSessionId)?.length <= 2 ? 'PRIORITY: Follow NEW USER ONBOARDING flow above for smooth introduction' : 'Follow the conversation flow logic above - don\'t skip phases'}
 2. When showing products, ALWAYS present exactly 4 options for optimal choice
-3. **CRITICAL PRODUCT DISPLAY RULE: When showing products, write ONLY conversational guidance text. DO NOT list product names, prices, descriptions, or use placeholder text like "[Product cards displayed here]". The visual cards handle all details. Example: "Here are some great options for you" NOT "1. Product Name - Description (Price: X)"**
+3. **🚨 CRITICAL: When showing products, write ONLY conversational guidance text. NEVER list product names, prices, or descriptions. The visual cards handle all details. Write like: "Here are some great options for you" NEVER like: "1. Product Name - Description (Price: X AED)"**
 4. After presenting products, check customer satisfaction before offering more
 5. If customer indicates satisfaction ("perfect", "these look great", etc.), immediately guide toward purchase
 6. Use conversational follow-up suggestions that sound like natural customer responses
@@ -230,7 +248,7 @@ INSTRUCTIONS:
 12. Always explain what makes KarjiStore special (premium brands, competitive prices, fast UAE shipping)
 
 KNOWLEDGE BASE:
-${context.documents.slice(0, 2).map((d: any) => (d.content || '').substring(0, 200)).join('\n')}
+${context.documents.slice(0, 2).map((d: Document & { content?: string }) => (d.content || '').substring(0, 200)).join('\n')}
 
 Remember: You're not just providing information - you're creating a personalized shopping experience that guides this specific customer toward a purchase decision.
 
@@ -279,7 +297,7 @@ INSTRUCTIONS:
 6. Explain KarjiStore's unique value (premium brands, competitive prices, UAE shipping)
 `}
 
-KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: any) => (d.content || '').substring(0, 300)).join('\n')}`;
+KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: string }) => (d.content || '').substring(0, 300)).join('\n')}`;
         
         console.log('Optimized system prompt length:', coreSystemPrompt.length);
         

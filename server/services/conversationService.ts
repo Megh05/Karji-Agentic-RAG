@@ -250,6 +250,30 @@ class ConversationService {
       activeMessages: totalMessages
     };
   }
+
+  public getRecentlyShownProducts(sessionId: string): any[] {
+    const session = this.sessions.get(sessionId);
+    if (!session) return [];
+
+    // Get products from the last 3 assistant messages (recent conversation context)
+    const recentProducts: any[] = [];
+    const recentAssistantMessages = session.messages
+      .filter(msg => msg.role === 'assistant' && msg.products && msg.products.length > 0)
+      .slice(-3); // Last 3 messages with products
+
+    recentAssistantMessages.forEach(msg => {
+      if (msg.products) {
+        recentProducts.push(...msg.products);
+      }
+    });
+
+    // Remove duplicates based on product ID
+    const uniqueProducts = recentProducts.filter((product, index, arr) => 
+      arr.findIndex(p => p.id === product.id) === index
+    );
+
+    return uniqueProducts;
+  }
 }
 
 export const conversationService = ConversationService.getInstance();

@@ -813,6 +813,135 @@ export class RAGService {
     
     console.log('Reindexing complete');
   }
+
+  public async findSimilarProducts(
+    query: string, 
+    previousProducts: any[], 
+    options?: {
+      maxDocuments?: number;
+      maxProducts?: number;
+      similarityThreshold?: number;
+    }
+  ): Promise<RAGContext> {
+    if (!this.isInitialized) await this.initialize();
+
+    const { 
+      maxDocuments = 2, 
+      maxProducts = 4, 
+      similarityThreshold = 0.1 
+    } = options || {};
+
+    try {
+      console.log(`Finding similar products based on ${previousProducts.length} previously shown products`);
+      
+      // Get all products from storage
+      const allProducts = await storage.getProducts();
+      
+      if (previousProducts.length === 0) {
+        // Fallback to regular search if no previous products
+        return await this.findRelevantContext(query, options);
+      }
+
+      // Extract characteristics from previously shown products
+      const extractedCategories = new Set<string>();
+      const extractedBrands = new Set<string>();
+      const priceRanges: number[] = [];
+      
+      previousProducts.forEach(product => {
+        // Extract categories from title and description
+        const text = `${product.title || ''} ${product.description || ''}`.toLowerCase();
+        
+        // Category extraction
+        if (text.includes('perfume') || text.includes('fragrance')) extractedCategories.add('perfume');
+        if (text.includes('women') || text.includes('female')) extractedCategories.add('women');
+        if (text.includes('men') || text.includes('male') || text.includes('homme')) extractedCategories.add('men');
+        if (text.includes('watch')) extractedCategories.add('watch');
+        if (text.includes('jewelry')) extractedCategories.add('jewelry');
+        
+        // Brand extraction
+        if (product.brand) extractedBrands.add(product.brand.toLowerCase());
+        
+        // Price extraction
+        if (product.price) {
+          const price = parseFloat(product.price.replace(/[^\d.]/g, ''));
+          if (!isNaN(price)) priceRanges.push(price);
+        }
+      });
+
+      // Calculate average price range for similarity
+      const avgPrice = priceRanges.length > 0 ? priceRanges.reduce((a, b) => a + b, 0) / priceRanges.length : null;
+      
+      console.log(`Extracted characteristics - Categories: ${Array.from(extractedCategories).join(', ')}, Brands: ${Array.from(extractedBrands).join(', ')}, Avg Price: ${avgPrice}`);
+
+      // Score products based on similarity to previously shown ones
+      const scoredProducts = allProducts
+        .filter(product => !previousProducts.some(prev => prev.id === product.id)) // Exclude already shown products
+        .map(product => {
+          let score = 0;
+          const productText = `${product.title || ''} ${product.description || ''}`.toLowerCase();
+          
+          // Category similarity
+          extractedCategories.forEach(category => {
+            if (productText.includes(category)) {
+              score += 3; // Strong category match
+            }
+          });
+          
+          // Brand similarity
+          if (product.brand && extractedBrands.has(product.brand.toLowerCase())) {
+            score += 2; // Brand match
+          }
+          
+          // Price similarity (within 50% range)
+          if (avgPrice && product.price) {
+            const productPrice = parseFloat(product.price.replace(/[^\d.]/g, ''));
+            if (!isNaN(productPrice)) {
+              const priceDiff = Math.abs(productPrice - avgPrice) / avgPrice;
+              if (priceDiff <= 0.5) {
+                score += 1; // Price similarity
+              }
+            }
+          }
+          
+          // Query relevance (original search terms)
+          const queryWords = query.toLowerCase().split(/\s+/);
+          queryWords.forEach(word => {
+            if (word.length > 2 && productText.includes(word)) {
+              score += 0.5; // Query relevance bonus
+            }
+          });
+          
+          return { ...product, similarity: score };
+        })
+        .filter(product => product.similarity > 0)
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, maxProducts);
+
+      console.log(`Found ${scoredProducts.length} similar products with scores: ${scoredProducts.map(p => `${p.title?.substring(0, 30)}... (${p.similarity})`).join(', ')}`);
+
+      // Get documents as usual
+      const documents = await storage.getDocuments();
+      const relevantDocs = documents
+        .map(doc => ({ 
+          ...doc, 
+          similarity: this.calculateBasicSimilarity(query, doc.content || '') 
+        }))
+        .filter(doc => doc.similarity > similarityThreshold)
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, maxDocuments);
+
+      return {
+        documents: relevantDocs,
+        products: scoredProducts,
+        relevantChunks: []
+      };
+      
+    } catch (error) {
+      console.error('Error finding similar products:', error);
+      // Fallback to regular search
+      return await this.findRelevantContext(query, options);
+    }
+  }
 }
 
 export const ragService = RAGService.getInstance();
