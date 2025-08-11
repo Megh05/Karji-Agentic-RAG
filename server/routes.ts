@@ -101,6 +101,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         // Determine if we should search for products based on intent and user specificity
         const shouldSearchProducts = shouldSearchForProducts(intent, message, conversationService.getMessages(currentSessionId) || []);
+        console.log('Product search decision details:', {
+          shouldSearch: shouldSearchProducts,
+          intent: intent.category,
+          message: message.toLowerCase(),
+          hasOpenTo: message.toLowerCase().includes('open to')
+        });
+        console.log('Intent details:', JSON.stringify(intent, null, 2));
         
         if (shouldSearchProducts) {
           // Check if user is asking for similar products based on previous conversation
@@ -358,6 +365,11 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
   // Helper function to determine if we should search for products
   function shouldSearchForProducts(intent: any, message: string, conversationHistory: any[]): boolean {
     const lowercaseMessage = message.toLowerCase();
+    console.log('shouldSearchForProducts called with:', {
+      intent: intent.category,
+      message: lowercaseMessage,
+      hasOpenTo: lowercaseMessage.includes('open to')
+    });
     
     // Always search for deals/discount queries - this is a priority use case
     const isDealQuery = ['deal', 'deals', 'sale', 'discount', 'offer', 'special', 'promo', 'cheap', 'affordable'].some(keyword => 
@@ -367,14 +379,14 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
       return true; // Always show products for deal queries
     }
     
-    // Never search for products if user is asking for help or clarification
+    // Never search for products if user is asking for help or clarification (but NOT for openness expressions)
     if (intent.category === 'support' && (
       lowercaseMessage.includes('help me narrow down') ||
       lowercaseMessage.includes('help me choose') ||
       lowercaseMessage.includes('help me decide') ||
       lowercaseMessage.includes('compare options') ||
       lowercaseMessage.includes('i need help')
-    )) {
+    ) && !lowercaseMessage.includes('open to')) {
       return false;
     }
     
@@ -400,8 +412,28 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
     const isComparingWithContext = intent.category === 'comparing' && 
                                   conversationHistory.some((msg: any) => 
                                     msg.type === 'assistant' && msg.content?.includes('AED'));
+
+    // User expressing openness or flexibility should see products
+    const isOpenToBrowsing = lowercaseMessage.includes('open to') || 
+                            lowercaseMessage.includes('flexible') ||
+                            lowercaseMessage.includes('anything') ||
+                            lowercaseMessage.includes('any option') ||
+                            lowercaseMessage.includes('show me') ||
+                            lowercaseMessage.includes('what do you have');
+
+    // User has engaged with preferences (this indicates browsing intent after preference questions)
+    const hasEngagedWithPreferences = conversationHistory.some((msg: any) => 
+      msg.role === 'user' && (
+        msg.content?.toLowerCase().includes('woody') ||
+        msg.content?.toLowerCase().includes('musky') ||
+        msg.content?.toLowerCase().includes('fresh') ||
+        msg.content?.toLowerCase().includes('light') ||
+        msg.content?.toLowerCase().includes('cologne')
+      )
+    );
     
-    return hasSpecificPreferences || explicitlyAskedForProducts || isBuyingIntent || isComparingWithContext;
+    return hasSpecificPreferences || explicitlyAskedForProducts || isBuyingIntent || 
+           isComparingWithContext || isOpenToBrowsing || hasEngagedWithPreferences;
   }
 
   // Conversation management endpoints

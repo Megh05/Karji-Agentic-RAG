@@ -36,7 +36,7 @@ class IntentRecognitionService {
     
     // Enhanced intent classification patterns
     const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
-    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes'];
+    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes', 'open to any', 'open to anything', 'flexible', 'show me', 'what do you have'];
     const comparingSignals = ['compare these', 'difference between these', 'versus', 'vs', 'which of these is better', 'deciding between these products'];
     const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns', 'price', 'cost'];
     const supportSignals = ['help me choose', 'help me decide', 'help me narrow down', 'help me find', 'need help', 'i need assistance', 'can you help'];
