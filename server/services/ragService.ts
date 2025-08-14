@@ -451,11 +451,26 @@ export class RAGService {
                             intent.searchTerms.some(term => ['men', 'male', 'mans', 'mens', 'cologne'].includes(term)) ||
                             queryLower.includes('men') ||
                             queryLower.includes('cologne') ||
-                            queryLower.includes("men's");
+                            queryLower.includes("men's") ||
+                            queryLower.includes('for dad') ||
+                            queryLower.includes('for him') ||
+                            queryLower.includes('for husband') ||
+                            queryLower.includes('for boyfriend') ||
+                            queryLower.includes('for father') ||
+                            queryLower.includes('for gentleman');
     const hasWomenRequest = intent.categoryHints.some(hint => ['women', 'female', 'womans', 'womens'].includes(hint)) ||
                            intent.searchTerms.some(term => ['women', 'female', 'womans', 'womens'].includes(term)) ||
                            queryLower.includes('women') ||
-                           queryLower.includes("women's");
+                           queryLower.includes("women's") ||
+                           queryLower.includes('for mom') ||
+                           queryLower.includes('for her') ||
+                           queryLower.includes('for wife') ||
+                           queryLower.includes('for girlfriend') ||
+                           queryLower.includes('for mother') ||
+                           queryLower.includes('for lady') ||
+                           queryLower.includes('for ladies');
+
+
     
 
 
@@ -509,17 +524,31 @@ export class RAGService {
         }
       }
       
-      // Gender-specific filtering and scoring - MOST ACCURATE VERSION
+      // Gender-specific filtering and scoring - ENHANCED PRECISION VERSION
       const productTypeField = (product.additionalFields?.product_type || '').toLowerCase();
-      const isWomensProduct = productTypeField.includes('women') || titleLower.includes('for women') || 
-                             (titleLower.includes('women') && !titleLower.includes('for men'));
+      const allText = `${titleLower} ${descLower}`.toLowerCase();
+      
+      // More precise women's product detection
+      const isWomensProduct = productTypeField.includes('women') || 
+                             titleLower.includes('for women') || 
+                             (titleLower.includes('women') && !titleLower.includes('for men')) ||
+                             titleLower.includes('woman edp') || titleLower.includes('woman edt') ||
+                             allText.includes('feminine') || allText.includes('for her');
+      
+      // More precise men's product detection - excluding "homme" false positives
       const isMensProduct = (productTypeField.includes('men') && !productTypeField.includes('women')) || 
-                           (titleLower.includes('for men') && !titleLower.includes('women')) || 
-                           (titleLower.includes('cologne') && !titleLower.includes('women'));
-      const isUnisexProduct = productTypeField.includes('unisex');
+                           titleLower.includes('for men') || 
+                           (titleLower.includes('cologne') && !titleLower.includes('women')) ||
+                           (titleLower.includes('homme') && (titleLower.includes('for men') || titleLower.includes('men'))) ||
+                           titleLower.includes('man edt') || titleLower.includes('man edp') ||
+                           allText.includes('masculine') || allText.includes('for him');
+      
+      const isUnisexProduct = productTypeField.includes('unisex') && !isWomensProduct && !isMensProduct;
       
 
       
+
+
       // CRITICAL FIX: Strict gender filtering - completely exclude wrong gender products
       if (hasWomenRequest) {
         // For women's requests, ONLY allow women's and unisex products
