@@ -21,7 +21,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 lg:w-72 bg-card dark:bg-card border-r border-border flex flex-col luxury-container rounded-r-2xl">
+    <div className="w-64 lg:w-72 bg-card dark:bg-card flex flex-col luxury-container rounded-none relative z-30">
       {/* Logo Section - Luxury Design */}
       <div className="p-4 lg:p-6 border-b border-border">
         <div className="flex items-center space-x-3">

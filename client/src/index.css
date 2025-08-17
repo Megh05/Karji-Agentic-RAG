@@ -284,11 +284,11 @@
   
   /* Input Container - Sticky Bottom - Compact */
   .input-container {
-    @apply luxury-container backdrop-blur-sm border-t px-4 py-3 lg:px-6 lg:py-4;
+    @apply bg-card backdrop-blur-sm border-t border-border px-4 py-3 lg:px-6 lg:py-4;
     background: linear-gradient(135deg, hsl(var(--card) / 0.98) 0%, hsl(var(--muted) / 0.1) 100%);
     position: sticky;
     bottom: 0;
-    z-index: 10;
+    z-index: 20;
   }
   
   /* Discount Badges */
