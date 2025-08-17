@@ -25,7 +25,7 @@ export default function Sidebar() {
       {/* Logo Section - Luxury Design */}
       <div className="p-4 lg:p-6 border-b border-border">
         <div className="flex items-center space-x-3">
-          <div className="bot-avatar animate-luxury-float">
+          <div className="bot-avatar">
             <Store className="w-6 h-6" />
           </div>
           <div>
@@ -41,14 +41,11 @@ export default function Sidebar() {
           const Icon = item.icon;
           return (
             <Link key={item.href} href={item.href} className={cn(
-              "flex items-center space-x-3 px-4 py-4 rounded-xl transition-all duration-300 relative overflow-hidden",
+              "flex items-center space-x-3 px-4 py-4 rounded-xl",
               item.active 
                 ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-luxury" 
-                : "text-foreground hover:bg-muted/50 hover:shadow-sm hover:transform hover:translateY(-1px)"
+                : "text-foreground"
             )}>
-              {item.active && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-              )}
               <Icon className="w-5 h-5 relative z-10" />
               <span className="font-medium relative z-10">{item.label}</span>
             </Link>
@@ -60,7 +57,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-border">
         <div className="luxury-container px-3 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-luxury-pulse"></div>
+            <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
             <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Assistant Online</span>
           </div>
         </div>
