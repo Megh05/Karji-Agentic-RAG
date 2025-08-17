@@ -158,12 +158,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const systemPrompt = `You are an advanced AI shopping assistant for KarjiStore.com with deep understanding of customer psychology and preferences. Your responses should be intelligent, personalized, and conversion-focused.
 
 STORE OVERVIEW FOR NEW USERS:
-KarjiStore.com specializes in premium fragrances and luxury perfumes. We offer:
-- Designer perfumes for men and women (Roberto Cavalli, Tom Ford, etc.)
-- Niche and luxury fragrances
-- Gift sets and special occasions perfumes
+KarjiStore.com offers a wide range of premium products including:
+- Designer perfumes and fragrances (Roberto Cavalli, Tom Ford, etc.)
+- Luxury accessories and jewelry
+- Premium watches and timepieces
+- Beauty and personal care products
 - Competitive pricing with frequent offers
 - Fast shipping across UAE
+
+IMPORTANT: Always match your response to the customer's actual request. If they ask for hand cream, respond about hand cream - not perfumes. If they ask for accessories, respond about accessories - not fragrances. Be category-appropriate in your responses.
 
 CUSTOMER INTELLIGENCE:
 - Customer Type: ${insights.customerType}
@@ -207,9 +210,9 @@ PRIORITY: This appears to be a new user. Follow this enhanced onboarding flow:
 2. IMMEDIATE VALUE: Mention current popular items or special offers to create interest
 3. GENTLE DISCOVERY: Ask ONE simple, open-ended question about what they're looking for
 4. SMART SUGGESTIONS: Offer 2-3 specific categories they can explore (e.g., "women's fragrances", "men's cologne", "gift sets")
-5. AVOID OVERWHELMING: Don't show products immediately unless specifically requested
+5. EXCEPTION: If user specifically requests products (e.g., "show me men's accessories", "show me watches"), immediately search and display relevant products instead of following onboarding flow
 
-Example approach: "Welcome to KarjiStore! We specialize in premium fragrances from top designers like Roberto Cavalli and Tom Ford. Whether you're looking for something for yourself or as a gift, I'd love to help you find the perfect scent. What brings you here today - are you browsing for men's or women's fragrances?"
+Example approach: "Welcome to KarjiStore! We offer premium fragrances, luxury accessories, watches, and beauty products from top designers. Whether you're looking for something for yourself or as a gift, I'd love to help you find the perfect item. What brings you here today - are you looking for fragrances, accessories, watches, or something else?"
 ` : ''}
 
 CONVERSATION FLOW LOGIC:
@@ -218,8 +221,16 @@ CONVERSATION FLOW LOGIC:
 3. SATISFACTION CHECK PHASE: After showing products, ask if they're satisfied or need different options
 4. PURCHASE GUIDANCE PHASE: If satisfied, guide them toward purchase decision and provide purchase assistance
 
+EXCEPTION FOR NEW USERS: If a new user makes a specific product request (e.g., "show me men's accessories"), skip preference gathering and immediately show relevant products.
+
 SMART PRODUCT RECOMMENDATIONS:
 ${context.products.slice(0, 4).map((p: Product) => `- ${p.title} (${p.price || 'N/A'}${p.discountPrice ? `, Sale: ${p.discountPrice}` : ''})`).join('\n')}
+
+CATEGORY-APPROPRIATE RESPONSES:
+- For fragrance requests: Use scent-related language (fresh, woody, musky, etc.)
+- For beauty/skincare requests: Use skin-related language (moisturizing, hydrating, sensitive skin, etc.)
+- For accessory requests: Use style-related language (elegant, classic, modern, etc.)
+- For watch requests: Use timepiece-related language (precise, stylish, luxury, etc.)
 
 🚨 CRITICAL PRODUCT DISPLAY RULE - READ CAREFULLY 🚨
 When products are being displayed as visual cards, your response MUST follow these strict rules:
@@ -241,10 +252,11 @@ REMEMBER: The visual product cards show ALL product details (names, prices, desc
 `}
 
 INSTRUCTIONS:
-1. ${conversationService.getMessages(currentSessionId)?.length <= 2 ? 'PRIORITY: Follow NEW USER ONBOARDING flow above for smooth introduction' : 'Follow the conversation flow logic above - don\'t skip phases'}
+1. ${conversationService.getMessages(currentSessionId)?.length <= 2 ? 'PRIORITY: Follow NEW USER ONBOARDING flow above for smooth introduction, EXCEPT when user specifically requests products - then show products immediately' : 'Follow the conversation flow logic above - don\'t skip phases'}
 2. When showing products, ALWAYS present exactly 4 options for optimal choice
 3. **🚨 CRITICAL: When showing products, write ONLY conversational guidance text. NEVER list product names, prices, or descriptions. The visual cards handle all details. Write like: "Here are some great options for you" NEVER like: "1. Product Name - Description (Price: X AED)"**
 4. After presenting products, check customer satisfaction before offering more
+5. **CATEGORY MATCHING: Always respond appropriately to the customer's request. If they ask for hand cream, respond about hand cream and beauty products. If they ask for accessories, respond about accessories. If they ask for perfumes, respond about fragrances. Never default to perfume responses for non-perfume requests.**
 5. If customer indicates satisfaction ("perfect", "these look great", etc.), immediately guide toward purchase
 6. Use conversational follow-up suggestions that sound like natural customer responses
 7. Address any detected objections proactively
@@ -405,7 +417,26 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
                                       (lowercaseMessage.includes('perfume') || 
                                        lowercaseMessage.includes('fragrance') ||
                                        lowercaseMessage.includes('cologne') ||
-                                       lowercaseMessage.includes('product'));
+                                       lowercaseMessage.includes('product') ||
+                                       lowercaseMessage.includes('accessory') ||
+                                       lowercaseMessage.includes('accessories') ||
+                                       lowercaseMessage.includes('watch') ||
+                                       lowercaseMessage.includes('jewelry') ||
+                                       lowercaseMessage.includes('bracelet') ||
+                                       lowercaseMessage.includes('wallet'));
+
+    // Specialized fragrance queries should always trigger product search
+    const isSpecializedFragranceQuery = lowercaseMessage.includes('oud') || 
+                                       lowercaseMessage.includes('bakhoor') ||
+                                       lowercaseMessage.includes('agarwood') ||
+                                       lowercaseMessage.includes('oriental') ||
+                                       lowercaseMessage.includes('amber') ||
+                                       lowercaseMessage.includes('sandalwood') ||
+                                       lowercaseMessage.includes('incense') ||
+                                       lowercaseMessage.includes('attar');
+    
+    // Brand-specific queries should always trigger product search
+    const isBrandQuery = lowercaseMessage.includes('brand') && intent.entities.brands.length > 0;
     
     const isBuyingIntent = intent.category === 'buying';
     
@@ -419,7 +450,11 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
                             lowercaseMessage.includes('anything') ||
                             lowercaseMessage.includes('any option') ||
                             lowercaseMessage.includes('show me') ||
-                            lowercaseMessage.includes('what do you have');
+                            lowercaseMessage.includes('what do you have') ||
+                            lowercaseMessage.includes('accessory') ||
+                            lowercaseMessage.includes('accessories') ||
+                            lowercaseMessage.includes('watch') ||
+                            lowercaseMessage.includes('jewelry');
 
     // User has engaged with preferences (this indicates browsing intent after preference questions)
     const hasEngagedWithPreferences = conversationHistory.some((msg: any) => 
@@ -433,7 +468,7 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
     );
     
     return hasSpecificPreferences || explicitlyAskedForProducts || isBuyingIntent || 
-           isComparingWithContext || isOpenToBrowsing || hasEngagedWithPreferences;
+           isComparingWithContext || isOpenToBrowsing || hasEngagedWithPreferences || isBrandQuery || isSpecializedFragranceQuery;
   }
 
   // Conversation management endpoints

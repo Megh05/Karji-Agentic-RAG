@@ -440,8 +440,18 @@ export class RAGService {
                         queryLower.includes('chronograph') || queryLower.includes('clock');
     const isJewelryQuery = queryLower.includes('jewelry') || queryLower.includes('bracelet') || 
                           queryLower.includes('necklace') || queryLower.includes('ring');
-    const isAccessoryQuery = queryLower.includes('accessory') || queryLower.includes('wallet') || 
-                            queryLower.includes('bag') || queryLower.includes('leather goods');
+    const isAccessoryQuery = queryLower.includes('accessory') || queryLower.includes('accessories') || queryLower.includes('wallet') || 
+                            queryLower.includes('bag') || queryLower.includes('leather goods') || queryLower.includes('bracelet') ||
+                            queryLower.includes('jewelry') || queryLower.includes('watch') || queryLower.includes('timepiece');
+    
+    // Special handling for "men's accessories" - highest priority
+    const isMensAccessoriesQuery = (queryLower.includes("men's") || queryLower.includes('mens') || queryLower.includes('men')) && 
+                                  (queryLower.includes('accessory') || queryLower.includes('accessories'));
+    
+    // Brand-specific query detection
+    const isBrandQuery = queryLower.includes('brand') || 
+                        intent.searchTerms.some(term => ['aigner', 'fabian', 'lencia', 'police', 'roberto cavalli', 'tom ford'].includes(term.toLowerCase()));
+    
     const isNewCollectionQuery = queryLower.includes('new') || queryLower.includes('latest') || 
                                queryLower.includes('recent') || queryLower.includes('arrival') || 
                                queryLower.includes('collection');
@@ -485,9 +495,83 @@ export class RAGService {
       const categoryLower = (product.additionalFields && typeof product.additionalFields === 'object' && 'product_type' in product.additionalFields ? 
                             (product.additionalFields.product_type as string || '').toLowerCase() : '');
       const brandLower = (product.brand || '').toLowerCase();
+      const productTypeField = (product.additionalFields?.product_type || '').toLowerCase();
       
-      // Category-specific scoring logic
-      if (isWatchQuery) {
+      // Category-specific scoring logic - BRAND QUERIES GET HIGHEST PRIORITY
+      if (isBrandQuery) {
+        // For brand-specific queries, prioritize products from that brand
+        const queryBrands = ['aigner', 'fabian', 'lencia', 'police', 'roberto cavalli', 'tom ford'];
+        const matchingBrand = queryBrands.find(brand => 
+          queryLower.includes(brand) || titleLower.includes(brand) || brandLower.includes(brand)
+        );
+        
+        if (matchingBrand && (brandLower.includes(matchingBrand) || titleLower.includes(matchingBrand))) {
+          // FIRST: Check if this is a jewelry gift set disguised as a perfume gift set
+          // Apply penalty BEFORE brand boost to ensure exclusion
+          let isJewelryGiftSet = false;
+          if (queryLower.includes('perfume') || queryLower.includes('fragrance') || queryLower.includes('edp') || queryLower.includes('edt')) {
+            if (categoryLower.includes('gift set') && 
+                (titleLower.includes('bracelet') || titleLower.includes('necklace') || 
+                 titleLower.includes('jewelry') || titleLower.includes('watch') || titleLower.includes('timepiece'))) {
+              // This is jewelry, not perfume - exclude it entirely
+              score -= 3000; // Massive penalty to ensure exclusion
+              console.log(`Excluding jewelry gift set: ${product.title} - score reduced to ${score}`);
+              isJewelryGiftSet = true;
+            }
+          }
+          
+          // Only apply brand boost if it's not a jewelry gift set
+          if (!isJewelryGiftSet) {
+            score += 600; // Maximum priority for brand matches
+          }
+          
+          // Additional boost for brand + category matches (e.g., "Aigner perfumes")
+          if (queryLower.includes('perfume') || queryLower.includes('fragrance') || queryLower.includes('edp') || queryLower.includes('edt')) {
+            if (categoryLower.includes('fragrance') || categoryLower.includes('perfume') || 
+                titleLower.includes('edp') || titleLower.includes('edt')) {
+              score += 200; // Extra boost for brand + perfume matches
+              
+              // Extra boost for actual perfume bottles (not gift sets with jewelry)
+              if (titleLower.includes('edp') || titleLower.includes('edt') || 
+                  titleLower.includes('perfume') || titleLower.includes('fragrance')) {
+                score += 100; // Additional boost for actual perfume products
+              }
+            } else {
+              // Heavily penalize non-perfume products when perfume is specifically requested
+              score -= 400; // Major penalty for category mismatch
+            }
+          }
+          
+          // Additional boost for brand + accessory matches (e.g., "Aigner accessories")
+          if (queryLower.includes('accessory') || queryLower.includes('accessories') || 
+              queryLower.includes('bracelet') || queryLower.includes('watch') || queryLower.includes('jewelry')) {
+            if (categoryLower.includes('accessory') || categoryLower.includes('jewelry') || 
+                categoryLower.includes('bracelet') || categoryLower.includes('watch')) {
+              score += 200; // Extra boost for brand + accessory matches
+            } else {
+              // Heavily penalize non-accessory products when accessories are specifically requested
+              score -= 400; // Major penalty for category mismatch
+            }
+          }
+        } else {
+          score += 1; // Very low score for non-matching brands
+        }
+      } else if (isMensAccessoriesQuery) {
+        // For "men's accessories" queries, prioritize men's accessories above everything else
+        if (categoryLower.includes('accessory') || categoryLower.includes('accessories') || categoryLower.includes('jewelry') || 
+            categoryLower.includes('bracelet') || categoryLower.includes('watch') || 
+            categoryLower.includes('timepiece') || categoryLower.includes('wallet')) {
+          if (productTypeField.includes('men') || titleLower.includes('men') || titleLower.includes('mens')) {
+            score += 500; // Maximum priority for men's accessories
+          } else {
+            score += 300; // High priority for general accessories
+          }
+        } else if (categoryLower.includes('fragrance') || categoryLower.includes('perfume')) {
+          score += 1; // Minimal score for fragrances when men's accessories are requested
+        } else {
+          score += 5; // Low score for other products
+        }
+      } else if (isWatchQuery) {
         // Prioritize watches and timepieces
         if (categoryLower.includes('watch') || categoryLower.includes('timepiece') || 
             titleLower.includes('watch') || titleLower.includes('timepiece')) {
@@ -501,10 +585,14 @@ export class RAGService {
         // Prioritize jewelry and accessories
         if (categoryLower.includes('jewelry') || categoryLower.includes('accessory') || 
             categoryLower.includes('bracelet') || categoryLower.includes('wallet') ||
-            titleLower.includes('bracelet') || titleLower.includes('wallet')) {
-          score += 100; // High priority for jewelry/accessory queries
+            categoryLower.includes('watch') || categoryLower.includes('timepiece') ||
+            titleLower.includes('bracelet') || titleLower.includes('wallet') ||
+            titleLower.includes('watch') || titleLower.includes('timepiece')) {
+          score += 200; // Very high priority for accessory queries
+        } else if (categoryLower.includes('fragrance') || categoryLower.includes('perfume')) {
+          score += 5; // Very low score for fragrances when accessories are requested
         } else {
-          score += 1; // Low score for non-accessories
+          score += 1; // Minimal score for other products
         }
       } else {
         // Default fragrance prioritization
@@ -525,7 +613,6 @@ export class RAGService {
       }
       
       // Gender-specific filtering and scoring - ENHANCED PRECISION VERSION
-      const productTypeField = (product.additionalFields?.product_type || '').toLowerCase();
       const allText = `${titleLower} ${descLower}`.toLowerCase();
       
       // More precise women's product detection
@@ -704,21 +791,58 @@ export class RAGService {
       ['oud', 'incense', 'oriental', 'amber', 'sandalwood', 'agarwood', 'bakhoor', 'attar'].includes(term.toLowerCase())
     );
     
-    const minScore = isDealQuery ? 5 : isSpecializedFragranceSearch ? 10 : 0; // Higher threshold to find actual matches
-    console.log(`Specialized fragrance search detected: ${isSpecializedFragranceSearch}, using minScore: ${minScore}`);
+    // For brand + category specific queries (e.g., "Aigner perfumes"), use higher threshold
+    const isBrandCategoryQuery = queryLower.includes('brand') && (
+      queryLower.includes('perfume') || queryLower.includes('fragrance') || 
+      queryLower.includes('accessory') || queryLower.includes('accessories')
+    );
+    
+    // For perfume-specific queries, be very strict about what constitutes a perfume
+    const isPerfumeSpecificQuery = queryLower.includes('perfume') || queryLower.includes('fragrance');
+    
+    const minScore = isDealQuery ? 5 : isSpecializedFragranceSearch ? 10 : isBrandCategoryQuery ? 300 : 0;
+    console.log(`Specialized search detected: ${isSpecializedFragranceSearch}, Brand+Category: ${isBrandCategoryQuery}, Perfume-specific: ${isPerfumeSpecificQuery}, using minScore: ${minScore}`);
     
     // Return products with score > minScore, sorted by score
     console.log(`Before final filtering: ${scoredProducts.filter(p => p.searchScore > minScore).length} products have score > ${minScore}`);
     const filteredProducts = scoredProducts
       .filter(product => product.searchScore > minScore)
-      .sort((a, b) => b.searchScore - a.searchScore)
-      .slice(0, maxProducts);
-    console.log(`After final filtering: ${filteredProducts.length} products remain`);
+      .sort((a, b) => b.searchScore - a.searchScore);
     
-    console.log(`Intelligent search found ${filteredProducts.length} products matching intent`);
+    // For perfume-specific queries, exclude jewelry gift sets that are mislabeled as perfume gift sets
+    let finalFilteredProducts = filteredProducts;
+    if (isPerfumeSpecificQuery) {
+      finalFilteredProducts = filteredProducts.filter(product => {
+        const titleLower = (product.title || '').toLowerCase();
+        const descLower = (product.description || '').toLowerCase();
+        const categoryLower = (product.additionalFields?.product_type || '').toLowerCase();
+        
+        // Exclude jewelry gift sets that are mislabeled as perfume gift sets
+        if (categoryLower.includes('gift set') && 
+            (titleLower.includes('bracelet') || titleLower.includes('necklace') || 
+             titleLower.includes('jewelry') || titleLower.includes('watch') || titleLower.includes('timepiece') ||
+             descLower.includes('bracelet') || descLower.includes('necklace') || 
+             descLower.includes('jewelry') || descLower.includes('watch') || descLower.includes('timepiece'))) {
+          console.log(`Excluding jewelry gift set from final results: ${product.title}`);
+          return false;
+        }
+        return true;
+      });
+      console.log(`After perfume-specific filtering: ${finalFilteredProducts.length} products remain (excluded ${filteredProducts.length - finalFilteredProducts.length} jewelry gift sets)`);
+    }
+    
+    // Only limit to maxProducts if we have more than that many relevant products
+    // This allows showing fewer products when that's all that match the query
+    const finalProducts = finalFilteredProducts.length > maxProducts 
+      ? finalFilteredProducts.slice(0, maxProducts) 
+      : finalFilteredProducts;
+    
+    console.log(`After final filtering: ${finalProducts.length} products remain (${finalFilteredProducts.length} total relevant, max requested: ${maxProducts})`);
+    
+    console.log(`Intelligent search found ${finalProducts.length} products matching intent`);
     
     // Apply offer pricing to products before returning
-    const productsWithOffers = await this.applyOfferPricing(filteredProducts);
+    const productsWithOffers = await this.applyOfferPricing(finalProducts);
     console.log(`Applied offer pricing to ${productsWithOffers.length} products`);
     
     // If no products found and user had specific brand preferences or Tom Ford mentioned, suggest alternatives
@@ -726,7 +850,7 @@ export class RAGService {
     const hasLuxuryBrandRequest = intent.brandPreferences.length > 0 || hasTomFordRequest;
     
     if (productsWithOffers.length === 0 && hasLuxuryBrandRequest) {
-      const brandName = hasTomFordRequest ? 'Tom Ford' : intent.brandPreferences.join(', ');
+      const brandName = hasTomFordRequest ? 'Tom Ford' : intent.brandPreferences.length > 0 ? intent.brandPreferences.join(', ') : 'requested brand';
       console.log(`No products found for brand: ${brandName}, searching for alternatives in same price range`);
       
       // Remove brand preference and search again for alternative suggestions

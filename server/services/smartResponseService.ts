@@ -283,20 +283,57 @@ class SmartResponseService {
     } else if (responseAnalysis.askedQuestion) {
       // AI asked a question - generate answers based on the question type
       if (responseAnalysis.questionType === 'preference') {
-        followUps.push("I prefer something fresh and light");
-        followUps.push("I like woody or musky scents");
-        followUps.push("I'm buying for myself");
-        followUps.push("I'm looking for a gift");
+        // Generate category-appropriate preference questions
+        if (userMessageLower.includes('perfume') || userMessageLower.includes('fragrance') || userMessageLower.includes('cologne')) {
+          followUps.push("I prefer something fresh and light");
+          followUps.push("I like woody or musky scents");
+          followUps.push("I'm buying for myself");
+          followUps.push("I'm looking for a gift");
+        } else if (userMessageLower.includes('hand cream') || userMessageLower.includes('soap') || userMessageLower.includes('beauty')) {
+          followUps.push("I prefer something moisturizing");
+          followUps.push("I have sensitive skin");
+          followUps.push("I'm buying for myself");
+          followUps.push("I'm looking for a gift");
+        } else if (userMessageLower.includes('watch') || userMessageLower.includes('timepiece')) {
+          followUps.push("I prefer something elegant and classic");
+          followUps.push("I like modern and sporty styles");
+          followUps.push("I'm buying for myself");
+          followUps.push("I'm looking for a gift");
+        } else if (userMessageLower.includes('accessory') || userMessageLower.includes('jewelry') || userMessageLower.includes('bracelet')) {
+          followUps.push("I prefer something elegant and classic");
+          followUps.push("I like modern and trendy styles");
+          followUps.push("I'm buying for myself");
+          followUps.push("I'm looking for a gift");
+        } else {
+          // Generic preference questions
+          followUps.push("I prefer something elegant and classic");
+          followUps.push("I like modern and trendy styles");
+          followUps.push("I'm buying for myself");
+          followUps.push("I'm looking for a gift");
+        }
       } else if (responseAnalysis.questionType === 'price') {
         followUps.push("Under 200 AED");
         followUps.push("Between 200-500 AED");
         followUps.push("I'm flexible with budget");
         followUps.push("Show me the best deals");
       } else if (responseAnalysis.questionType === 'gender') {
-        followUps.push("Men's fragrances");
-        followUps.push("Women's perfumes");
-        followUps.push("Unisex options");
-        followUps.push("It's for someone else");
+        // Generate category-appropriate gender questions
+        if (userMessageLower.includes('perfume') || userMessageLower.includes('fragrance') || userMessageLower.includes('cologne')) {
+          followUps.push("Men's fragrances");
+          followUps.push("Women's perfumes");
+          followUps.push("Unisex options");
+          followUps.push("It's for someone else");
+        } else if (userMessageLower.includes('watch') || userMessageLower.includes('accessory')) {
+          followUps.push("Men's watches/accessories");
+          followUps.push("Women's watches/accessories");
+          followUps.push("Unisex options");
+          followUps.push("It's for someone else");
+        } else {
+          followUps.push("Men's products");
+          followUps.push("Women's products");
+          followUps.push("Unisex options");
+          followUps.push("It's for someone else");
+        }
       }
     } else if (responseAnalysis.providedInformation) {
       // AI provided information - generate follow-up exploration
@@ -311,17 +348,42 @@ class SmartResponseService {
         followUps.push("Do you offer express shipping?");
         followUps.push("Let's continue browsing products");
       } else if (responseAnalysis.topicMentioned.includes('categories')) {
-        followUps.push("Show me men's fragrances");
-        followUps.push("I want to see women's perfumes");
-        followUps.push("What are your most popular items?");
-        followUps.push("Tell me about current offers");
+        // Generate category-appropriate follow-ups based on user's query
+        if (userMessageLower.includes('perfume') || userMessageLower.includes('fragrance') || userMessageLower.includes('cologne')) {
+          followUps.push("Show me men's fragrances");
+          followUps.push("I want to see women's perfumes");
+          followUps.push("What are your most popular items?");
+          followUps.push("Tell me about current offers");
+        } else if (userMessageLower.includes('watch') || userMessageLower.includes('accessory')) {
+          followUps.push("Show me men's watches");
+          followUps.push("I want to see women's accessories");
+          followUps.push("What are your most popular items?");
+          followUps.push("Tell me about current offers");
+        } else {
+          followUps.push("Show me men's products");
+          followUps.push("I want to see women's products");
+          followUps.push("What are your most popular items?");
+          followUps.push("Tell me about current offers");
+        }
       }
     } else if (responseAnalysis.isWelcomeMessage) {
       // Welcome message - help user navigate
-      followUps.push("Show me your best-selling perfumes");
-      followUps.push("I'm looking for something under 300 AED");
-      followUps.push("What's good for everyday wear?");
-      followUps.push("I need a gift recommendation");
+      if (userMessageLower.includes('perfume') || userMessageLower.includes('fragrance') || userMessageLower.includes('cologne')) {
+        followUps.push("Show me your best-selling perfumes");
+        followUps.push("I'm looking for something under 300 AED");
+        followUps.push("What's good for everyday wear?");
+        followUps.push("I need a gift recommendation");
+      } else if (userMessageLower.includes('watch') || userMessageLower.includes('accessory')) {
+        followUps.push("Show me your best-selling watches");
+        followUps.push("I'm looking for something under 300 AED");
+        followUps.push("What's good for everyday wear?");
+        followUps.push("I need a gift recommendation");
+      } else {
+        followUps.push("Show me your bestsellers");
+        followUps.push("I'm looking for something under 300 AED");
+        followUps.push("What's good for everyday wear?");
+        followUps.push("I need a gift recommendation");
+      }
     }
 
     // If no specific follow-ups were generated, create contextual ones based on conversation stage
@@ -329,10 +391,23 @@ class SmartResponseService {
       const isNewUser = conversationHistory.length <= 2;
       
       if (isNewUser) {
-        followUps.push("Show me your bestsellers");
-        followUps.push("I'm looking for men's cologne");
-        followUps.push("I want women's perfumes");
-        followUps.push("What are your current deals?");
+        // Generate category-appropriate new user follow-ups
+        if (userMessageLower.includes('perfume') || userMessageLower.includes('fragrance') || userMessageLower.includes('cologne')) {
+          followUps.push("Show me your bestsellers");
+          followUps.push("I'm looking for men's cologne");
+          followUps.push("I want women's perfumes");
+          followUps.push("What are your current deals?");
+        } else if (userMessageLower.includes('watch') || userMessageLower.includes('accessory')) {
+          followUps.push("Show me your bestsellers");
+          followUps.push("I'm looking for men's watches");
+          followUps.push("I want women's accessories");
+          followUps.push("What are your current deals?");
+        } else {
+          followUps.push("Show me your bestsellers");
+          followUps.push("I'm looking for men's products");
+          followUps.push("I want women's products");
+          followUps.push("What are your current deals?");
+        }
       } else {
         followUps.push("I need help choosing");
         followUps.push("Tell me about shipping");

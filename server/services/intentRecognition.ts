@@ -36,7 +36,7 @@ class IntentRecognitionService {
     
     // Enhanced intent classification patterns
     const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
-    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes', 'open to any', 'open to anything', 'flexible', 'show me', 'what do you have'];
+    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes', 'open to any', 'open to anything', 'flexible', 'show me', 'what do you have', 'do you have', 'brands do you have', 'which brands'];
     const comparingSignals = ['compare these', 'difference between these', 'versus', 'vs', 'which of these is better', 'deciding between these products'];
     const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns', 'price', 'cost'];
     const supportSignals = ['help me choose', 'help me decide', 'help me narrow down', 'help me find', 'need help', 'i need assistance', 'can you help'];
@@ -118,8 +118,22 @@ class IntentRecognitionService {
     }
 
     // Brand extraction (you can expand this list)
-    const brands = ['chanel', 'dior', 'versace', 'armani', 'calvin klein', 'hugo boss', 'rolex', 'omega', 'seiko'];
+    const brands = ['chanel', 'dior', 'versace', 'armani', 'calvin klein', 'hugo boss', 'rolex', 'omega', 'seiko', 'aigner', 'fabian', 'lencia', 'police', 'tom ford', 'roberto cavalli'];
     const detectedBrands = brands.filter(brand => lowercaseMessage.includes(brand));
+    
+    // Enhanced brand detection for broader brand queries
+    if (lowercaseMessage.includes('brand') || lowercaseMessage.includes('brands')) {
+      // If user asks about brands in general, detect any brand mentioned
+      const brandPatterns = ['do you have', 'show me', 'what brands', 'which brands', 'brands do you have'];
+      const isBrandQuery = brandPatterns.some(pattern => lowercaseMessage.includes(pattern));
+      if (isBrandQuery) {
+        // Extract brand names from the message more intelligently
+        const brandMatches = brands.filter(brand => lowercaseMessage.includes(brand));
+        if (brandMatches.length > 0) {
+          detectedBrands.push(...brandMatches);
+        }
+      }
+    }
 
     // Category extraction
     const categories = ['perfume', 'fragrance', 'watch', 'jewelry', 'skincare', 'makeup', 'fashion', 'accessories'];
