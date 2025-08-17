@@ -2,174 +2,380 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Professional Modern - Tech-Savvy Elegance */
-  --background: hsl(60 2% 86%);
-  --foreground: hsl(203 13% 30%);
-  --card: hsl(0 0% 95%);
-  --card-foreground: hsl(203 13% 30%);
-  --popover: hsl(60 2% 86%);
-  --popover-foreground: hsl(203 13% 30%);
-  --primary: hsl(196 67% 37%);
-  --primary-foreground: hsl(60 2% 86%);
-  --secondary: hsl(0 0% 90%);
-  --secondary-foreground: hsl(203 13% 30%);
-  --muted: hsl(0 0% 92%);
-  --muted-foreground: hsl(203 13% 40%);
-  --accent: hsl(0 0% 78%);
-  --accent-foreground: hsl(203 13% 30%);
-  --destructive: hsl(356 90% 54%);
-  --destructive-foreground: hsl(60 2% 86%);
-  --border: hsl(0 0% 85%);
-  --input: hsl(0 0% 93%);
-  --ring: hsl(196 67% 37%);
-  --chart-1: hsl(196 67% 37%);
-  --chart-2: hsl(203 13% 40%);
-  --chart-3: hsl(0 0% 78%);
-  --chart-4: hsl(0 0% 90%);
-  --chart-5: hsl(60 2% 86%);
-  --sidebar: hsl(0 0% 95%);
-  --sidebar-foreground: hsl(203 13% 30%);
-  --sidebar-primary: hsl(196 67% 37%);
-  --sidebar-primary-foreground: hsl(60 2% 86%);
-  --sidebar-accent: hsl(0 0% 90%);
-  --sidebar-accent-foreground: hsl(203 13% 30%);
-  --sidebar-border: hsl(0 0% 85%);
-  --sidebar-ring: hsl(196 67% 37%);
-  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius: 1.2rem;
-  --karjistore-gainsboro: hsl(60 2% 86%);
-  --karjistore-silver: hsl(0 0% 78%);
-  --karjistore-charcoal: hsl(203 13% 30%);
-  --karjistore-slate: hsl(203 13% 40%);
-  --karjistore-teal: hsl(196 67% 37%);
-  --luxury-gradient: linear-gradient(135deg, hsl(196 67% 37%) 0%, hsl(203 13% 40%) 25%, hsl(203 13% 30%) 50%, hsl(0 0% 78%) 75%, hsl(60 2% 86%) 100%);
-}
-
-.dark {
-  /* Professional Modern Dark - Tech-Savvy Elegance */
-  --background: hsl(203 13% 30%);
-  --foreground: hsl(60 2% 86%);
-  --card: hsl(203 13% 25%);
-  --card-foreground: hsl(0 0% 85%);
-  --popover: hsl(203 13% 30%);
-  --popover-foreground: hsl(60 2% 86%);
-  --primary: hsl(196 67% 50%);
-  --primary-foreground: hsl(203 13% 30%);
-  --secondary: hsl(203 13% 35%);
-  --secondary-foreground: hsl(0 0% 80%);
-  --muted: hsl(203 13% 35%);
-  --muted-foreground: hsl(0 0% 70%);
-  --accent: hsl(203 13% 40%);
-  --accent-foreground: hsl(0 0% 85%);
-  --destructive: hsl(356 90% 54%);
-  --destructive-foreground: hsl(60 2% 86%);
-  --border: hsl(203 13% 40%);
-  --input: hsl(203 13% 35%);
-  --ring: hsl(196 67% 50%);
-  --chart-1: hsl(196 67% 50%);
-  --chart-2: hsl(203 13% 50%);
-  --chart-3: hsl(0 0% 65%);
-  --chart-4: hsl(203 13% 45%);
-  --chart-5: hsl(60 2% 70%);
-  --sidebar: hsl(203 13% 25%);
-  --sidebar-foreground: hsl(0 0% 85%);
-  --sidebar-primary: hsl(196 67% 50%);
-  --sidebar-primary-foreground: hsl(203 13% 30%);
-  --sidebar-accent: hsl(203 13% 40%);
-  --sidebar-accent-foreground: hsl(0 0% 85%);
-  --sidebar-border: hsl(203 13% 40%);
-  --sidebar-ring: hsl(196 67% 50%);
-  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius: 1.2rem;
-  --karjistore-gainsboro: hsl(60 2% 70%);
-  --karjistore-silver: hsl(0 0% 65%);
-  --karjistore-charcoal: hsl(203 13% 25%);
-  --karjistore-slate: hsl(203 13% 50%);
-  --karjistore-teal: hsl(196 67% 50%);
-  --luxury-gradient: linear-gradient(135deg, hsl(196 67% 50%) 0%, hsl(203 13% 50%) 25%, hsl(203 13% 25%) 50%, hsl(0 0% 65%) 75%, hsl(60 2% 70%) 100%);
-}
-
 @layer base {
+  :root {
+    /* Luxurious 3D Cardboard Color Palette */
+    --background: 28 20% 97%;              /* Warm cream white */
+    --foreground: 25 15% 15%;              /* Rich dark brown */
+    --card: 32 25% 94%;                    /* Light cardboard */
+    --card-foreground: 25 15% 15%;
+    --popover: 32 25% 94%;
+    --popover-foreground: 25 15% 15%;
+    --primary: 35 85% 55%;                 /* Luxury gold */
+    --primary-foreground: 28 20% 97%;
+    --secondary: 30 50% 85%;               /* Soft champagne */
+    --secondary-foreground: 25 15% 15%;
+    --muted: 30 30% 90%;                   /* Light tan */
+    --muted-foreground: 25 25% 45%;        /* Medium brown */
+    --accent: 35 85% 55%;                  /* Accent gold */
+    --accent-foreground: 28 20% 97%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 28 20% 97%;
+    --border: 30 35% 82%;                  /* Cardboard border */
+    --input: 32 25% 92%;
+    --ring: 35 85% 55%;
+    --chart-1: 35 85% 55%;
+    --chart-2: 25 65% 45%;
+    --chart-3: 20 50% 35%;
+    --chart-4: 40 75% 65%;
+    --chart-5: 45 70% 60%;
+    --radius: 0.75rem;
+    
+    /* 3D Cardboard Effects */
+    --cardboard-shadow-light: 0 2px 8px rgba(139, 69, 19, 0.1), 
+                              0 4px 16px rgba(139, 69, 19, 0.08),
+                              0 8px 32px rgba(139, 69, 19, 0.06);
+    --cardboard-shadow-medium: 0 4px 12px rgba(139, 69, 19, 0.15),
+                               0 8px 24px rgba(139, 69, 19, 0.12),
+                               0 16px 48px rgba(139, 69, 19, 0.08);
+    --cardboard-shadow-heavy: 0 8px 16px rgba(139, 69, 19, 0.2),
+                              0 16px 32px rgba(139, 69, 19, 0.15),
+                              0 32px 64px rgba(139, 69, 19, 0.1);
+    --cardboard-inset: inset 0 1px 3px rgba(255, 255, 255, 0.6),
+                       inset 0 -1px 2px rgba(139, 69, 19, 0.1);
+    --gold-gradient: linear-gradient(135deg, 
+                     hsl(45, 100%, 70%) 0%, 
+                     hsl(35, 85%, 55%) 50%, 
+                     hsl(25, 75%, 45%) 100%);
+    --cardboard-texture: linear-gradient(45deg, 
+                         rgba(139, 69, 19, 0.02) 25%, 
+                         transparent 25%),
+                         linear-gradient(-45deg, 
+                         rgba(139, 69, 19, 0.02) 25%, 
+                         transparent 25%),
+                         linear-gradient(45deg, 
+                         transparent 75%, 
+                         rgba(139, 69, 19, 0.02) 75%),
+                         linear-gradient(-45deg, 
+                         transparent 75%, 
+                         rgba(139, 69, 19, 0.02) 75%);
+  }
+
+  .dark {
+    /* Dark Luxury Cardboard Theme */
+    --background: 25 20% 8%;               /* Dark chocolate */
+    --foreground: 30 15% 92%;              /* Warm cream */
+    --card: 25 25% 12%;                    /* Dark cardboard */
+    --card-foreground: 30 15% 92%;
+    --popover: 25 25% 12%;
+    --popover-foreground: 30 15% 92%;
+    --primary: 45 100% 65%;                /* Bright gold */
+    --primary-foreground: 25 20% 8%;
+    --secondary: 25 30% 18%;               /* Dark bronze */
+    --secondary-foreground: 30 15% 92%;
+    --muted: 25 20% 16%;                   /* Dark tan */
+    --muted-foreground: 30 20% 70%;        /* Light brown */
+    --accent: 45 100% 65%;
+    --accent-foreground: 25 20% 8%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 30 15% 92%;
+    --border: 25 30% 20%;                  /* Dark border */
+    --input: 25 25% 14%;
+    --ring: 45 100% 65%;
+    
+    /* Dark 3D Effects */
+    --cardboard-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.3), 
+                              0 4px 16px rgba(0, 0, 0, 0.2),
+                              0 8px 32px rgba(0, 0, 0, 0.1);
+    --cardboard-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.4),
+                               0 8px 24px rgba(0, 0, 0, 0.3),
+                               0 16px 48px rgba(0, 0, 0, 0.2);
+    --cardboard-shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.5),
+                              0 16px 32px rgba(0, 0, 0, 0.4),
+                              0 32px 64px rgba(0, 0, 0, 0.3);
+    --cardboard-inset: inset 0 1px 3px rgba(255, 255, 255, 0.1),
+                       inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+    --gold-gradient: linear-gradient(135deg, 
+                     hsl(50, 100%, 75%) 0%, 
+                     hsl(45, 100%, 65%) 50%, 
+                     hsl(35, 85%, 55%) 100%);
+    --cardboard-texture: linear-gradient(45deg, 
+                         rgba(255, 255, 255, 0.02) 25%, 
+                         transparent 25%),
+                         linear-gradient(-45deg, 
+                         rgba(255, 255, 255, 0.02) 25%, 
+                         transparent 25%),
+                         linear-gradient(45deg, 
+                         transparent 75%, 
+                         rgba(255, 255, 255, 0.02) 75%),
+                         linear-gradient(-45deg, 
+                         transparent 75%, 
+                         rgba(255, 255, 255, 0.02) 75%);
+  }
+  
   * {
     @apply border-border;
   }
-
+  
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: var(--cardboard-texture);
+    background-size: 20px 20px;
+  }
+  
+  /* 3D Cardboard Component Classes */
+  .cardboard-light {
+    background: hsl(var(--card));
+    box-shadow: var(--cardboard-shadow-light);
+    border: 1px solid hsl(var(--border));
+    position: relative;
+  }
+  
+  .cardboard-light::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--cardboard-texture);
+    background-size: 8px 8px;
+    border-radius: inherit;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  .cardboard-medium {
+    background: hsl(var(--card));
+    box-shadow: var(--cardboard-shadow-medium);
+    border: 2px solid hsl(var(--border));
+    position: relative;
+    transform: translateZ(0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .cardboard-medium::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--cardboard-texture);
+    background-size: 12px 12px;
+    border-radius: inherit;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  
+  .cardboard-medium:hover {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: var(--cardboard-shadow-heavy);
+  }
+  
+  .cardboard-heavy {
+    background: hsl(var(--card));
+    box-shadow: var(--cardboard-shadow-heavy);
+    border: 3px solid hsl(var(--border));
+    position: relative;
+    transform: translateZ(0);
+    transition: all 0.3s ease;
+  }
+  
+  .cardboard-heavy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--cardboard-texture);
+    background-size: 16px 16px;
+    border-radius: inherit;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .cardboard-inset {
+    box-shadow: var(--cardboard-inset);
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+  }
+  
+  .gold-button {
+    background: var(--gold-gradient);
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--cardboard-shadow-medium);
+    border: 2px solid hsl(45, 100%, 80%);
+    position: relative;
+    transition: all 0.2s ease;
+    font-weight: 600;
+  }
+  
+  .gold-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.3) 0%, 
+                transparent 50%, 
+                rgba(0, 0, 0, 0.1) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  
+  .gold-button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--cardboard-shadow-heavy);
+    background: linear-gradient(135deg, 
+                hsl(50, 100%, 75%) 0%, 
+                hsl(40, 90%, 60%) 50%, 
+                hsl(30, 80%, 50%) 100%);
+  }
+  
+  .gold-button:active {
+    transform: translateY(0);
+    box-shadow: var(--cardboard-shadow-light);
+  }
+  
+  /* Custom 3D Animated Elements */
+  .cardboard-float {
+    animation: cardboardFloat 6s ease-in-out infinite;
+  }
+  
+  @keyframes cardboardFloat {
+    0%, 100% { transform: translateY(0) rotateY(0deg); }
+    50% { transform: translateY(-8px) rotateY(2deg); }
+  }
+  
+  .cardboard-pulse {
+    animation: cardboardPulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes cardboardPulse {
+    0%, 100% { box-shadow: var(--cardboard-shadow-medium); }
+    50% { box-shadow: var(--cardboard-shadow-heavy); }
+  }
+  
+  /* Responsive 3D Design Classes */
+  .cardboard-responsive {
+    @apply rounded-lg lg:rounded-xl;
+  }
+  
+  @media (max-width: 768px) {
+    .cardboard-medium {
+      box-shadow: var(--cardboard-shadow-light);
+      border-width: 1px;
+    }
+    
+    .cardboard-heavy {
+      box-shadow: var(--cardboard-shadow-medium);
+      border-width: 2px;
+    }
+  }
+  
+  /* Luxury Text Effects */
+  .luxury-text {
+    background: var(--gold-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(139, 69, 19, 0.2);
+  }
+  
+  .cardboard-text {
+    color: hsl(var(--foreground));
+    text-shadow: 0 1px 2px rgba(139, 69, 19, 0.1);
+  }
+  
+  /* Icon and Button Enhancements */
+  .icon-3d {
+    filter: drop-shadow(0 2px 4px rgba(139, 69, 19, 0.2));
+    transition: all 0.2s ease;
+  }
+  
+  .icon-3d:hover {
+    filter: drop-shadow(0 4px 8px rgba(139, 69, 19, 0.3));
+    transform: translateY(-1px);
   }
 }
 
-/* Karjistore Chatbot Custom Animations */
-@keyframes karjistore-bounce {
-  0%, 20%, 53%, 80%, 100% {
-    transform: translate3d(0,0,0);
+/* Component-specific 3D styles */
+@layer components {
+  /* Enhanced Button Styles */
+  .btn-cardboard {
+    @apply cardboard-medium px-6 py-3 rounded-xl font-semibold text-foreground hover:text-foreground transition-all duration-200;
   }
-  40%, 43% {
-    transform: translate3d(0, -30px, 0);
+  
+  .btn-cardboard:hover {
+    @apply -translate-y-1;
   }
-  70% {
-    transform: translate3d(0, -15px, 0);
+  
+  .btn-gold {
+    @apply gold-button px-6 py-3 rounded-xl font-bold text-primary-foreground;
   }
-  90% {
-    transform: translate3d(0, -4px, 0);
+  
+  /* Enhanced Card Styles */
+  .card-3d {
+    @apply cardboard-medium rounded-xl p-6 bg-card;
+  }
+  
+  .card-luxury {
+    @apply cardboard-heavy rounded-2xl p-8;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--secondary)) 100%);
+  }
+  
+  /* Input Enhancements */
+  .input-cardboard {
+    @apply cardboard-inset rounded-lg px-4 py-3 bg-input border-2 border-border focus:border-primary focus:ring-2 transition-all duration-200;
+    box-shadow: var(--cardboard-inset), 0 0 0 0 hsl(var(--primary) / 0.2);
+  }
+  
+  .input-cardboard:focus {
+    box-shadow: var(--cardboard-inset), 0 0 0 4px hsl(var(--primary) / 0.2);
+  }
+  
+  /* Product Card Enhancements */
+  .product-card-3d {
+    @apply cardboard-medium rounded-2xl overflow-hidden bg-card hover:cardboard-heavy transition-all duration-300 transform hover:-translate-y-2 hover:rotate-1;
+  }
+  
+  /* Navigation and Header Styles */
+  .nav-3d {
+    @apply cardboard-light backdrop-blur-md border-b-2 border-border;
+    background-color: hsl(var(--card) / 0.9);
+  }
+  
+  /* Modal and Dialog Enhancements */
+  .modal-3d {
+    @apply cardboard-heavy rounded-3xl bg-card shadow-2xl backdrop-blur-lg;
   }
 }
 
-@keyframes karjistore-pulse {
-  0%, 100% {
-    opacity: 1;
+/* Accessibility and Focus States */
+@layer utilities {
+  .focus-cardboard {
+    @apply focus:outline-none focus:ring-4 focus:border-primary;
   }
-  50% {
-    opacity: .5;
+  
+  .focus-cardboard:focus {
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.3);
   }
-}
-
-.karjistore-chat .animate-bounce {
-  animation: karjistore-bounce 1.4s ease-in-out infinite;
-}
-
-.karjistore-chat .delay-100 {
-  animation-delay: 0.1s;
-}
-
-.karjistore-chat .delay-200 {
-  animation-delay: 0.2s;
-}
-
-.karjistore-chat .animate-pulse {
-  animation: karjistore-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Smooth transitions for the chat window */
-.karjistore-chat {
-  transition: all 0.3s ease-in-out;
-}
-
-/* Custom scrollbar for webkit browsers */
-.karjistore-chat .overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
-}
-
-.karjistore-chat .overflow-y-auto::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
-  border-radius: 3px;
-}
-
-.karjistore-chat .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: hsl(var(--karjistore-teal));
-  border-radius: 3px;
-}
-
-.karjistore-chat .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--karjistore-slate));
-}
-
-/* Luxury gradient utility class */
-.luxury-gradient {
-  background: var(--luxury-gradient);
+  
+  /* Loading States */
+  .loading-cardboard {
+    @apply animate-pulse bg-gradient-to-r from-muted via-card to-muted bg-[length:200%_100%];
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  /* Responsive Utilities */
+  .cardboard-responsive-text {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+  
+  .cardboard-responsive-padding {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+  
+  .cardboard-responsive-margin {
+    @apply m-2 sm:m-4 lg:m-6;
+  }
 }

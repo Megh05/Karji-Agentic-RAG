@@ -28,27 +28,30 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discount = calculateDiscount();
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
+    <div className="product-card-3d relative cardboard-responsive">
       {discount && (
-        <div className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs font-bold z-10 shadow-lg">
-          <Tag className="w-3 h-3" />
+        <div className="absolute top-3 left-3 gold-button px-3 py-2 rounded-2xl flex items-center gap-2 text-sm font-bold z-10">
+          <Tag className="w-4 h-4" />
           {discount}% OFF
         </div>
       )}
       {product.imageLink && (
-        <img 
-          src={product.imageLink} 
-          alt={product.title}
-          className="w-full h-32 object-cover"
-          onError={(e) => {
-            e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
-          }}
-        />
+        <div className="relative overflow-hidden">
+          <img 
+            src={product.imageLink} 
+            alt={product.title}
+            className="w-full h-40 lg:h-48 object-cover transition-transform duration-300 hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+        </div>
       )}
-      <div className="p-4">
-        <h3 className="font-semibold text-sm mb-1">{product.title}</h3>
+      <div className="cardboard-responsive-padding">
+        <h3 className="font-bold cardboard-responsive-text luxury-text mb-2 leading-tight">{product.title}</h3>
         {product.description && (
-          <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+          <p className="text-sm text-muted-foreground cardboard-text mb-3 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         )}
@@ -57,33 +60,33 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="flex flex-col">
               {product.discountPrice ? (
                 <>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold text-karjistore-teal">{product.discountPrice}</span>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xl lg:text-2xl font-bold luxury-text">{product.discountPrice}</span>
                     {discount && (
-                      <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700 text-xs">
+                      <Badge variant="outline" className="cardboard-light bg-secondary text-primary border-primary text-xs font-bold px-2 py-1 rounded-full">
                         <Percent className="w-3 h-3 mr-1" />
                         SAVE {discount}%
                       </Badge>
                     )}
                   </div>
                   {product.price && (
-                    <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                    <span className="text-sm text-muted-foreground line-through cardboard-text">
                       Was {product.price}
                     </span>
                   )}
                 </>
               ) : (
-                <span className="text-lg font-bold text-karjistore-teal">{product.price || 'Price not available'}</span>
+                <span className="text-xl lg:text-2xl font-bold luxury-text">{product.price || 'Price not available'}</span>
               )}
             </div>
           </div>
         </div>
         <Button 
           onClick={handleViewProduct} 
-          className="w-full text-xs py-2"
+          className="btn-gold w-full text-base py-3 rounded-2xl font-bold icon-3d"
           disabled={!product.link}
         >
-          View Product <ExternalLink className="w-3 h-3 ml-1" />
+          View Product <ExternalLink className="w-4 h-4 ml-2" />
         </Button>
       </div>
     </div>

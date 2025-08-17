@@ -34,19 +34,19 @@ export default function SettingsButton({
         variant={variant}
         size={size}
         onClick={() => setIsOpen(true)}
-        className="hover:bg-accent hover:text-accent-foreground"
+        className="btn-cardboard w-12 h-12 rounded-2xl icon-3d"
         title="Settings"
       >
-        <Settings className="h-4 w-4" />
+        <Settings className="h-5 w-5" />
         {showText && <span className="ml-2">Settings</span>}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="modal-3d max-w-5xl max-h-[90vh] overflow-y-auto cardboard-responsive-padding">
           <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Settings className="h-5 w-5" />
-              <span>Chat Settings</span>
+            <DialogTitle className="flex items-center space-x-3 luxury-text text-2xl">
+              <Settings className="h-6 w-6 icon-3d" />
+              <span>KarjiStore Settings</span>
             </DialogTitle>
           </DialogHeader>
           
