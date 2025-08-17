@@ -1,51 +1,51 @@
+/* Import Luxury Themes */
+@import './styles/luxury-themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Professional Modern - Tech-Savvy Elegance */
-  --background: hsl(60 2% 86%);
-  --foreground: hsl(203 13% 30%);
-  --card: hsl(0 0% 95%);
-  --card-foreground: hsl(203 13% 30%);
-  --popover: hsl(60 2% 86%);
-  --popover-foreground: hsl(203 13% 30%);
-  --primary: hsl(196 67% 37%);
-  --primary-foreground: hsl(60 2% 86%);
-  --secondary: hsl(0 0% 90%);
-  --secondary-foreground: hsl(203 13% 30%);
-  --muted: hsl(0 0% 92%);
-  --muted-foreground: hsl(203 13% 40%);
-  --accent: hsl(0 0% 78%);
-  --accent-foreground: hsl(203 13% 30%);
-  --destructive: hsl(356 90% 54%);
-  --destructive-foreground: hsl(60 2% 86%);
-  --border: hsl(0 0% 85%);
-  --input: hsl(0 0% 93%);
-  --ring: hsl(196 67% 37%);
-  --chart-1: hsl(196 67% 37%);
-  --chart-2: hsl(203 13% 40%);
-  --chart-3: hsl(0 0% 78%);
-  --chart-4: hsl(0 0% 90%);
-  --chart-5: hsl(60 2% 86%);
-  --sidebar: hsl(0 0% 95%);
-  --sidebar-foreground: hsl(203 13% 30%);
-  --sidebar-primary: hsl(196 67% 37%);
-  --sidebar-primary-foreground: hsl(60 2% 86%);
-  --sidebar-accent: hsl(0 0% 90%);
-  --sidebar-accent-foreground: hsl(203 13% 30%);
-  --sidebar-border: hsl(0 0% 85%);
-  --sidebar-ring: hsl(196 67% 37%);
-  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Midnight Platinum - Sophisticated Dark Luxury */
+  --background: 225 15% 8%; /* Deep midnight blue */
+  --foreground: 45 25% 92%; /* Warm platinum */
+  --card: 225 20% 12%; /* Slightly lighter midnight */
+  --card-foreground: 45 25% 92%;
+  --popover: 225 20% 10%;
+  --popover-foreground: 45 25% 92%;
+  --primary: 45 95% 75%; /* Rich champagne gold */
+  --primary-foreground: 225 20% 8%;
+  --secondary: 225 25% 18%; /* Sophisticated navy */
+  --secondary-foreground: 45 20% 85%;
+  --muted: 225 20% 16%;
+  --muted-foreground: 225 8% 65%;
+  --accent: 43 85% 65%; /* Refined gold */
+  --accent-foreground: 225 20% 8%;
+  --border: 225 15% 22%;
+  --input: 225 15% 16%;
+  --ring: 43 85% 65%;
+  --destructive: 0 75% 58%;
+  --destructive-foreground: 45 25% 95%;
+  --chart-1: 45 95% 75%;
+  --chart-2: 225 25% 18%;
+  --chart-3: 43 85% 65%;
+  --chart-4: 225 15% 22%;
+  --chart-5: 45 25% 92%;
+  --sidebar: 225 20% 12%;
+  --sidebar-foreground: 45 25% 92%;
+  --sidebar-primary: 45 95% 75%;
+  --sidebar-primary-foreground: 225 20% 8%;
+  --sidebar-accent: 225 25% 18%;
+  --sidebar-accent-foreground: 45 20% 85%;
+  --sidebar-border: 225 15% 22%;
+  --sidebar-ring: 43 85% 65%;
+  --font-sans: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
   --radius: 1.2rem;
-  --karjistore-gainsboro: hsl(60 2% 86%);
-  --karjistore-silver: hsl(0 0% 78%);
-  --karjistore-charcoal: hsl(203 13% 30%);
-  --karjistore-slate: hsl(203 13% 40%);
-  --karjistore-teal: hsl(196 67% 37%);
-  --luxury-gradient: linear-gradient(135deg, hsl(196 67% 37%) 0%, hsl(203 13% 40%) 25%, hsl(203 13% 30%) 50%, hsl(0 0% 78%) 75%, hsl(60 2% 86%) 100%);
+  --luxury-gradient: linear-gradient(135deg, hsl(45 95% 75%) 0%, hsl(43 85% 65%) 30%, hsl(225 25% 18%) 70%, hsl(225 15% 8%) 100%);
+  --glass-effect: rgba(255, 255, 255, 0.05);
+  --shadow-luxury: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 }
 
 .dark {

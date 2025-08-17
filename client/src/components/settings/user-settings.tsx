@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Settings, Palette, MessageCircle, Bell, Shield, Eye, Sparkles, Volume2 } from "lucide-react";
+import ThemeSelector from "@/components/ui/theme-selector";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -192,75 +193,80 @@ export default function UserSettingsComponent({ sessionId, onClose }: UserSettin
 
         {/* Appearance Settings */}
         <TabsContent value="appearance">
-          <Card>
+          <Card className="card-luxury">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center space-x-2 font-luxury-display">
                 <Palette className="h-5 w-5" />
-                <span>Appearance & Theme</span>
+                <span>Luxury Appearance & Themes</span>
               </CardTitle>
-              <CardDescription>
-                Customize the visual appearance of your chat interface.
+              <CardDescription className="font-luxury-sans">
+                Choose from our collection of sophisticated luxury themes designed for discerning taste.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="theme">Theme</Label>
-                  <Select
-                    value={formData.theme}
-                    onValueChange={(value) => setFormData({ ...formData, theme: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select theme" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-muted-foreground">
-                    Choose your preferred color scheme
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="accentColor">Accent Color</Label>
-                  <Select
-                    value={formData.accentColor}
-                    onValueChange={(value) => setFormData({ ...formData, accentColor: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select accent color" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="blue">Blue</SelectItem>
-                      <SelectItem value="amber">Amber</SelectItem>
-                      <SelectItem value="emerald">Emerald</SelectItem>
-                      <SelectItem value="purple">Purple</SelectItem>
-                      <SelectItem value="rose">Rose</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-muted-foreground">
-                    Primary color used throughout the interface
-                  </p>
-                </div>
+            <CardContent className="space-y-8">
+              {/* Luxury Theme Selector */}
+              <div className="space-y-4">
+                <ThemeSelector
+                  currentTheme={formData.accentColor}
+                  onThemeSelect={(theme) => {
+                    setFormData({ 
+                      ...formData, 
+                      accentColor: theme.id,
+                      theme: theme.id.includes('pearl') ? 'light' : 'dark'
+                    });
+                  }}
+                />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="animations">Enable Animations</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Smooth transitions and visual effects
-                  </p>
+              <Separator className="my-6" />
+
+              {/* Advanced Options */}
+              <div className="space-y-4">
+                <h4 className="font-luxury-display text-lg">Advanced Styling</h4>
+                
+                <div className="flex items-center justify-between p-4 rounded-lg luxury-glass">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="animations" className="font-luxury-sans">Luxury Animations</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Enable sophisticated transitions and elegant visual effects
+                    </p>
+                  </div>
+                  <Switch
+                    id="animations"
+                    checked={formData.animationsEnabled}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, animationsEnabled: checked })
+                    }
+                  />
                 </div>
-                <Switch
-                  id="animations"
-                  checked={formData.animationsEnabled}
-                  onCheckedChange={(checked) => 
-                    setFormData({ ...formData, animationsEnabled: checked })
-                  }
-                />
+
+                <div className="flex items-center justify-between p-4 rounded-lg luxury-glass">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="glassEffect" className="font-luxury-sans">Glass Morphism</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Apply premium glass blur effects to interface elements
+                    </p>
+                  </div>
+                  <Switch
+                    id="glassEffect"
+                    checked={true}
+                    onCheckedChange={() => {}}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg luxury-glass">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="luxuryFont" className="font-luxury-sans">Premium Typography</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Use sophisticated fonts designed for luxury brands
+                    </p>
+                  </div>
+                  <Switch
+                    id="luxuryFont"
+                    checked={true}
+                    onCheckedChange={() => {}}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

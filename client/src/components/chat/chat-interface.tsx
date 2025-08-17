@@ -121,33 +121,43 @@ export default function ChatInterface() {
 
   return (
     <>
-      {/* Chat Header */}
-      <div className="bg-card dark:bg-card border-b border-border px-6 py-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-50/30 via-yellow-50/20 to-orange-50/10 dark:from-amber-900/10 dark:via-yellow-900/5 dark:to-amber-900/10"></div>
+      {/* Luxury Chat Header */}
+      <div className="luxury-glass border-b border-border/20 px-6 py-5 relative overflow-hidden">
+        <div className="absolute inset-0 luxury-gradient-bg opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent luxury-shimmer"></div>
         <div className="relative flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Bot className="text-white w-6 h-6" />
+          <div className="flex items-center space-x-4">
+            <div className="luxury-glow-animation w-14 h-14 luxury-gradient-bg rounded-2xl flex items-center justify-center shadow-2xl relative">
+              <div className="absolute inset-0 luxury-gradient-bg rounded-2xl blur opacity-50"></div>
+              <Bot className="text-white w-7 h-7 relative z-10" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-foreground">Luxury AI Concierge</h2>
-              <p className="text-sm text-muted-foreground">Ready to help you discover premium fragrances & timepieces</p>
+            <div className="space-y-1">
+              <h2 className="text-2xl font-luxury-display font-bold text-foreground luxury-text-glow">
+                KarjiStore Concierge
+              </h2>
+              <p className="text-sm text-muted-foreground font-luxury-sans">
+                Your personal luxury fragrance & timepiece advisor
+              </p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             <SettingsButton sessionId={sessionId} />
-            <div className="bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 text-white px-4 py-2 rounded-xl shadow-md">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">Online</span>
+            <div className="luxury-glass border border-border/30 px-5 py-3 rounded-2xl luxury-shadow relative group">
+              <div className="absolute inset-0 luxury-gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="flex items-center space-x-3 relative">
+                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg"></div>
+                <span className="text-sm font-luxury-sans font-medium text-foreground">Premium Service Active</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-background dark:bg-background">
+      {/* Luxury Messages Container */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-background relative">
+        <div className="absolute inset-0 opacity-5">
+          <div className="luxury-gradient-bg h-full w-full"></div>
+        </div>
         {messages.map((message) => (
           <Message 
             key={message.id} 
@@ -156,18 +166,21 @@ export default function ChatInterface() {
           />
         ))}
         
-        {/* Typing Indicator */}
+        {/* Luxury Typing Indicator */}
         {isTyping && (
-          <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-              <Bot className="text-white w-5 h-5" />
+          <div className="flex items-start space-x-4 relative z-10">
+            <div className="luxury-glow-animation w-12 h-12 luxury-gradient-bg rounded-2xl flex items-center justify-center flex-shrink-0 luxury-shadow relative">
+              <div className="absolute inset-0 luxury-gradient-bg rounded-2xl blur opacity-50"></div>
+              <Bot className="text-white w-6 h-6 relative z-10" />
             </div>
-            <div className="bg-card dark:bg-card rounded-2xl rounded-tl-sm p-4 shadow-sm border border-border">
-              <div className="flex space-x-2">
-                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce"></div>
-                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-3 h-3 bg-amber-600 dark:bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="luxury-glass rounded-3xl rounded-tl-lg p-5 luxury-shadow border border-border/30 relative">
+              <div className="absolute inset-0 luxury-gradient-bg rounded-3xl rounded-tl-lg opacity-5"></div>
+              <div className="flex space-x-2 relative">
+                <div className="w-3 h-3 bg-primary rounded-full animate-bounce shadow-lg"></div>
+                <div className="w-3 h-3 bg-primary rounded-full animate-bounce shadow-lg" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-3 h-3 bg-primary rounded-full animate-bounce shadow-lg" style={{ animationDelay: '0.2s' }}></div>
               </div>
+              <p className="text-xs text-muted-foreground mt-2 font-luxury-sans">Concierge is thinking...</p>
             </div>
           </div>
         )}
@@ -195,38 +208,39 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="bg-card dark:bg-card border-t border-border p-4">
+      {/* Luxury Message Input */}
+      <div className="luxury-glass border-t border-border/30 p-6 relative">
+        <div className="absolute inset-0 luxury-gradient-bg opacity-3"></div>
+        
         {/* Quick Actions - HIDDEN FOR NOW */}
         {messages.length > 1 && (
-          <div className="mb-3 hidden">
+          <div className="mb-4 hidden">
             <QuickActions
               products={messages.slice(-1)[0]?.products}
               userProfile={userProfile}
               conversationContext={input}
               onActionClick={(action, context) => {
-                // Send the action directly as a request
                 sendDirectMessage(action.label);
               }}
             />
           </div>
         )}
 
-        <div className="flex space-x-4">
+        <div className="relative flex space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about products, deals, or anything else..."
-                className="pr-10"
+                placeholder="Share your luxury fragrance preferences..."
+                className="input-luxury h-14 rounded-3xl px-6 pr-14 font-luxury-sans text-base placeholder:font-luxury-sans placeholder:text-muted-foreground/60 luxury-border-glow"
                 disabled={chatMutation.isPending}
               />
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-xl luxury-hover text-muted-foreground hover:text-foreground"
               >
                 <Paperclip className="w-4 h-4" />
               </Button>
@@ -235,13 +249,18 @@ export default function ChatInterface() {
           <Button 
             onClick={handleSend} 
             disabled={!input.trim() || chatMutation.isPending}
+            className="btn-luxury-primary h-14 px-6 rounded-3xl font-luxury-sans font-medium"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5 mr-2" />
+            Send
           </Button>
         </div>
-        <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>Press Enter to send, Shift+Enter for new line</span>
-          <span>Powered by OpenRouter AI</span>
+        <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground/80 font-luxury-sans">
+          <span>Press Enter to send • Shift+Enter for new line</span>
+          <span className="flex items-center space-x-2">
+            <span>Powered by</span>
+            <span className="text-primary font-medium">OpenRouter AI</span>
+          </span>
         </div>
       </div>
     </>
