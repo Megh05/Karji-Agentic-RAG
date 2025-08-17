@@ -120,33 +120,33 @@ export default function ChatInterface() {
   };
 
   return (
-    <>
-      {/* Chat Header - 3D Cardboard Design */}
-      <div className="cardboard-container px-6 py-6 relative overflow-hidden">
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="btn-gold w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center animate-cardboard-float">
-              <Bot className="text-black w-7 h-7 lg:w-9 lg:h-9" />
+    <div className="chat-container">
+      {/* Chat Header - Luxury Design */}
+      <div className="chat-header">
+        <div className="flex items-center justify-between max-w-6xl mx-auto">
+          <div className="flex items-center space-x-6">
+            <div className="bot-avatar animate-luxury-float">
+              <Bot className="w-7 h-7" />
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-heading font-bold text-pure-black">KarjiStore Concierge</h2>
-              <p className="text-sm lg:text-base text-gray-custom font-body">Premium Fragrances & Luxury Accessories</p>
+              <h1 className="text-3xl lg:text-4xl font-heading font-bold text-foreground">KarjiStore Concierge</h1>
+              <p className="text-lg text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <SettingsButton sessionId={sessionId} />
-            <div className="btn-gold px-4 py-3 lg:px-6 lg:py-4 rounded-2xl">
+            <div className="luxury-container px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
               <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm lg:text-base font-bold text-black">Online</span>
+                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-luxury-pulse"></div>
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Online</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Messages Container - 3D Cardboard Design */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-off-white">
+      {/* Messages Container - Luxury Design */}
+      <div className="flex-1 overflow-y-auto message-area">
         {messages.map((message) => (
           <Message 
             key={message.id} 
@@ -155,17 +155,17 @@ export default function ChatInterface() {
           />
         ))}
         
-        {/* Typing Indicator - 3D Cardboard Design */}
+        {/* Typing Indicator - Luxury Design */}
         {isTyping && (
-          <div className="flex items-start space-x-4">
-            <div className="btn-gold w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <Bot className="text-black w-6 h-6" />
+          <div className="flex items-start space-x-6">
+            <div className="bot-avatar">
+              <Bot className="w-6 h-6" />
             </div>
-            <div className="cardboard-bot-bubble rounded-tl-lg">
-              <div className="flex space-x-3">
-                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce"></div>
-                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="typing-indicator">
+              <div className="typing-dots">
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
               </div>
             </div>
           </div>
@@ -194,9 +194,9 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input - 3D Cardboard Design */}
-      <div className="cardboard-container border-t border-gray-accent px-6 py-6 bg-pure-white">
-        <div className="max-w-4xl mx-auto">
+      {/* Message Input - Luxury Design */}
+      <div className="input-container">
+        <div className="max-w-6xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (
             <div className="mb-4 hidden">
@@ -219,7 +219,7 @@ export default function ChatInterface() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about luxury fragrances, get personalized recommendations, or explore our premium collection..."
-                  className="cardboard-input pr-16 min-h-[56px] text-base"
+                  className="luxury-input pr-16 min-h-[60px] text-base resize-none"
                   disabled={chatMutation.isPending}
                 />
                 <Button
@@ -236,7 +236,7 @@ export default function ChatInterface() {
             <Button 
               onClick={handleSend}
               disabled={!input.trim() || chatMutation.isPending}
-              className="cardboard-send-btn px-8 py-4 text-base min-h-[56px] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="luxury-btn min-h-[60px] disabled:opacity-50 disabled:cursor-not-allowed"
               size="default"
             >
               {chatMutation.isPending ? (
@@ -250,12 +250,12 @@ export default function ChatInterface() {
             </Button>
           </div>
           
-          <div className="mt-4 flex items-center justify-between text-sm cardboard-text cardboard-responsive-text opacity-70">
+          <div className="mt-6 flex items-center justify-between text-sm text-muted-foreground">
             <span>Press Enter to send • Shift+Enter for new line</span>
-            <span className="luxury-text font-semibold">Powered by KarjiStore AI</span>
+            <span className="font-heading font-semibold text-primary">Powered by KarjiStore AI</span>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

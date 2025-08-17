@@ -1,80 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* 3D Cardboard Cut-out Minimal Monochrome + Gold Theme */
-    --background: 0 0% 97%;                /* Off-white #F8F8F6 */
-    --foreground: 0 0% 11%;                /* Black #1C1C1C */
-    --card: 0 0% 100%;                     /* White #FFFFFF */
-    --card-foreground: 0 0% 11%;           /* Black #1C1C1C */
-    --popover: 0 0% 100%;                  /* White #FFFFFF */
-    --popover-foreground: 0 0% 11%;        /* Black #1C1C1C */
-    --primary: 42 45% 58%;                 /* Gold #CFA95B */
-    --primary-foreground: 0 0% 11%;        /* Black #1C1C1C */
-    --secondary: 0 0% 90%;                 /* Gray accent #E5E5E5 */
-    --secondary-foreground: 0 0% 11%;      /* Black #1C1C1C */
-    --muted: 0 0% 90%;                     /* Gray accent #E5E5E5 */
-    --muted-foreground: 0 0% 48%;          /* Text gray #7A7A7A */
-    --accent: 42 45% 58%;                  /* Gold #CFA95B */
-    --accent-foreground: 0 0% 11%;         /* Black #1C1C1C */
+    /* Luxury Color Palette - Sophisticated High-End Fashion/Jewelry Aesthetic */
+    --background: 37 20% 98%;              /* Warm cream #FAF9F6 */
+    --foreground: 0 0% 16%;                /* Rich charcoal #2C2C2C */
+    --card: 0 0% 99.5%;                    /* Pearl white #FEFEFE */
+    --card-foreground: 0 0% 16%;           /* Rich charcoal */
+    --popover: 0 0% 99.5%;                 /* Pearl white */
+    --popover-foreground: 0 0% 16%;        /* Rich charcoal */
+    --primary: 43 75% 52%;                 /* Champagne gold #D4AF37 */
+    --primary-foreground: 0 0% 10%;        /* Deep charcoal */
+    --secondary: 0 0% 91%;                 /* Silver accent #E8E8E8 */
+    --secondary-foreground: 0 0% 16%;      /* Rich charcoal */
+    --muted: 0 0% 91%;                     /* Silver accent */
+    --muted-foreground: 0 0% 48%;          /* Sophisticated gray */
+    --accent: 43 75% 52%;                  /* Champagne gold */
+    --accent-foreground: 0 0% 10%;         /* Deep charcoal */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;                    /* Gray border #E5E5E5 */
-    --input: 0 0% 100%;                    /* White #FFFFFF */
-    --ring: 42 45% 58%;                    /* Gold #CFA95B */
-    --chart-1: 42 45% 58%;
+    --border: 0 0% 91%;                    /* Silver border */
+    --input: 0 0% 99.5%;                   /* Pearl white */
+    --ring: 43 75% 52%;                    /* Champagne gold */
+    --chart-1: 43 75% 52%;
     --chart-2: 0 0% 48%;
-    --chart-3: 0 0% 11%;
-    --chart-4: 0 0% 90%;
-    --chart-5: 0 0% 100%;
-    --radius: 0.75rem;
+    --chart-3: 0 0% 16%;
+    --chart-4: 0 0% 91%;
+    --chart-5: 0 0% 99.5%;
+    --radius: 1rem;
     
-    /* 3D Cardboard Cut-out Effects */
-    --cardboard-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-    --cardboard-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.08);
-    --cardboard-shadow-heavy: 0 8px 18px rgba(0, 0, 0, 0.08);
-    --cardboard-shadow-hover: 0 12px 20px rgba(0, 0, 0, 0.12);
-    --cardboard-inset: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.08);
-    --gold-color: #CFA95B;
-    --off-white: #F8F8F6;
-    --pure-white: #FFFFFF;
-    --pure-black: #1C1C1C;
-    --gray-accent: #E5E5E5;
-    --text-gray: #7A7A7A;
-    --light-gray-bg: #F5F5F5;
+    /* Luxury 3D Shadows & Effects */
+    --shadow-luxury: 0 8px 25px rgba(42, 42, 42, 0.08), 0 4px 10px rgba(42, 42, 42, 0.05);
+    --shadow-elevated: 0 12px 35px rgba(42, 42, 42, 0.12), 0 6px 15px rgba(42, 42, 42, 0.08);
+    --shadow-floating: 0 20px 50px rgba(42, 42, 42, 0.15), 0 10px 25px rgba(42, 42, 42, 0.1);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-metallic: 0 4px 8px rgba(212, 175, 55, 0.15), 0 2px 4px rgba(212, 175, 55, 0.1);
+    
+    /* Premium Typography */
+    --font-heading: 'Playfair Display', 'Times New Roman', serif;
+    --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+    --font-accent: 'Cormorant Garamond', serif;
   }
 
   .dark {
-    /* Dark mode maintains the minimal monochrome theme */
-    --background: 0 0% 8%;                 /* Very dark gray */
-    --foreground: 0 0% 100%;               /* White */
-    --card: 0 0% 11%;                      /* Dark card */
-    --card-foreground: 0 0% 100%;          /* White text */
-    --popover: 0 0% 11%;                   /* Dark popover */
-    --popover-foreground: 0 0% 100%;       /* White text */
-    --primary: 42 45% 58%;                 /* Gold #CFA95B */
-    --primary-foreground: 0 0% 11%;        /* Black text on gold */
-    --secondary: 0 0% 15%;                 /* Dark gray */
-    --secondary-foreground: 0 0% 100%;     /* White text */
-    --muted: 0 0% 15%;                     /* Dark gray */
+    /* Elegant dark theme maintaining luxury aesthetic */
+    --background: 0 0% 6%;                 /* Deep black background */
+    --foreground: 0 0% 94%;                /* Cream white text */
+    --card: 0 0% 10%;                      /* Dark luxury card */
+    --card-foreground: 0 0% 94%;           /* Cream text */
+    --popover: 0 0% 10%;                   /* Dark popover */
+    --popover-foreground: 0 0% 94%;        /* Cream text */
+    --primary: 43 75% 52%;                 /* Champagne gold */
+    --primary-foreground: 0 0% 10%;        /* Deep black */
+    --secondary: 0 0% 18%;                 /* Dark gray */
+    --secondary-foreground: 0 0% 94%;      /* Cream text */
+    --muted: 0 0% 18%;                     /* Dark gray */
     --muted-foreground: 0 0% 65%;          /* Light gray text */
-    --accent: 42 45% 58%;                  /* Gold */
-    --accent-foreground: 0 0% 11%;         /* Black text */
+    --accent: 43 75% 52%;                  /* Champagne gold */
+    --accent-foreground: 0 0% 10%;         /* Deep black */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 20%;                    /* Dark border */
-    --input: 0 0% 11%;                     /* Dark input */
-    --ring: 42 45% 58%;                    /* Gold ring */
+    --border: 0 0% 22%;                    /* Dark border */
+    --input: 0 0% 10%;                     /* Dark input */
+    --ring: 43 75% 52%;                    /* Champagne gold */
     
-    /* Dark 3D Effects */
-    --cardboard-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.5);
-    --cardboard-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.6);
-    --cardboard-shadow-heavy: 0 8px 18px rgba(0, 0, 0, 0.7);
-    --cardboard-shadow-hover: 0 12px 20px rgba(0, 0, 0, 0.8);
-    --cardboard-inset: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 4px 8px rgba(0, 0, 0, 0.6);
-    --light-gray-bg: #2A2A2A;
+    /* Dark luxury shadows */
+    --shadow-luxury: 0 8px 25px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.3);
+    --shadow-elevated: 0 12px 35px rgba(0, 0, 0, 0.5), 0 6px 15px rgba(0, 0, 0, 0.4);
+    --shadow-floating: 0 20px 50px rgba(0, 0, 0, 0.6), 0 10px 25px rgba(0, 0, 0, 0.5);
   }
   
   * {
@@ -83,176 +79,293 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-body);
     font-feature-settings: "rlig" 1, "calt" 1;
-    background-color: var(--off-white);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Typography Classes */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  
+  /* Custom Font Classes */
   .font-heading {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
   }
   
   .font-body {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-body);
+  }
+  
+  .font-accent {
+    font-family: var(--font-accent);
   }
 }
 
 @layer components {
-  /* 3D Cardboard Base Components */
-  .cardboard-container {
-    @apply bg-white border border-border rounded-2xl shadow-[0_8px_18px_rgba(0,0,0,0.08)] p-5;
+  /* Luxury Container Components */
+  .luxury-container {
+    @apply bg-card border border-border rounded-2xl;
+    box-shadow: var(--shadow-luxury);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .cardboard-bot-bubble {
-    @apply bg-white text-black rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] p-4 font-body;
+  .luxury-container:hover {
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-2px);
   }
   
-  .cardboard-user-bubble {
-    @apply bg-black text-white rounded-xl shadow-[0_4px_8px_rgba(0,0,0,0.08)] p-4 font-body;
+  /* Premium Chat Interface */
+  .chat-header {
+    @apply luxury-container border-b backdrop-blur-sm px-8 py-6;
+    background: linear-gradient(135deg, hsl(var(--card) / 0.8) 0%, hsl(var(--muted) / 0.2) 100%);
   }
   
-  .cardboard-input {
-    @apply bg-white border border-border rounded-xl px-4 py-3 font-body placeholder:text-[#7A7A7A] focus:outline-none focus:ring-2 focus:ring-[#CFA95B];
+  .chat-container {
+    @apply bg-background min-h-screen;
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--muted) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(var(--accent) / 0.05) 0%, transparent 50%);
   }
   
-  .cardboard-send-btn {
-    @apply bg-black text-[#CFA95B] rounded-xl px-4 py-2 font-bold shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:bg-[#CFA95B] hover:text-black transition-all duration-200;
+  .message-area {
+    @apply px-8 py-6 space-y-8 max-w-6xl mx-auto;
   }
   
-  /* Product Card Components */
+  /* Sophisticated Message Bubbles */
+  .bot-bubble {
+    @apply luxury-container p-6 rounded-3xl rounded-tl-lg;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.2) 100%);
+    position: relative;
+  }
+  
+  .bot-bubble::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.1) 100%);
+    border-radius: inherit;
+    z-index: -1;
+  }
+  
+  .user-bubble {
+    @apply bg-gradient-to-br from-primary to-accent text-primary-foreground p-6 rounded-3xl rounded-tr-lg;
+    box-shadow: var(--shadow-metallic);
+    position: relative;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  }
+  
+  .user-bubble::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  
+  /* Luxury Avatar Styles */
+  .bot-avatar {
+    @apply bg-gradient-to-br from-primary to-accent text-primary-foreground w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0;
+    box-shadow: var(--shadow-metallic);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bot-avatar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 100%);
+    border-radius: inherit;
+  }
+  
+  /* Premium Product Cards */
   .product-card {
-    @apply bg-white border border-border rounded-[18px] shadow-[0_6px_12px_rgba(0,0,0,0.08)] p-6 hover:shadow-[0_12px_20px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300;
+    @apply luxury-container overflow-hidden;
+    background: linear-gradient(to bottom, hsl(var(--card)) 0%, hsl(var(--muted) / 0.1) 100%);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+  
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.3), transparent);
+  }
+  
+  .product-card:hover {
+    box-shadow: var(--shadow-floating);
+    transform: translateY(-4px) scale(1.02);
   }
   
   .product-image-area {
-    @apply bg-[#F5F5F5] rounded-lg flex items-center justify-center p-4;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    @apply relative overflow-hidden rounded-t-2xl;
+    background: linear-gradient(45deg, hsl(var(--muted) / 0.2), transparent);
+  }
+  
+  .product-image-area::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.05) 100%);
   }
   
   .product-title {
-    @apply font-heading font-bold text-black text-lg;
+    @apply font-heading text-xl font-semibold text-foreground leading-tight;
+    letter-spacing: -0.02em;
   }
   
   .product-description {
-    @apply font-body text-[#7A7A7A] text-sm;
+    @apply text-muted-foreground font-body leading-relaxed;
+    font-weight: 400;
   }
   
   .product-price {
-    @apply font-body font-bold text-[#CFA95B] text-base;
+    @apply font-heading font-bold text-foreground;
+    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--accent)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
-  .product-cta-btn {
-    @apply bg-black text-[#CFA95B] rounded-xl px-6 py-3 font-bold shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:bg-[#CFA95B] hover:text-black transition-all duration-200;
+  /* Luxury Buttons & Inputs */
+  .luxury-btn {
+    @apply bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-4 px-8 rounded-2xl;
+    box-shadow: var(--shadow-metallic);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  /* General Button Styles */
-  .btn-3d {
-    @apply shadow-[0_4px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-200;
+  .luxury-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
   
-  .btn-gold {
-    @apply bg-[#CFA95B] text-black font-bold rounded-xl px-6 py-3 shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all duration-200;
+  .luxury-btn:hover::before {
+    opacity: 1;
   }
   
-  /* Enhanced Input Styles */
-  .input-3d {
-    @apply bg-white border border-border rounded-xl px-4 py-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.05),0_4px_8px_rgba(0,0,0,0.08)] focus:shadow-[inset_0_1px_2px_rgba(0,0,0,0.05),0_0_0_4px_rgba(207,169,91,0.2)] focus:outline-none transition-all duration-200;
+  .luxury-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated), var(--shadow-metallic);
   }
   
-  /* Card Styles */
-  .card-3d {
-    @apply bg-white rounded-2xl p-6 shadow-[0_6px_12px_rgba(0,0,0,0.08)] border border-border;
+  .luxury-input {
+    @apply bg-card border-2 border-border rounded-2xl px-6 py-4 font-body text-foreground;
+    box-shadow: var(--shadow-inset);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .card-luxury {
-    @apply bg-gradient-to-br from-white to-[#E5E5E5] rounded-2xl p-8 shadow-[0_8px_18px_rgba(0,0,0,0.08)] border border-border;
+  .luxury-input:focus {
+    @apply border-primary outline-none;
+    box-shadow: var(--shadow-luxury), 0 0 0 3px hsl(var(--accent)/20);
   }
   
-  /* Text Styles */
-  .text-luxury {
-    @apply font-heading font-bold text-black;
+  /* Typing Indicator */
+  .typing-indicator {
+    @apply bot-bubble;
   }
   
-  .text-gold {
-    @apply text-[#CFA95B] font-bold;
+  .typing-dots {
+    @apply flex space-x-2;
   }
   
-  .text-muted {
-    @apply text-[#7A7A7A] font-body;
-  }
-}
-
-@layer utilities {
-  /* Custom Animation Classes */
-  .animate-cardboard-float {
-    animation: cardboard-float 3s ease-in-out infinite;
+  .typing-dot {
+    @apply w-3 h-3 rounded-full bg-primary animate-bounce;
   }
   
-  .animate-cardboard-pulse {
-    animation: cardboard-pulse 2s ease-in-out infinite;
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.1s;
   }
   
-  @keyframes cardboard-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-4px); }
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.2s;
   }
   
-  @keyframes cardboard-pulse {
-    0%, 100% { 
-      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-      transform: scale(1);
+  /* Input Container */
+  .input-container {
+    @apply luxury-container backdrop-blur-sm border-t px-8 py-6;
+    background: linear-gradient(135deg, hsl(var(--card) / 0.95) 0%, hsl(var(--muted) / 0.1) 100%);
+  }
+  
+  /* Discount Badges */
+  .discount-badge {
+    @apply bg-gradient-to-r from-destructive to-orange-500 text-destructive-foreground px-3 py-2 rounded-xl text-sm font-bold;
+    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+  }
+  
+  /* Premium Animations */
+  @keyframes luxury-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(1deg); }
+  }
+  
+  @keyframes luxury-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .animate-luxury-float {
+    animation: luxury-float 3s ease-in-out infinite;
+  }
+  
+  .animate-luxury-pulse {
+    animation: luxury-pulse 2s ease-in-out infinite;
+  }
+  
+  /* Responsive Typography */
+  @media (max-width: 640px) {
+    .product-title {
+      @apply text-lg;
     }
-    50% { 
-      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-      transform: scale(1.02);
+    
+    .message-area {
+      @apply px-4 py-4 space-y-6;
+    }
+    
+    .chat-header {
+      @apply px-4 py-4;
+    }
+    
+    .input-container {
+      @apply px-4 py-4;
     }
   }
   
-  /* Responsive 3D Effects */
-  .responsive-3d {
-    @apply transition-all duration-300;
-  }
-  
-  .responsive-3d:hover {
-    @apply -translate-y-1 shadow-[0_12px_20px_rgba(0,0,0,0.12)];
-  }
-  
-  /* Specific Background Colors */
-  .bg-off-white {
-    background-color: var(--off-white);
-  }
-  
-  .bg-pure-white {
-    background-color: var(--pure-white);
-  }
-  
-  .bg-pure-black {
-    background-color: var(--pure-black);
-  }
-  
-  .bg-gray-accent {
-    background-color: var(--gray-accent);
-  }
-  
-  .bg-light-gray {
-    background-color: var(--light-gray-bg);
-  }
-  
-  /* Text Colors */
-  .text-pure-black {
-    color: var(--pure-black);
-  }
-  
-  .text-pure-white {
-    color: var(--pure-white);
-  }
-  
-  .text-gold-custom {
-    color: var(--gold-color);
-  }
-  
-  .text-gray-custom {
-    color: var(--text-gray);
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .luxury-container,
+    .luxury-btn,
+    .luxury-input,
+    .product-card {
+      transition: none;
+    }
+    
+    .animate-luxury-float,
+    .animate-luxury-pulse {
+      animation: none;
+    }
   }
 }

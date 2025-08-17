@@ -44,20 +44,20 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
   const isUser = message.type === 'user';
 
   return (
-    <div className={`flex items-start space-x-4 ${isUser ? 'justify-end' : ''}`}>
+    <div className={`flex items-start space-x-6 ${isUser ? 'justify-end' : ''}`}>
       {!isUser && (
-        <div className="btn-gold w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0">
-          <Bot className="text-black w-6 h-6" />
+        <div className="bot-avatar">
+          <Bot className="w-6 h-6" />
         </div>
       )}
       
-      <div className={`max-w-3xl lg:max-w-4xl ${isUser ? 'order-first' : ''}`}>
-        <div className={`p-4 rounded-xl ${
+      <div className={`max-w-4xl lg:max-w-5xl ${isUser ? 'order-first' : ''}`}>
+        <div className={`${
           isUser 
-            ? 'cardboard-user-bubble rounded-tr-lg' 
-            : 'cardboard-bot-bubble rounded-tl-lg'
+            ? 'user-bubble rounded-tr-lg' 
+            : 'bot-bubble rounded-tl-lg'
         }`}>
-          <p className="whitespace-pre-wrap leading-relaxed font-body">{message.content}</p>
+          <p className="whitespace-pre-wrap leading-relaxed text-base">{message.content}</p>
         </div>
         
         {/* Welcome Guide for first message */}
