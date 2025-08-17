@@ -126,11 +126,11 @@ export default function ChatInterface() {
         <div className="relative flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="btn-gold w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center animate-cardboard-float">
-              <Bot className="w-7 h-7 lg:w-9 lg:h-9" style={{ color: 'var(--hazy-charcoal)' }} />
+              <Bot className="text-black w-7 h-7 lg:w-9 lg:h-9" />
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-heading font-bold" style={{ color: 'var(--hazy-charcoal)' }}>KarjiStore Concierge</h2>
-              <p className="text-sm lg:text-base font-body" style={{ color: 'var(--hazy-teal)' }}>Premium Fragrances & Luxury Accessories</p>
+              <h2 className="text-2xl lg:text-3xl font-heading font-bold text-pure-black">KarjiStore Concierge</h2>
+              <p className="text-sm lg:text-base text-gray-custom font-body">Premium Fragrances & Luxury Accessories</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -138,15 +138,15 @@ export default function ChatInterface() {
             <div className="btn-gold px-4 py-3 lg:px-6 lg:py-4 rounded-2xl">
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm lg:text-base font-bold" style={{ color: 'var(--hazy-charcoal)' }}>Online</span>
+                <span className="text-sm lg:text-base font-bold text-black">Online</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Messages Container - HAZY Design */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6" style={{ backgroundColor: 'var(--hazy-pearl)' }}>
+      {/* Messages Container - 3D Cardboard Design */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-off-white">
         {messages.map((message) => (
           <Message 
             key={message.id} 
@@ -159,13 +159,13 @@ export default function ChatInterface() {
         {isTyping && (
           <div className="flex items-start space-x-4">
             <div className="btn-gold w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <Bot className="w-6 h-6" style={{ color: 'var(--hazy-charcoal)' }} />
+              <Bot className="text-black w-6 h-6" />
             </div>
             <div className="cardboard-bot-bubble rounded-tl-lg">
               <div className="flex space-x-3">
-                <div className="w-4 h-4 rounded-full animate-bounce" style={{ backgroundColor: 'var(--hazy-teal)' }}></div>
-                <div className="w-4 h-4 rounded-full animate-bounce" style={{ backgroundColor: 'var(--hazy-teal)', animationDelay: '0.1s' }}></div>
-                <div className="w-4 h-4 rounded-full animate-bounce" style={{ backgroundColor: 'var(--hazy-teal)', animationDelay: '0.2s' }}></div>
+                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce"></div>
+                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-4 h-4 bg-[#CFA95B] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -194,8 +194,8 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input - HAZY Design */}
-      <div className="cardboard-container border-t px-6 py-6" style={{ borderTopColor: 'var(--hazy-sage)' }}>
+      {/* Message Input - 3D Cardboard Design */}
+      <div className="cardboard-container border-t border-gray-accent px-6 py-6 bg-pure-white">
         <div className="max-w-4xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (
@@ -250,9 +250,9 @@ export default function ChatInterface() {
             </Button>
           </div>
           
-          <div className="mt-4 flex items-center justify-between text-sm opacity-70">
-            <span style={{ color: 'var(--hazy-teal)' }}>Press Enter to send • Shift+Enter for new line</span>
-            <span className="font-semibold" style={{ color: 'var(--hazy-charcoal)' }}>Powered by KarjiStore AI</span>
+          <div className="mt-4 flex items-center justify-between text-sm cardboard-text cardboard-responsive-text opacity-70">
+            <span>Press Enter to send • Shift+Enter for new line</span>
+            <span className="luxury-text font-semibold">Powered by KarjiStore AI</span>
           </div>
         </div>
       </div>
