@@ -28,30 +28,29 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discount = calculateDiscount();
 
   return (
-    <div className="product-card-3d relative cardboard-responsive">
+    <div className="product-card relative">
       {discount && (
-        <div className="absolute top-3 left-3 gold-button px-3 py-2 rounded-2xl flex items-center gap-2 text-sm font-bold z-10">
+        <div className="absolute top-3 left-3 btn-gold px-3 py-2 rounded-xl flex items-center gap-2 text-sm font-bold z-10">
           <Tag className="w-4 h-4" />
           {discount}% OFF
         </div>
       )}
       {product.imageLink && (
-        <div className="relative overflow-hidden">
+        <div className="product-image-area mb-4">
           <img 
             src={product.imageLink} 
             alt={product.title}
-            className="w-full h-40 lg:h-48 object-cover transition-transform duration-300 hover:scale-105"
+            className="w-full h-40 lg:h-48 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
         </div>
       )}
-      <div className="cardboard-responsive-padding">
-        <h3 className="font-bold cardboard-responsive-text luxury-text mb-2 leading-tight">{product.title}</h3>
+      <div className="px-6 pb-6">
+        <h3 className="product-title mb-2 leading-tight">{product.title}</h3>
         {product.description && (
-          <p className="text-sm text-muted-foreground cardboard-text mb-3 line-clamp-2 leading-relaxed">
+          <p className="product-description mb-3 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         )}
@@ -61,29 +60,29 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.discountPrice ? (
                 <>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xl lg:text-2xl font-bold luxury-text">{product.discountPrice}</span>
+                    <span className="product-price text-xl lg:text-2xl">{product.discountPrice}</span>
                     {discount && (
-                      <Badge variant="outline" className="cardboard-light bg-secondary text-primary border-primary text-xs font-bold px-2 py-1 rounded-full">
+                      <Badge variant="outline" className="bg-gray-accent text-[#CFA95B] border-[#CFA95B] text-xs font-bold px-2 py-1 rounded-full">
                         <Percent className="w-3 h-3 mr-1" />
                         SAVE {discount}%
                       </Badge>
                     )}
                   </div>
                   {product.price && (
-                    <span className="text-sm text-muted-foreground line-through cardboard-text">
+                    <span className="text-sm text-gray-custom line-through font-body">
                       Was {product.price}
                     </span>
                   )}
                 </>
               ) : (
-                <span className="text-xl lg:text-2xl font-bold luxury-text">{product.price || 'Price not available'}</span>
+                <span className="product-price text-xl lg:text-2xl">{product.price || 'Price not available'}</span>
               )}
             </div>
           </div>
         </div>
         <Button 
           onClick={handleViewProduct} 
-          className="btn-gold w-full text-base py-3 rounded-2xl font-bold icon-3d"
+          className="product-cta-btn w-full text-base py-3"
           disabled={!product.link}
         >
           View Product <ExternalLink className="w-4 h-4 ml-2" />
