@@ -121,7 +121,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full chat-container">
+    <div className="flex flex-col h-full max-h-screen overflow-hidden chat-container">
       {/* Chat Header - Compact */}
       <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-20">
         <div className="flex items-center max-w-6xl mx-auto">
