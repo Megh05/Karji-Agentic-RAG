@@ -77,8 +77,8 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
             {message.content.toLowerCase().includes('compar') && message.products.length >= 2 ? (
               <ProductComparison 
                 products={message.products} 
-                onSelectProduct={(productId) => onFollowUpClick?.(`Tell me more about ${message.products.find(p => p.id === productId)?.title}`)}
-                onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products.find(p => p.id === productId)?.title} to my wishlist`)}
+                onSelectProduct={(productId) => onFollowUpClick?.(`Tell me more about ${message.products?.find(p => p.id === productId)?.title}`)}
+                onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products?.find(p => p.id === productId)?.title} to my wishlist`)}
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -90,9 +90,9 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
           </div>
         )}
 
-        {/* Follow-up Questions */}
+        {/* Follow-up Questions - HIDDEN FOR NOW */}
         {message.followUpQuestions && message.followUpQuestions.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2 hidden">
             {message.followUpQuestions.map((question, index) => (
               <Button
                 key={index}

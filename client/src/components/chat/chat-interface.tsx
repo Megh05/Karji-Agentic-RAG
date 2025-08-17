@@ -170,9 +170,9 @@ export default function ChatInterface() {
           </div>
         )}
 
-        {/* Contextual Follow-ups */}
+        {/* Contextual Follow-ups - HIDDEN FOR NOW */}
         {sessionId && (
-          <div className="mb-4">
+          <div className="mb-4 hidden">
             <ContextualFollowUps
               sessionId={sessionId}
               conversationLength={messages.length}
@@ -195,9 +195,9 @@ export default function ChatInterface() {
 
       {/* Message Input */}
       <div className="bg-card dark:bg-card border-t border-border p-4">
-        {/* Quick Actions */}
+        {/* Quick Actions - HIDDEN FOR NOW */}
         {messages.length > 1 && (
-          <div className="mb-3">
+          <div className="mb-3 hidden">
             <QuickActions
               products={messages.slice(-1)[0]?.products}
               userProfile={userProfile}
