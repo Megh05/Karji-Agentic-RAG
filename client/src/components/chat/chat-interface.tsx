@@ -123,7 +123,7 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-full max-h-screen overflow-hidden chat-container">
       {/* Chat Header - Compact */}
-      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-20">
+      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-50">
         <div className="flex items-center max-w-6xl mx-auto">
           <div className="flex items-center space-x-3">
             <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
@@ -138,7 +138,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Messages Container - Luxury Design - Flexible */}
-      <div className="flex-1 overflow-y-auto message-area relative z-10">
+      <div className="flex-1 overflow-y-auto message-area relative z-10" style={{ paddingTop: '8px' }}>
         <div className="min-h-full">
           {messages.map((message) => (
             <Message 
@@ -187,7 +187,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Message Input - Luxury Design - Sticky Bottom */}
-      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 flex-shrink-0 sticky bottom-0 z-20">
+      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 flex-shrink-0 sticky bottom-0 z-40">
         <div className="max-w-6xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (

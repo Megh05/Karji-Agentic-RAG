@@ -145,6 +145,8 @@
   .message-area {
     @apply px-4 py-4 max-w-5xl mx-auto lg:px-6;
     max-height: calc(100vh - 140px); /* Account for header and input areas */
+    position: relative;
+    z-index: 1;
   }
   
   /* Sophisticated Message Bubbles */
@@ -152,6 +154,7 @@
     @apply luxury-container p-4 rounded-2xl rounded-tl-lg;
     background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.2) 100%);
     position: relative;
+    z-index: 5;
   }
   
   .bot-bubble::before {
@@ -171,6 +174,7 @@
     box-shadow: var(--shadow-metallic);
     position: relative;
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    z-index: 5;
   }
   
   .user-bubble::before {
@@ -303,7 +307,7 @@
     background: linear-gradient(135deg, hsl(var(--card) / 0.98) 0%, hsl(var(--muted) / 0.1) 100%);
     position: sticky;
     bottom: 0;
-    z-index: 20;
+    z-index: 40;
   }
   
   /* Discount Badges */
