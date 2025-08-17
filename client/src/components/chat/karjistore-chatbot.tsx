@@ -130,7 +130,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="hidden fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center"
+          className="hidden fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal text-white rounded-full shadow-lg z-50 flex items-center justify-center"
           aria-label="Open chat"
           data-testid="button-open-chat"
         >
@@ -159,7 +159,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground hover:bg-gray-100/50 dark:hover:bg-accent h-auto p-2 rounded-full transition-colors"
+                className="text-gray-500 dark:text-muted-foreground h-auto p-2 rounded-full"
                 aria-label="Close chat"
                 data-testid="button-close-chat"
               >
@@ -246,14 +246,14 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="w-full bg-gray-50 dark:bg-input border border-gray-200 dark:border-border rounded-2xl px-6 py-4 text-sm text-gray-800 dark:text-foreground focus:ring-2 focus:ring-karjistore-teal dark:focus:ring-karjistore-teal focus:border-karjistore-teal dark:focus:border-karjistore-teal shadow-sm outline-none transition-colors"
+                  className="w-full bg-gray-50 dark:bg-input border border-gray-200 dark:border-border rounded-2xl px-6 py-4 text-sm text-gray-800 dark:text-foreground focus:ring-2 focus:ring-karjistore-teal dark:focus:ring-karjistore-teal focus:border-karjistore-teal dark:focus:border-karjistore-teal shadow-sm outline-none"
                   data-testid="input-message"
                 />
               </div>
               <button
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
-                className="bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:via-gray-600 dark:disabled:to-gray-600 text-white w-12 h-12 rounded-2xl p-0 transition-all duration-300 hover:scale-105 shadow-md disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
+                className="bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal disabled:from-gray-300 disabled:via-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:via-gray-600 dark:disabled:to-gray-600 text-white w-12 h-12 rounded-2xl p-0 shadow-md disabled:cursor-not-allowed flex items-center justify-center"
                 data-testid="button-send-message"
               >
                 <Send className="h-5 w-5" />
@@ -268,7 +268,7 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                   <button
                     key={action.label}
                     onClick={() => handleQuickAction(action.value)}
-                    className="bg-gray-50 dark:bg-accent hover:bg-karjistore-gainsboro/20 dark:hover:bg-accent/80 text-gray-800 dark:text-foreground text-xs py-3 px-4 rounded-xl border border-gray-200 dark:border-border hover:border-karjistore-silver/40 dark:hover:border-karjistore-slate/40 transition-all duration-200 font-medium flex items-center gap-2"
+                    className="bg-gray-50 dark:bg-accent text-gray-800 dark:text-foreground text-xs py-3 px-4 rounded-xl border border-gray-200 dark:border-border font-medium flex items-center gap-2"
                     data-testid={`button-quick-action-${action.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <IconComponent className="h-4 w-4 text-karjistore-teal dark:text-karjistore-teal" />

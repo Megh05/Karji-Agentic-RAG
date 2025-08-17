@@ -113,12 +113,6 @@
   .luxury-container {
     @apply bg-card border border-border rounded-2xl;
     box-shadow: var(--shadow-luxury);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .luxury-container:hover {
-    box-shadow: var(--shadow-elevated);
-    transform: translateY(-2px);
   }
   
   /* Premium Chat Interface */
@@ -193,7 +187,6 @@
   .product-card {
     @apply luxury-container overflow-hidden;
     background: linear-gradient(to bottom, hsl(var(--card)) 0%, hsl(var(--muted) / 0.1) 100%);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
   }
   
@@ -205,11 +198,6 @@
     right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.3), transparent);
-  }
-  
-  .product-card:hover {
-    box-shadow: var(--shadow-floating);
-    transform: translateY(-4px) scale(1.02);
   }
   
   .product-image-area {
@@ -248,7 +236,6 @@
     box-shadow: var(--shadow-metallic);
     position: relative;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .luxury-btn::before {
@@ -257,22 +244,13 @@
     inset: 0;
     background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
   }
   
-  .luxury-btn:hover::before {
-    opacity: 1;
-  }
-  
-  .luxury-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-elevated), var(--shadow-metallic);
-  }
+
   
   .luxury-input {
     @apply bg-card border-2 border-border rounded-2xl px-6 py-4 font-body text-foreground;
     box-shadow: var(--shadow-inset);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .luxury-input:focus {

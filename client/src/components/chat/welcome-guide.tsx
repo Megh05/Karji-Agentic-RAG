@@ -194,7 +194,7 @@ export default function WelcomeGuide({
                 key={idx}
                 variant="outline"
                 size="sm"
-                className="justify-start h-auto p-3 text-left hover:bg-primary/5"
+                className="justify-start h-auto p-3 text-left"
                 onClick={() => onQuestionSelect?.(question)}
                 data-testid={`quick-question-${idx}`}
               >
@@ -208,13 +208,13 @@ export default function WelcomeGuide({
 
       {/* Store Information Tab */}
       {activeTab === 'store' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
           {storeHighlights.map((highlight, idx) => (
-            <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div>{highlight.icon}</div>
-              <div>
-                <h3 className="font-semibold text-sm mb-1">{highlight.title}</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-300">
+            <div key={idx} className="luxury-container flex items-start space-x-3 p-4 bg-gradient-to-br from-card to-muted/20">
+              <div className="flex-shrink-0 text-primary">{highlight.icon}</div>
+              <div className="flex-1">
+                <h3 className="font-heading font-semibold text-sm lg:text-base mb-2 text-foreground">{highlight.title}</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground leading-relaxed">
                   {highlight.description}
                 </p>
               </div>

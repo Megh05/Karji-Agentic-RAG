@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <img 
             src={product.imageLink} 
             alt={product.title}
-            className="w-full h-40 lg:h-48 object-cover transition-all duration-500 hover:scale-105"
+            className="w-full h-40 lg:h-48 object-cover"
             onError={(e) => {
               e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
             }}
