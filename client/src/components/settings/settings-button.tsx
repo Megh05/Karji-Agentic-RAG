@@ -19,10 +19,10 @@ export default function SettingsButton({
 }: SettingsButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Don't show settings if no session
-  if (!sessionId) {
-    return null;
-  }
+  // Show settings button even without session for testing
+  // if (!sessionId) {
+  //   return null;
+  // }
 
   const handleClose = () => {
     setIsOpen(false);
@@ -51,7 +51,7 @@ export default function SettingsButton({
           </DialogHeader>
           
           <UserSettingsComponent 
-            sessionId={sessionId} 
+            sessionId={sessionId || "demo-session"} 
             onClose={handleClose}
           />
         </DialogContent>
