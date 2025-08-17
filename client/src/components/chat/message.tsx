@@ -47,7 +47,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
     <div className={`flex items-start space-x-4 ${isUser ? 'justify-end' : ''}`}>
       {!isUser && (
         <div className="btn-gold w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0">
-          <Bot className="text-black w-6 h-6" />
+          <Bot className="w-6 h-6" style={{ color: 'var(--hazy-charcoal)' }} />
         </div>
       )}
       

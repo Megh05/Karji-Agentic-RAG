@@ -4,75 +4,76 @@
 
 @layer base {
   :root {
-    /* 3D Cardboard Cut-out Minimal Monochrome + Gold Theme */
-    --background: 0 0% 97%;                /* Off-white #F8F8F6 */
-    --foreground: 0 0% 11%;                /* Black #1C1C1C */
-    --card: 0 0% 100%;                     /* White #FFFFFF */
-    --card-foreground: 0 0% 11%;           /* Black #1C1C1C */
-    --popover: 0 0% 100%;                  /* White #FFFFFF */
-    --popover-foreground: 0 0% 11%;        /* Black #1C1C1C */
-    --primary: 42 45% 58%;                 /* Gold #CFA95B */
-    --primary-foreground: 0 0% 11%;        /* Black #1C1C1C */
-    --secondary: 0 0% 90%;                 /* Gray accent #E5E5E5 */
-    --secondary-foreground: 0 0% 11%;      /* Black #1C1C1C */
-    --muted: 0 0% 90%;                     /* Gray accent #E5E5E5 */
-    --muted-foreground: 0 0% 48%;          /* Text gray #7A7A7A */
-    --accent: 42 45% 58%;                  /* Gold #CFA95B */
-    --accent-foreground: 0 0% 11%;         /* Black #1C1C1C */
+    /* HAZY Color Palette - Professional Design Theme */
+    --background: 36 18% 93%;              /* Pearl #EFECE9 */
+    --foreground: 168 15% 14%;             /* Charcoal #192524 */
+    --card: 85 8% 81%;                     /* Silver #D0D5CE */
+    --card-foreground: 168 15% 14%;        /* Charcoal #192524 */
+    --popover: 85 8% 81%;                  /* Silver #D0D5CE */
+    --popover-foreground: 168 15% 14%;     /* Charcoal #192524 */
+    --primary: 185 20% 29%;                /* Teal #3C5759 */
+    --primary-foreground: 36 18% 93%;      /* Pearl #EFECE9 */
+    --secondary: 140 17% 85%;              /* Mint #D1EBDB */
+    --secondary-foreground: 168 15% 14%;   /* Charcoal #192524 */
+    --muted: 85 8% 81%;                    /* Silver #D0D5CE */
+    --muted-foreground: 185 20% 29%;       /* Teal #3C5759 */
+    --accent: 140 17% 85%;                 /* Mint #D1EBDB */
+    --accent-foreground: 168 15% 14%;      /* Charcoal #192524 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;                    /* Gray border #E5E5E5 */
-    --input: 0 0% 100%;                    /* White #FFFFFF */
-    --ring: 42 45% 58%;                    /* Gold #CFA95B */
-    --chart-1: 42 45% 58%;
-    --chart-2: 0 0% 48%;
-    --chart-3: 0 0% 11%;
-    --chart-4: 0 0% 90%;
-    --chart-5: 0 0% 100%;
+    --border: 78 4% 59%;                   /* Sage #959D90 */
+    --input: 36 18% 93%;                   /* Pearl #EFECE9 */
+    --ring: 185 20% 29%;                   /* Teal #3C5759 */
+    --chart-1: 185 20% 29%;                /* Teal */
+    --chart-2: 78 4% 59%;                  /* Sage */
+    --chart-3: 168 15% 14%;                /* Charcoal */
+    --chart-4: 140 17% 85%;                /* Mint */
+    --chart-5: 85 8% 81%;                  /* Silver */
     --radius: 0.75rem;
     
-    /* 3D Cardboard Cut-out Effects */
-    --cardboard-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-    --cardboard-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.08);
-    --cardboard-shadow-heavy: 0 8px 18px rgba(0, 0, 0, 0.08);
-    --cardboard-shadow-hover: 0 12px 20px rgba(0, 0, 0, 0.12);
-    --cardboard-inset: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.08);
-    --gold-color: #CFA95B;
-    --off-white: #F8F8F6;
-    --pure-white: #FFFFFF;
-    --pure-black: #1C1C1C;
-    --gray-accent: #E5E5E5;
-    --text-gray: #7A7A7A;
-    --light-gray-bg: #F5F5F5;
+    /* HAZY 3D Cardboard Cut-out Effects */
+    --cardboard-shadow-light: 0 4px 6px rgba(25, 37, 36, 0.08);
+    --cardboard-shadow-medium: 0 6px 12px rgba(25, 37, 36, 0.12);
+    --cardboard-shadow-heavy: 0 8px 18px rgba(25, 37, 36, 0.15);
+    --cardboard-shadow-hover: 0 12px 20px rgba(25, 37, 36, 0.18);
+    --cardboard-inset: inset 0 1px 2px rgba(25, 37, 36, 0.08), 0 4px 8px rgba(25, 37, 36, 0.12);
+    
+    /* HAZY Color Variables */
+    --hazy-charcoal: #192524;
+    --hazy-teal: #3C5759;
+    --hazy-sage: #959D90;
+    --hazy-mint: #D1EBDB;
+    --hazy-silver: #D0D5CE;
+    --hazy-pearl: #EFECE9;
   }
 
   .dark {
-    /* Dark mode maintains the minimal monochrome theme */
-    --background: 0 0% 8%;                 /* Very dark gray */
-    --foreground: 0 0% 100%;               /* White */
-    --card: 0 0% 11%;                      /* Dark card */
-    --card-foreground: 0 0% 100%;          /* White text */
-    --popover: 0 0% 11%;                   /* Dark popover */
-    --popover-foreground: 0 0% 100%;       /* White text */
-    --primary: 42 45% 58%;                 /* Gold #CFA95B */
-    --primary-foreground: 0 0% 11%;        /* Black text on gold */
-    --secondary: 0 0% 15%;                 /* Dark gray */
-    --secondary-foreground: 0 0% 100%;     /* White text */
-    --muted: 0 0% 15%;                     /* Dark gray */
-    --muted-foreground: 0 0% 65%;          /* Light gray text */
-    --accent: 42 45% 58%;                  /* Gold */
-    --accent-foreground: 0 0% 11%;         /* Black text */
+    /* HAZY Dark Mode - Inverted palette */
+    --background: 168 15% 14%;             /* Charcoal #192524 */
+    --foreground: 36 18% 93%;              /* Pearl #EFECE9 */
+    --card: 185 20% 29%;                   /* Teal #3C5759 */
+    --card-foreground: 36 18% 93%;         /* Pearl #EFECE9 */
+    --popover: 185 20% 29%;                /* Teal #3C5759 */
+    --popover-foreground: 36 18% 93%;      /* Pearl #EFECE9 */
+    --primary: 140 17% 85%;                /* Mint #D1EBDB */
+    --primary-foreground: 168 15% 14%;     /* Charcoal #192524 */
+    --secondary: 78 4% 59%;                /* Sage #959D90 */
+    --secondary-foreground: 36 18% 93%;    /* Pearl #EFECE9 */
+    --muted: 78 4% 59%;                    /* Sage #959D90 */
+    --muted-foreground: 85 8% 81%;         /* Silver #D0D5CE */
+    --accent: 140 17% 85%;                 /* Mint #D1EBDB */
+    --accent-foreground: 168 15% 14%;      /* Charcoal #192524 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 20%;                    /* Dark border */
-    --input: 0 0% 11%;                     /* Dark input */
-    --ring: 42 45% 58%;                    /* Gold ring */
+    --border: 78 4% 59%;                   /* Sage #959D90 */
+    --input: 185 20% 29%;                  /* Teal #3C5759 */
+    --ring: 140 17% 85%;                   /* Mint #D1EBDB */
     
-    /* Dark 3D Effects */
-    --cardboard-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.5);
-    --cardboard-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.6);
-    --cardboard-shadow-heavy: 0 8px 18px rgba(0, 0, 0, 0.7);
-    --cardboard-shadow-hover: 0 12px 20px rgba(0, 0, 0, 0.8);
+    /* HAZY Dark 3D Effects */
+    --cardboard-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.6);
+    --cardboard-shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.7);
+    --cardboard-shadow-heavy: 0 8px 18px rgba(0, 0, 0, 0.8);
+    --cardboard-shadow-hover: 0 12px 20px rgba(0, 0, 0, 0.9);
     --cardboard-inset: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 4px 8px rgba(0, 0, 0, 0.6);
     --light-gray-bg: #2A2A2A;
   }
@@ -85,7 +86,7 @@
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    background-color: var(--off-white);
+    background-color: var(--hazy-pearl);
   }
   
   /* Typography Classes */
@@ -99,51 +100,87 @@
 }
 
 @layer components {
-  /* 3D Cardboard Base Components */
+  /* HAZY 3D Cardboard Base Components */
   .cardboard-container {
-    @apply bg-white border border-border rounded-2xl shadow-[0_8px_18px_rgba(0,0,0,0.08)] p-5;
+    @apply rounded-2xl shadow-[0_8px_18px_rgba(25,37,36,0.15)] p-5;
+    background: linear-gradient(145deg, var(--hazy-silver) 0%, var(--hazy-pearl) 100%);
+    border: 1px solid var(--hazy-sage);
   }
   
   .cardboard-bot-bubble {
-    @apply bg-white text-black rounded-xl shadow-[0_4px_6px_rgba(0,0,0,0.05)] p-4 font-body;
+    @apply rounded-xl shadow-[0_4px_6px_rgba(25,37,36,0.08)] p-4 font-body;
+    background: var(--hazy-mint);
+    color: var(--hazy-charcoal);
   }
   
   .cardboard-user-bubble {
-    @apply bg-black text-white rounded-xl shadow-[0_4px_8px_rgba(0,0,0,0.08)] p-4 font-body;
+    @apply rounded-xl shadow-[0_4px_8px_rgba(25,37,36,0.12)] p-4 font-body;
+    background: var(--hazy-teal);
+    color: var(--hazy-pearl);
   }
   
   .cardboard-input {
-    @apply bg-white border border-border rounded-xl px-4 py-3 font-body placeholder:text-[#7A7A7A] focus:outline-none focus:ring-2 focus:ring-[#CFA95B];
+    @apply rounded-xl px-4 py-3 font-body focus:outline-none transition-all duration-200;
+    background: var(--hazy-pearl);
+    border: 1px solid var(--hazy-sage);
+    color: var(--hazy-charcoal);
+  }
+  .cardboard-input::placeholder {
+    color: var(--hazy-teal);
+  }
+  .cardboard-input:focus {
+    border-color: var(--hazy-teal);
+    box-shadow: 0 0 0 3px rgba(60, 87, 89, 0.1);
   }
   
   .cardboard-send-btn {
-    @apply bg-black text-[#CFA95B] rounded-xl px-4 py-2 font-bold shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:bg-[#CFA95B] hover:text-black transition-all duration-200;
+    @apply rounded-xl px-4 py-2 font-bold shadow-[0_3px_6px_rgba(25,37,36,0.12)] transition-all duration-200;
+    background: var(--hazy-teal);
+    color: var(--hazy-pearl);
+  }
+  .cardboard-send-btn:hover {
+    background: var(--hazy-charcoal);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(25, 37, 36, 0.18);
   }
   
-  /* Product Card Components */
+  /* HAZY Product Card Components */
   .product-card {
-    @apply bg-white border border-border rounded-[18px] shadow-[0_6px_12px_rgba(0,0,0,0.08)] p-6 hover:shadow-[0_12px_20px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300;
+    @apply rounded-[18px] shadow-[0_6px_12px_rgba(25,37,36,0.12)] p-6 hover:shadow-[0_12px_20px_rgba(25,37,36,0.18)] hover:-translate-y-1 transition-all duration-300;
+    background: linear-gradient(145deg, var(--hazy-pearl) 0%, var(--hazy-silver) 100%);
+    border: 1px solid var(--hazy-sage);
   }
   
   .product-image-area {
-    @apply bg-[#F5F5F5] rounded-lg flex items-center justify-center p-4;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    @apply rounded-lg flex items-center justify-center p-4;
+    background: var(--hazy-mint);
+    box-shadow: inset 0 2px 4px rgba(25, 37, 36, 0.08);
   }
   
   .product-title {
-    @apply font-heading font-bold text-black text-lg;
+    @apply font-heading font-bold text-lg;
+    color: var(--hazy-charcoal);
   }
   
   .product-description {
-    @apply font-body text-[#7A7A7A] text-sm;
+    @apply font-body text-sm;
+    color: var(--hazy-teal);
   }
   
   .product-price {
-    @apply font-body font-bold text-[#CFA95B] text-base;
+    @apply font-body font-bold text-base;
+    color: var(--hazy-charcoal);
   }
   
   .product-cta-btn {
-    @apply bg-black text-[#CFA95B] rounded-xl px-6 py-3 font-bold shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:bg-[#CFA95B] hover:text-black transition-all duration-200;
+    @apply rounded-xl px-6 py-3 font-bold shadow-[0_3px_6px_rgba(25,37,36,0.12)] transition-all duration-200;
+    background: var(--hazy-teal);
+    color: var(--hazy-pearl);
+  }
+  .product-cta-btn:hover {
+    background: var(--hazy-charcoal);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(25, 37, 36, 0.18);
   }
   
   /* General Button Styles */
@@ -152,7 +189,9 @@
   }
   
   .btn-gold {
-    @apply bg-[#CFA95B] text-black font-bold rounded-xl px-6 py-3 shadow-[0_3px_6px_rgba(0,0,0,0.12)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all duration-200;
+    @apply font-bold rounded-xl px-6 py-3 shadow-[0_3px_6px_rgba(25,37,36,0.12)] hover:shadow-[0_6px_12px_rgba(25,37,36,0.18)] hover:-translate-y-0.5 transition-all duration-200;
+    background: var(--hazy-mint);
+    color: var(--hazy-charcoal);
   }
   
   /* Enhanced Input Styles */

@@ -30,7 +30,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="product-card relative">
       {discount && (
-        <div className="absolute top-3 left-3 btn-gold px-3 py-2 rounded-xl flex items-center gap-2 text-sm font-bold z-10">
+        <div className="absolute top-3 left-3 px-3 py-2 rounded-xl flex items-center gap-2 text-sm font-bold z-10" style={{ backgroundColor: 'var(--hazy-teal)', color: 'var(--hazy-pearl)' }}>
           <Tag className="w-4 h-4" />
           {discount}% OFF
         </div>
@@ -62,14 +62,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                   <div className="flex items-center space-x-3">
                     <span className="product-price text-xl lg:text-2xl">{product.discountPrice}</span>
                     {discount && (
-                      <Badge variant="outline" className="bg-gray-accent text-[#CFA95B] border-[#CFA95B] text-xs font-bold px-2 py-1 rounded-full">
+                      <Badge variant="outline" className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--hazy-mint)', color: 'var(--hazy-charcoal)', borderColor: 'var(--hazy-sage)' }}>
                         <Percent className="w-3 h-3 mr-1" />
                         SAVE {discount}%
                       </Badge>
                     )}
                   </div>
                   {product.price && (
-                    <span className="text-sm text-gray-custom line-through font-body">
+                    <span className="text-sm line-through font-body" style={{ color: 'var(--hazy-sage)' }}>
                       Was {product.price}
                     </span>
                   )}
