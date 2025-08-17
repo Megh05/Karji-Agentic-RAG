@@ -44,7 +44,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
   const isUser = message.type === 'user';
 
   return (
-    <div className={`flex items-start space-x-6 ${isUser ? 'justify-end' : ''}`}>
+    <div className={`flex items-start space-x-4 mb-6 ${isUser ? 'justify-end' : ''}`}>
       {!isUser && (
         <div className="bot-avatar">
           <Bot className="w-6 h-6" />
@@ -81,7 +81,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
                 onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products?.find(p => p.id === productId)?.title} to my wishlist`)}
               />
             ) : (
-              <div className="products-grid">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {message.products.slice(0, 6).map((product: any, index: number) => (
                   <ProductCard key={product.id || index} product={product} />
                 ))}

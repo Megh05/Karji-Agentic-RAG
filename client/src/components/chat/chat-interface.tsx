@@ -122,25 +122,16 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full chat-container">
-      {/* Chat Header - Luxury Design - Fixed */}
-      <div className="chat-header flex-shrink-0">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center space-x-3 lg:space-x-4">
-            <div className="bot-avatar">
-              <Bot className="w-5 h-5 lg:w-6 lg:h-6" />
+      {/* Chat Header - Compact */}
+      <div className="luxury-container border-b backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20">
+        <div className="flex items-center max-w-6xl mx-auto">
+          <div className="flex items-center space-x-3">
+            <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
+              <Bot className="w-4 h-4 lg:w-5 lg:h-5" />
             </div>
             <div>
-              <h1 className="text-base lg:text-lg font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
+              <h1 className="text-sm lg:text-base font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
               <p className="text-xs text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2 lg:space-x-4">
-            <SettingsButton sessionId={sessionId} />
-            <div className="luxury-container px-2 lg:px-4 py-1 lg:py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
-              <div className="flex items-center space-x-2 lg:space-x-3">
-                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-emerald-400 rounded-full"></div>
-                <span className="text-xs lg:text-sm font-semibold text-emerald-700 dark:text-emerald-300">Online</span>
-              </div>
             </div>
           </div>
         </div>

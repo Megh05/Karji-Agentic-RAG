@@ -129,7 +129,7 @@
   }
   
   .message-area {
-    @apply px-4 py-4 space-y-6 lg:space-y-8 max-w-5xl mx-auto lg:px-6;
+    @apply px-4 py-4 max-w-5xl mx-auto lg:px-6;
   }
   
   /* Sophisticated Message Bubbles */
@@ -268,7 +268,7 @@
   }
   
   .typing-dot {
-    @apply w-3 h-3 rounded-full bg-primary animate-bounce;
+    @apply w-2 h-2 rounded-full bg-primary animate-bounce;
   }
   
   .typing-dot:nth-child(2) {

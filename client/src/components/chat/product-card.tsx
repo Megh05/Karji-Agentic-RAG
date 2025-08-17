@@ -28,10 +28,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discount = calculateDiscount();
 
   return (
-    <div className="product-card relative">
+    <div className="product-card relative max-w-xs">
       {discount && (
-        <div className="absolute top-4 left-4 discount-badge flex items-center gap-2 z-10">
-          <Tag className="w-4 h-4" />
+        <div className="absolute top-2 left-2 discount-badge flex items-center gap-1 z-10 text-xs px-2 py-1">
+          <Tag className="w-3 h-3" />
           {discount}% OFF
         </div>
       )}
@@ -40,52 +40,44 @@ export default function ProductCard({ product }: ProductCardProps) {
           <img 
             src={product.imageLink} 
             alt={product.title}
-            className="w-full h-40 lg:h-48 object-cover"
+            className="w-full h-32 object-cover"
             onError={(e) => {
               e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
             }}
           />
         </div>
       )}
-      <div className="p-4 space-y-3">
-        <h3 className="product-title">{product.title}</h3>
-        {product.description && (
-          <p className="product-description line-clamp-2">
-            {product.description}
-          </p>
-        )}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col space-y-1">
-              {product.discountPrice ? (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <span className="product-price">{product.discountPrice}</span>
-                    {discount && (
-                      <Badge variant="outline" className="bg-muted text-primary border-primary text-xs font-bold px-2 py-1 rounded-full">
-                        <Percent className="w-3 h-3 mr-1" />
-                        {discount}%
-                      </Badge>
-                    )}
-                  </div>
-                  {product.price && (
-                    <span className="text-xs text-muted-foreground line-through">
-                      Was {product.price}
-                    </span>
+      <div className="p-3 space-y-2">
+        <h3 className="product-title text-sm font-semibold line-clamp-2">{product.title}</h3>
+        <div className="space-y-1">
+          <div className="flex flex-col space-y-1">
+            {product.discountPrice ? (
+              <>
+                <div className="flex items-center space-x-1">
+                  <span className="product-price text-sm font-bold">{product.discountPrice}</span>
+                  {discount && (
+                    <Badge variant="outline" className="bg-muted text-primary border-primary text-xs font-bold px-1 py-0 rounded-full">
+                      {discount}%
+                    </Badge>
                   )}
-                </>
-              ) : (
-                <span className="product-price">{product.price || 'Price not available'}</span>
-              )}
-            </div>
+                </div>
+                {product.price && (
+                  <span className="text-xs text-muted-foreground line-through">
+                    Was {product.price}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="product-price text-sm font-bold">{product.price || 'Price not available'}</span>
+            )}
           </div>
         </div>
         <Button 
           onClick={handleViewProduct} 
-          className="luxury-btn w-full text-sm py-2 lg:py-3"
+          className="luxury-btn w-full text-xs py-2"
           disabled={!product.link}
         >
-          View Product <ExternalLink className="w-3 h-3 lg:w-4 lg:h-4 ml-2" />
+          View <ExternalLink className="w-3 h-3 ml-1" />
         </Button>
       </div>
     </div>
