@@ -12,7 +12,9 @@ import {
   type MerchantFeed,
   type InsertMerchantFeed,
   type UploadedFile,
-  type InsertUploadedFile
+  type InsertUploadedFile,
+  type UserSettings,
+  type InsertUserSettings
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import fs from "fs";
@@ -28,6 +30,7 @@ export class JSONStorage implements IStorage {
   private apiConfigFile: string;
   private merchantFeedsFile: string;
   private uploadedFilesFile: string;
+  private userSettingsFile: string;
 
   constructor() {
     this.dataDir = path.join(process.cwd(), 'data');
@@ -38,6 +41,7 @@ export class JSONStorage implements IStorage {
     this.apiConfigFile = path.join(this.dataDir, 'api-config.json');
     this.merchantFeedsFile = path.join(this.dataDir, 'merchant-feeds.json');
     this.uploadedFilesFile = path.join(this.dataDir, 'uploaded-files.json');
+    this.userSettingsFile = path.join(this.dataDir, 'user-settings.json');
     
     this.ensureDataDirectory();
   }
@@ -302,5 +306,61 @@ export class JSONStorage implements IStorage {
     delete files[id];
     await this.writeJSONFile(this.uploadedFilesFile, files);
     return true;
+  }
+
+  // User Settings operations
+  async getUserSettings(sessionId: string): Promise<UserSettings | undefined> {
+    const settings = await this.readJSONFile<Record<string, UserSettings>>(this.userSettingsFile, {});
+    return Object.values(settings).find(s => s.sessionId === sessionId);
+  }
+
+  async createUserSettings(insertSettings: InsertUserSettings): Promise<UserSettings> {
+    const settings = await this.readJSONFile<Record<string, UserSettings>>(this.userSettingsFile, {});
+    const id = randomUUID();
+    const userSettings: UserSettings = { 
+      ...insertSettings, 
+      id, 
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    settings[id] = userSettings;
+    await this.writeJSONFile(this.userSettingsFile, settings);
+    return userSettings;
+  }
+
+  async updateUserSettings(sessionId: string, updates: Partial<InsertUserSettings>): Promise<UserSettings | undefined> {
+    const settings = await this.readJSONFile<Record<string, UserSettings>>(this.userSettingsFile, {});
+    const existingSetting = Object.values(settings).find(s => s.sessionId === sessionId);
+    
+    if (!existingSetting) return undefined;
+    
+    const updated = { 
+      ...existingSetting, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    settings[existingSetting.id] = updated;
+    await this.writeJSONFile(this.userSettingsFile, settings);
+    return updated;
+  }
+
+  async deleteUserSettings(sessionId: string): Promise<boolean> {
+    const settings = await this.readJSONFile<Record<string, UserSettings>>(this.userSettingsFile, {});
+    const existingSetting = Object.values(settings).find(s => s.sessionId === sessionId);
+    
+    if (!existingSetting) return false;
+    delete settings[existingSetting.id];
+    await this.writeJSONFile(this.userSettingsFile, settings);
+    return true;
+  }
+
+  async upsertUserSettings(sessionId: string, settingsData: Partial<InsertUserSettings>): Promise<UserSettings> {
+    const existing = await this.getUserSettings(sessionId);
+    
+    if (existing) {
+      return (await this.updateUserSettings(sessionId, settingsData))!;
+    } else {
+      return await this.createUserSettings({ ...settingsData, sessionId });
+    }
   }
 }

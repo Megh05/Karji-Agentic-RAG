@@ -9,6 +9,7 @@ import Message from "./message";
 import ContextualFollowUps from "./contextual-follow-ups";
 import QuickActions from "./quick-actions";
 import { useToast } from "@/hooks/use-toast";
+import { SettingsButton } from "@/components/settings";
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -133,7 +134,8 @@ export default function ChatInterface() {
               <p className="text-sm text-muted-foreground">Ready to help you discover premium fragrances & timepieces</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
+            <SettingsButton sessionId={sessionId} />
             <div className="bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 dark:from-amber-500 dark:via-yellow-500 dark:to-amber-600 text-white px-4 py-2 rounded-xl shadow-md">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>

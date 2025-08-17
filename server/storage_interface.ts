@@ -12,7 +12,9 @@ import {
   type MerchantFeed,
   type InsertMerchantFeed,
   type UploadedFile,
-  type InsertUploadedFile
+  type InsertUploadedFile,
+  type UserSettings,
+  type InsertUserSettings
 } from "@shared/schema";
 
 export interface IStorage {
@@ -56,4 +58,11 @@ export interface IStorage {
   createUploadedFile(file: InsertUploadedFile): Promise<UploadedFile>;
   updateUploadedFile(id: string, updates: Partial<UploadedFile>): Promise<UploadedFile | undefined>;
   deleteUploadedFile(id: string): Promise<boolean>;
+
+  // User Settings operations
+  getUserSettings(sessionId: string): Promise<UserSettings | undefined>;
+  createUserSettings(settings: InsertUserSettings): Promise<UserSettings>;
+  updateUserSettings(sessionId: string, updates: Partial<InsertUserSettings>): Promise<UserSettings | undefined>;
+  deleteUserSettings(sessionId: string): Promise<boolean>;
+  upsertUserSettings(sessionId: string, settings: Partial<InsertUserSettings>): Promise<UserSettings>;
 }

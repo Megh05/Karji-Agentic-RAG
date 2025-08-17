@@ -72,6 +72,37 @@ export const uploadedFiles = pgTable("uploaded_files", {
   processed: boolean("processed").default(false),
 });
 
+export const userSettings = pgTable("user_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: text("session_id").notNull().unique(),
+  // Theme Settings
+  theme: text("theme").default("system"), // "light", "dark", "system"
+  accentColor: text("accent_color").default("blue"), // "blue", "amber", "emerald", etc.
+  // Chat Behavior
+  chatStyle: text("chat_style").default("balanced"), // "concise", "detailed", "balanced"
+  showProductImages: boolean("show_product_images").default(true),
+  showPricing: boolean("show_pricing").default(true),
+  autoSuggestions: boolean("auto_suggestions").default(true),
+  // Communication Preferences
+  communicationTone: text("communication_tone").default("friendly"), // "professional", "casual", "friendly"
+  language: text("language").default("en"), // "en", "ar", "fr", etc.
+  // Personalization
+  rememberPreferences: boolean("remember_preferences").default(true),
+  shareData: boolean("share_data").default(true),
+  // Notifications
+  soundEnabled: boolean("sound_enabled").default(true),
+  notifications: boolean("notifications").default(true),
+  // Display Settings
+  compactMode: boolean("compact_mode").default(false),
+  animationsEnabled: boolean("animations_enabled").default(true),
+  // Privacy Settings
+  anonymousMode: boolean("anonymous_mode").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -105,6 +136,12 @@ export const insertUploadedFileSchema = createInsertSchema(uploadedFiles).omit({
   uploadedAt: true,
 });
 
+export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Document = typeof documents.$inferSelect;
@@ -112,6 +149,8 @@ export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Product = typeof products.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Offer = typeof offers.$inferSelect;
+export type UserSettings = typeof userSettings.$inferSelect;
+export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
 export type InsertOffer = z.infer<typeof insertOfferSchema>;
 export type ApiConfig = typeof apiConfig.$inferSelect;
 export type InsertApiConfig = z.infer<typeof insertApiConfigSchema>;

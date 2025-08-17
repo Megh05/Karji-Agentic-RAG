@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
-import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema, type Product, type Document } from "@shared/schema";
+import { insertDocumentSchema, insertProductSchema, insertOfferSchema, insertApiConfigSchema, insertMerchantFeedSchema, insertUserSettingsSchema, type Product, type Document, type UserSettings, type InsertUserSettings } from "@shared/schema";
 import { ragService } from "./services/ragService.js";
 import { conversationService } from "./services/conversationService.js";
 import { smartResponseService } from "./services/smartResponseService.js";
@@ -1035,6 +1035,66 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
     } catch (error) {
       console.error('Error clearing ChromaDB embeddings:', error);
       res.status(500).json({ error: "Failed to clear ChromaDB embeddings" });
+    }
+  });
+
+  // User Settings endpoints
+  app.get("/api/settings/:sessionId", async (req, res) => {
+    try {
+      const settings = await storage.getUserSettings(req.params.sessionId);
+      if (!settings) {
+        // Return default settings if none exist
+        const defaultSettings = {
+          sessionId: req.params.sessionId,
+          theme: "system",
+          accentColor: "blue",
+          chatStyle: "balanced",
+          showProductImages: true,
+          showPricing: true,
+          autoSuggestions: true,
+          communicationTone: "friendly",
+          language: "en",
+          rememberPreferences: true,
+          shareData: true,
+          soundEnabled: true,
+          notifications: true,
+          compactMode: false,
+          animationsEnabled: true,
+          anonymousMode: false,
+        };
+        res.json(defaultSettings);
+      } else {
+        res.json(settings);
+      }
+    } catch (error) {
+      console.error('Error getting user settings:', error);
+      res.status(500).json({ error: "Failed to get settings" });
+    }
+  });
+
+  app.put("/api/settings/:sessionId", async (req, res) => {
+    try {
+      const sessionId = req.params.sessionId;
+      const settingsData = insertUserSettingsSchema.parse(req.body);
+      
+      const settings = await storage.upsertUserSettings(sessionId, settingsData);
+      res.json(settings);
+    } catch (error) {
+      console.error('Error saving user settings:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid settings data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to save settings" });
+    }
+  });
+
+  app.delete("/api/settings/:sessionId", async (req, res) => {
+    try {
+      const success = await storage.deleteUserSettings(req.params.sessionId);
+      res.json({ success });
+    } catch (error) {
+      console.error('Error deleting user settings:', error);
+      res.status(500).json({ error: "Failed to delete settings" });
     }
   });
 
