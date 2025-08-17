@@ -81,7 +81,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
                 onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products?.find(p => p.id === productId)?.title} to my wishlist`)}
               />
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-full">
                 {message.products.slice(0, 6).map((product: any, index: number) => (
                   <ProductCard key={product.id || index} product={product} />
                 ))}

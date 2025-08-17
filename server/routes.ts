@@ -423,6 +423,7 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
                                        lowercaseMessage.includes('watch') ||
                                        lowercaseMessage.includes('jewelry') ||
                                        lowercaseMessage.includes('bracelet') ||
+                                       lowercaseMessage.includes('floral') ||
                                        lowercaseMessage.includes('wallet'));
 
     // Specialized fragrance queries should always trigger product search
@@ -433,7 +434,16 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
                                        lowercaseMessage.includes('amber') ||
                                        lowercaseMessage.includes('sandalwood') ||
                                        lowercaseMessage.includes('incense') ||
-                                       lowercaseMessage.includes('attar');
+                                       lowercaseMessage.includes('attar') ||
+                                       lowercaseMessage.includes('floral') ||
+                                       lowercaseMessage.includes('flower') ||
+                                       lowercaseMessage.includes('jasmine') ||
+                                       lowercaseMessage.includes('rose') ||
+                                       lowercaseMessage.includes('lily') ||
+                                       lowercaseMessage.includes('woody') ||
+                                       lowercaseMessage.includes('musky') ||
+                                       lowercaseMessage.includes('fresh') ||
+                                       lowercaseMessage.includes('citrus');
     
     // Brand-specific queries should always trigger product search
     const isBrandQuery = lowercaseMessage.includes('brand') && intent.entities.brands.length > 0;
