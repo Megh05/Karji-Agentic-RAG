@@ -126,11 +126,11 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
 
   return (
     <>
-      {/* Floating Chat Button */}
+      {/* Floating Chat Button - HIDDEN FOR NOW */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center"
+          className="hidden fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal hover:from-karjistore-teal/90 hover:via-karjistore-slate/90 hover:to-karjistore-charcoal/90 dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal dark:hover:from-karjistore-teal/90 dark:hover:via-karjistore-slate/90 dark:hover:to-karjistore-charcoal/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center"
           aria-label="Open chat"
           data-testid="button-open-chat"
         >
