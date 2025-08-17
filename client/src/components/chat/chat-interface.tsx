@@ -138,8 +138,8 @@ export default function ChatInterface() {
       </div>
 
       {/* Messages Container - Luxury Design - Flexible */}
-      <div className="flex-1 overflow-y-auto message-area relative z-10" style={{ paddingTop: '8px' }}>
-        <div className="min-h-full">
+      <div className="flex-1 overflow-y-auto message-area relative z-25" style={{ paddingTop: '16px' }}>
+        <div className="min-h-full relative z-30">
           {messages.map((message) => (
             <Message 
               key={message.id} 

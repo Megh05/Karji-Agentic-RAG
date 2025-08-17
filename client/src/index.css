@@ -146,7 +146,7 @@
     @apply px-4 py-4 max-w-5xl mx-auto lg:px-6;
     max-height: calc(100vh - 140px); /* Account for header and input areas */
     position: relative;
-    z-index: 1;
+    z-index: 25;
   }
   
   /* Sophisticated Message Bubbles */
@@ -154,7 +154,7 @@
     @apply luxury-container p-4 rounded-2xl rounded-tl-lg;
     background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.2) 100%);
     position: relative;
-    z-index: 5;
+    z-index: 30;
   }
   
   .bot-bubble::before {
@@ -174,7 +174,7 @@
     box-shadow: var(--shadow-metallic);
     position: relative;
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
-    z-index: 5;
+    z-index: 30;
   }
   
   .user-bubble::before {
