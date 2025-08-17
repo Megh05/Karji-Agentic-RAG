@@ -34,22 +34,19 @@ export default function SettingsButton({
         variant={variant}
         size={size}
         onClick={() => setIsOpen(true)}
-        className="luxury-hover w-12 h-12 rounded-2xl luxury-glass border-border/30 text-muted-foreground hover:text-primary transition-all duration-300"
-        title="Luxury Settings"
+        className="hover:bg-accent hover:text-accent-foreground"
+        title="Settings"
       >
-        <Settings className="h-5 w-5" />
-        {showText && <span className="ml-2 font-luxury-sans">Settings</span>}
+        <Settings className="h-4 w-4" />
+        {showText && <span className="ml-2">Settings</span>}
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto luxury-glass border-border/30 luxury-shadow">
-          <div className="absolute inset-0 luxury-gradient-bg opacity-5 rounded-lg"></div>
-          <DialogHeader className="relative">
-            <DialogTitle className="flex items-center space-x-3 font-luxury-display text-2xl">
-              <div className="w-10 h-10 luxury-gradient-bg rounded-2xl flex items-center justify-center shadow-lg">
-                <Settings className="h-5 w-5 text-white" />
-              </div>
-              <span>Luxury Experience Settings</span>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Settings className="h-5 w-5" />
+              <span>Chat Settings</span>
             </DialogTitle>
           </DialogHeader>
           
