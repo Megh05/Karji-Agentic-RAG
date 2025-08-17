@@ -78,7 +78,8 @@ export default function ChatInterface() {
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
+        className: "border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-100"
       });
     }
   });
@@ -124,13 +125,13 @@ export default function ChatInterface() {
       {/* Chat Header - Luxury Design - Fixed */}
       <div className="chat-header flex-shrink-0">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center space-x-4 lg:space-x-6">
+          <div className="flex items-center space-x-3 lg:space-x-4">
             <div className="bot-avatar animate-luxury-float">
-              <Bot className="w-6 h-6 lg:w-7 lg:h-7" />
+              <Bot className="w-5 h-5 lg:w-6 lg:h-6" />
             </div>
             <div>
-              <h1 className="text-lg lg:text-2xl font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
-              <p className="text-xs lg:text-base text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
+              <h1 className="text-base lg:text-lg font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
+              <p className="text-xs text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
             </div>
           </div>
           <div className="flex items-center space-x-2 lg:space-x-4">
@@ -219,7 +220,7 @@ export default function ChatInterface() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about luxury fragrances, get personalized recommendations, or explore our premium collection..."
-                  className="luxury-input pr-12 lg:pr-16 min-h-[50px] lg:min-h-[60px] text-sm lg:text-base resize-none"
+                  className="luxury-input pr-12 lg:pr-16 min-h-[44px] lg:min-h-[48px] text-sm lg:text-sm resize-none py-2 lg:py-3"
                   disabled={chatMutation.isPending}
                 />
                 <Button
@@ -236,15 +237,15 @@ export default function ChatInterface() {
             <Button 
               onClick={handleSend}
               disabled={!input.trim() || chatMutation.isPending}
-              className="luxury-btn min-h-[50px] lg:min-h-[60px] disabled:opacity-50 disabled:cursor-not-allowed px-4 lg:px-8"
+              className="luxury-btn min-h-[44px] lg:min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed px-4 lg:px-6"
               size="default"
             >
               {chatMutation.isPending ? (
-                <div className="w-5 h-5 lg:w-6 lg:h-6 border-2 lg:border-3 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 lg:w-5 lg:h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <Send className="h-4 w-4 lg:h-5 lg:w-5 sm:mr-2" />
-                  <span className="hidden sm:inline text-sm lg:text-base">Send</span>
+                  <Send className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline text-sm">Send</span>
                 </>
               )}
             </Button>

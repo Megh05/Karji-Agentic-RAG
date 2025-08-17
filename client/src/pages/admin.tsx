@@ -25,13 +25,13 @@ export default function AdminPage() {
         {/* Admin Header - Luxury Design */}
         <div className="chat-header flex-shrink-0">
           <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <div className="flex items-center space-x-4 lg:space-x-6">
+            <div className="flex items-center space-x-3 lg:space-x-4">
               <div className="bot-avatar animate-luxury-float">
-                <Database className="w-6 h-6 lg:w-7 lg:h-7" />
+                <Database className="w-5 h-5 lg:w-6 lg:h-6" />
               </div>
               <div>
-                <h1 className="text-lg lg:text-2xl font-heading font-semibold text-foreground">Admin Dashboard</h1>
-                <p className="text-xs lg:text-base text-muted-foreground">Configure AI Assistant & Manage Data</p>
+                <h1 className="text-base lg:text-lg font-heading font-semibold text-foreground">Admin Dashboard</h1>
+                <p className="text-xs text-muted-foreground">Configure AI Assistant & Manage Data</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 lg:space-x-4">
@@ -55,38 +55,38 @@ export default function AdminPage() {
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto message-area">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="api-setup" className="w-full">
-              <TabsList className="luxury-container grid w-full grid-cols-2 lg:grid-cols-4 mb-6 p-1 h-auto">
+              <TabsList className="luxury-container grid w-full grid-cols-2 lg:grid-cols-4 mb-6 p-1 h-12 lg:h-14">
                 <TabsTrigger 
                   value="api-setup" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-sm py-3 px-3 lg:px-4 rounded-xl transition-all duration-300"
+                  className="flex items-center justify-center space-x-1 lg:space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg transition-all duration-300 font-medium"
                 >
-                  <Key className="w-4 h-4" />
-                  <span className="hidden sm:inline font-medium">OpenRouter API</span>
-                  <span className="sm:hidden font-medium">API</span>
+                  <Key className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden sm:inline">OpenRouter API</span>
+                  <span className="sm:hidden">API</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="knowledge-base" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-sm py-3 px-3 lg:px-4 rounded-xl transition-all duration-300"
+                  className="flex items-center justify-center space-x-1 lg:space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg transition-all duration-300 font-medium"
                 >
-                  <Upload className="w-4 h-4" />
-                  <span className="hidden sm:inline font-medium">Knowledge Base</span>
-                  <span className="sm:hidden font-medium">KB</span>
+                  <Upload className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden sm:inline">Knowledge Base</span>
+                  <span className="sm:hidden">KB</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="product-offers" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-sm py-3 px-3 lg:px-4 rounded-xl transition-all duration-300"
+                  className="flex items-center justify-center space-x-1 lg:space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg transition-all duration-300 font-medium"
                 >
-                  <Tag className="w-4 h-4" />
-                  <span className="hidden sm:inline font-medium">Product Offers</span>
-                  <span className="sm:hidden font-medium">Offers</span>
+                  <Tag className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden sm:inline">Product Offers</span>
+                  <span className="sm:hidden">Offers</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="merchant-feed" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-sm py-3 px-3 lg:px-4 rounded-xl transition-all duration-300"
+                  className="flex items-center justify-center space-x-1 lg:space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg transition-all duration-300 font-medium"
                 >
-                  <Rss className="w-4 h-4" />
-                  <span className="hidden sm:inline font-medium">Merchant Feed</span>
-                  <span className="sm:hidden font-medium">Feed</span>
+                  <Rss className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden sm:inline">Merchant Feed</span>
+                  <span className="sm:hidden">Feed</span>
                 </TabsTrigger>
               </TabsList>
 

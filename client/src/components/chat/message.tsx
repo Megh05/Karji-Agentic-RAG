@@ -57,7 +57,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
             ? 'user-bubble rounded-tr-lg' 
             : 'bot-bubble rounded-tl-lg'
         }`}>
-          <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
+          <p className="whitespace-pre-wrap leading-relaxed text-sm lg:text-sm">{message.content}</p>
         </div>
         
         {/* Welcome Guide for first message */}

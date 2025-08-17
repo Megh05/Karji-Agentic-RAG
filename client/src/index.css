@@ -22,6 +22,8 @@
     --accent-foreground: 0 0% 10%;         /* Deep charcoal */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
     --border: 0 0% 91%;                    /* Silver border */
     --input: 0 0% 99.5%;                   /* Pearl white */
     --ring: 43 75% 52%;                    /* Champagne gold */
@@ -133,7 +135,7 @@
   }
   
   .message-area {
-    @apply px-4 py-4 space-y-4 lg:space-y-6 max-w-5xl mx-auto lg:px-6;
+    @apply px-4 py-4 space-y-6 lg:space-y-8 max-w-5xl mx-auto lg:px-6;
   }
   
   /* Sophisticated Message Bubbles */
@@ -299,9 +301,9 @@
     animation-delay: 0.2s;
   }
   
-  /* Input Container - Sticky Bottom */
+  /* Input Container - Sticky Bottom - Compact */
   .input-container {
-    @apply luxury-container backdrop-blur-sm border-t px-4 py-4 lg:px-8 lg:py-6;
+    @apply luxury-container backdrop-blur-sm border-t px-4 py-3 lg:px-6 lg:py-4;
     background: linear-gradient(135deg, hsl(var(--card) / 0.98) 0%, hsl(var(--muted) / 0.1) 100%);
     position: sticky;
     bottom: 0;
@@ -341,7 +343,7 @@
   /* Enhanced Responsive Design */
   @media (max-width: 1024px) {
     .message-area {
-      @apply px-4 py-4 space-y-5;
+      @apply px-4 py-4 space-y-6;
     }
     
     .bot-bubble,
@@ -352,15 +354,15 @@
   
   @media (max-width: 768px) {
     .message-area {
-      @apply px-4 py-4 space-y-4;
+      @apply px-4 py-4 space-y-5;
     }
     
     .chat-header {
-      @apply px-4 py-4;
+      @apply px-3 py-3;
     }
     
     .input-container {
-      @apply px-4 py-4;
+      @apply px-3 py-3;
     }
     
     .bot-avatar {
@@ -377,15 +379,19 @@
     }
     
     .product-title {
-      @apply text-base;
+      @apply text-sm;
     }
     
     .product-price {
-      @apply text-base;
+      @apply text-sm;
     }
   }
   
   @media (max-width: 640px) {
+    .message-area {
+      @apply space-y-4;
+    }
+    
     .bot-bubble,
     .user-bubble {
       @apply p-3 text-sm;
@@ -396,27 +402,35 @@
     }
   }
   
-  /* Improved Product Grids - Responsive */
+  /* Improved Product Grids - Proper Grid Layout */
   .products-grid {
     display: grid;
-    gap: 0.75rem;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     max-width: 100%;
-    overflow-x: visible;
-    margin: 0.75rem 0;
+    overflow: visible;
+    margin: 1rem 0;
+  }
+  
+  @media (max-width: 1200px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.875rem;
+    }
   }
   
   @media (max-width: 1024px) {
     .products-grid {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 0.625rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.75rem;
     }
   }
   
   @media (max-width: 768px) {
     .products-grid {
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 0.5rem;
+      gap: 0.625rem;
+      margin: 0.75rem 0;
     }
   }
   
@@ -425,16 +439,12 @@
       grid-template-columns: 1fr;
       gap: 0.75rem;
     }
-    
-    .luxury-btn {
-      @apply py-3 px-6 text-sm;
-    }
   }
   
   @media (max-width: 480px) {
     .products-grid {
       grid-template-columns: 1fr;
-      gap: 0.5rem;
+      gap: 0.625rem;
       margin: 0.5rem 0;
     }
   }
