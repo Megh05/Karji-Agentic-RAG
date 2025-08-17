@@ -19,23 +19,23 @@ export default function AdminPage() {
   });
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Admin Header */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="chat-header">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-              <p className="text-gray-600 dark:text-gray-400">Configure your AI assistant and manage product data</p>
+              <h2 className="text-xl font-heading font-semibold text-foreground">Admin Dashboard</h2>
+              <p className="text-sm text-muted-foreground">Configure your AI assistant and manage product data</p>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <Database className="w-4 h-4 inline mr-1" />
+              <div className="text-xs text-muted-foreground">
+                <Database className="w-3 h-3 inline mr-1" />
                 <span>{products.length} products loaded</span>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <FileText className="w-4 h-4 inline mr-1" />
+              <div className="text-xs text-muted-foreground">
+                <FileText className="w-3 h-3 inline mr-1" />
                 <span>{documents.length} documents</span>
               </div>
             </div>
@@ -45,22 +45,26 @@ export default function AdminPage() {
         {/* Admin Content */}
         <div className="flex-1 p-6 overflow-y-auto">
           <Tabs defaultValue="api-setup" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
-              <TabsTrigger value="api-setup" className="flex items-center space-x-2">
-                <Key className="w-4 h-4" />
-                <span>OpenRouter API</span>
+            <TabsList className="luxury-container grid w-full grid-cols-4 mb-6 p-1">
+              <TabsTrigger value="api-setup" className="flex items-center space-x-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-sm">
+                <Key className="w-3 h-3" />
+                <span className="hidden sm:inline">OpenRouter API</span>
+                <span className="sm:hidden">API</span>
               </TabsTrigger>
-              <TabsTrigger value="knowledge-base" className="flex items-center space-x-2">
-                <Upload className="w-4 h-4" />
-                <span>Knowledge Base</span>
+              <TabsTrigger value="knowledge-base" className="flex items-center space-x-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-sm">
+                <Upload className="w-3 h-3" />
+                <span className="hidden sm:inline">Knowledge Base</span>
+                <span className="sm:hidden">KB</span>
               </TabsTrigger>
-              <TabsTrigger value="product-offers" className="flex items-center space-x-2">
-                <Tag className="w-4 h-4" />
-                <span>Product Offers</span>
+              <TabsTrigger value="product-offers" className="flex items-center space-x-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-sm">
+                <Tag className="w-3 h-3" />
+                <span className="hidden sm:inline">Product Offers</span>
+                <span className="sm:hidden">Offers</span>
               </TabsTrigger>
-              <TabsTrigger value="merchant-feed" className="flex items-center space-x-2">
-                <Rss className="w-4 h-4" />
-                <span>Merchant Feed</span>
+              <TabsTrigger value="merchant-feed" className="flex items-center space-x-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-sm">
+                <Rss className="w-3 h-3" />
+                <span className="hidden sm:inline">Merchant Feed</span>
+                <span className="sm:hidden">Feed</span>
               </TabsTrigger>
             </TabsList>
 

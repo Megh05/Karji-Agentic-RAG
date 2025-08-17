@@ -57,7 +57,7 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
             ? 'user-bubble rounded-tr-lg' 
             : 'bot-bubble rounded-tl-lg'
         }`}>
-          <p className="whitespace-pre-wrap leading-relaxed text-base">{message.content}</p>
+          <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
         </div>
         
         {/* Welcome Guide for first message */}
@@ -81,9 +81,9 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
                 onAddToWishlist={(productId) => onFollowUpClick?.(`Add ${message.products?.find(p => p.id === productId)?.title} to my wishlist`)}
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {message.products.map((product: any) => (
-                  <ProductCard key={product.id} product={product} />
+              <div className="products-grid">
+                {message.products.slice(0, 6).map((product: any, index: number) => (
+                  <ProductCard key={product.id || index} product={product} />
                 ))}
               </div>
             )}

@@ -133,12 +133,12 @@
   }
   
   .message-area {
-    @apply px-8 py-6 space-y-8 max-w-6xl mx-auto;
+    @apply px-6 py-4 space-y-6 max-w-5xl mx-auto;
   }
   
   /* Sophisticated Message Bubbles */
   .bot-bubble {
-    @apply luxury-container p-6 rounded-3xl rounded-tl-lg;
+    @apply luxury-container p-4 rounded-2xl rounded-tl-lg;
     background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.2) 100%);
     position: relative;
   }
@@ -156,7 +156,7 @@
   }
   
   .user-bubble {
-    @apply bg-gradient-to-br from-primary to-accent text-primary-foreground p-6 rounded-3xl rounded-tr-lg;
+    @apply bg-gradient-to-br from-primary to-accent text-primary-foreground p-4 rounded-2xl rounded-tr-lg;
     box-shadow: var(--shadow-metallic);
     position: relative;
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
@@ -223,17 +223,17 @@
   }
   
   .product-title {
-    @apply font-heading text-xl font-semibold text-foreground leading-tight;
-    letter-spacing: -0.02em;
+    @apply font-heading text-lg font-medium text-foreground leading-tight;
+    letter-spacing: -0.01em;
   }
   
   .product-description {
-    @apply text-muted-foreground font-body leading-relaxed;
+    @apply text-muted-foreground font-body text-sm leading-relaxed;
     font-weight: 400;
   }
   
   .product-price {
-    @apply font-heading font-bold text-foreground;
+    @apply font-heading text-lg font-semibold text-foreground;
     background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--accent)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -335,14 +335,10 @@
     animation: luxury-pulse 2s ease-in-out infinite;
   }
   
-  /* Responsive Typography */
-  @media (max-width: 640px) {
-    .product-title {
-      @apply text-lg;
-    }
-    
+  /* Responsive Design */
+  @media (max-width: 768px) {
     .message-area {
-      @apply px-4 py-4 space-y-6;
+      @apply px-4 py-4 space-y-4;
     }
     
     .chat-header {
@@ -351,6 +347,42 @@
     
     .input-container {
       @apply px-4 py-4;
+    }
+    
+    .bot-avatar {
+      @apply w-12 h-12;
+    }
+    
+    .bot-bubble,
+    .user-bubble {
+      @apply p-4 text-sm;
+    }
+    
+    .product-card {
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  /* Improve scrolling for product grids */
+  .products-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    max-width: 100%;
+    overflow-x: visible;
+  }
+  
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.5rem;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .products-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
     }
   }
   

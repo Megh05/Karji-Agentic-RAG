@@ -129,8 +129,8 @@ export default function ChatInterface() {
               <Bot className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-3xl lg:text-4xl font-heading font-bold text-foreground">KarjiStore Concierge</h1>
-              <p className="text-lg text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
+              <h1 className="text-xl lg:text-2xl font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
+              <p className="text-sm lg:text-base text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -250,10 +250,7 @@ export default function ChatInterface() {
             </Button>
           </div>
           
-          <div className="mt-6 flex items-center justify-between text-sm text-muted-foreground">
-            <span>Press Enter to send • Shift+Enter for new line</span>
-            <span className="font-heading font-semibold text-primary">Powered by KarjiStore AI</span>
-          </div>
+
         </div>
       </div>
     </div>

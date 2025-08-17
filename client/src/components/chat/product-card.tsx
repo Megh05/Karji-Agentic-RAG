@@ -40,52 +40,52 @@ export default function ProductCard({ product }: ProductCardProps) {
           <img 
             src={product.imageLink} 
             alt={product.title}
-            className="w-full h-48 lg:h-56 object-cover transition-all duration-500 hover:scale-105"
+            className="w-full h-32 sm:h-40 object-cover transition-all duration-500 hover:scale-105"
             onError={(e) => {
-              e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300`;
+              e.currentTarget.src = `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200`;
             }}
           />
         </div>
       )}
-      <div className="p-6 space-y-4">
+      <div className="p-4 space-y-3">
         <h3 className="product-title">{product.title}</h3>
         {product.description && (
-          <p className="product-description line-clamp-3">
+          <p className="product-description line-clamp-2">
             {product.description}
           </p>
         )}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex flex-col space-y-1">
               {product.discountPrice ? (
                 <>
-                  <div className="flex items-center space-x-3">
-                    <span className="product-price text-2xl lg:text-3xl">{product.discountPrice}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="product-price">{product.discountPrice}</span>
                     {discount && (
                       <Badge variant="outline" className="bg-muted text-primary border-primary text-xs font-bold px-2 py-1 rounded-full">
                         <Percent className="w-3 h-3 mr-1" />
-                        SAVE {discount}%
+                        {discount}%
                       </Badge>
                     )}
                   </div>
                   {product.price && (
-                    <span className="text-sm text-muted-foreground line-through">
+                    <span className="text-xs text-muted-foreground line-through">
                       Was {product.price}
                     </span>
                   )}
                 </>
               ) : (
-                <span className="product-price text-2xl lg:text-3xl">{product.price || 'Price not available'}</span>
+                <span className="product-price">{product.price || 'Price not available'}</span>
               )}
             </div>
           </div>
         </div>
         <Button 
           onClick={handleViewProduct} 
-          className="luxury-btn w-full"
+          className="luxury-btn w-full text-sm py-2"
           disabled={!product.link}
         >
-          View Product <ExternalLink className="w-4 h-4 ml-2" />
+          View Product <ExternalLink className="w-3 h-3 ml-2" />
         </Button>
       </div>
     </div>
