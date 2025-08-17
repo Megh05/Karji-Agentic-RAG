@@ -120,82 +120,82 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="chat-container">
-      {/* Chat Header - Luxury Design */}
-      <div className="chat-header">
+    <div className="flex flex-col h-full chat-container">
+      {/* Chat Header - Luxury Design - Fixed */}
+      <div className="chat-header flex-shrink-0">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4 lg:space-x-6">
             <div className="bot-avatar animate-luxury-float">
-              <Bot className="w-7 h-7" />
+              <Bot className="w-6 h-6 lg:w-7 lg:h-7" />
             </div>
             <div>
-              <h1 className="text-xl lg:text-2xl font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
-              <p className="text-sm lg:text-base text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
+              <h1 className="text-lg lg:text-2xl font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
+              <p className="text-xs lg:text-base text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 lg:space-x-4">
             <SettingsButton sessionId={sessionId} />
-            <div className="luxury-container px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-luxury-pulse"></div>
-                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Online</span>
+            <div className="luxury-container px-2 lg:px-4 py-1 lg:py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
+              <div className="flex items-center space-x-2 lg:space-x-3">
+                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-emerald-400 rounded-full animate-luxury-pulse"></div>
+                <span className="text-xs lg:text-sm font-semibold text-emerald-700 dark:text-emerald-300">Online</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Messages Container - Luxury Design */}
+      {/* Messages Container - Luxury Design - Flexible */}
       <div className="flex-1 overflow-y-auto message-area">
-        {messages.map((message) => (
-          <Message 
-            key={message.id} 
-            message={message} 
-            onFollowUpClick={sendDirectMessage}
-          />
-        ))}
-        
-        {/* Typing Indicator - Luxury Design */}
-        {isTyping && (
-          <div className="flex items-start space-x-6">
-            <div className="bot-avatar">
-              <Bot className="w-6 h-6" />
-            </div>
-            <div className="typing-indicator">
-              <div className="typing-dots">
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
+        <div className="min-h-full">
+          {messages.map((message) => (
+            <Message 
+              key={message.id} 
+              message={message} 
+              onFollowUpClick={sendDirectMessage}
+            />
+          ))}
+          
+          {/* Typing Indicator - Luxury Design */}
+          {isTyping && (
+            <div className="flex items-start space-x-4 lg:space-x-6">
+              <div className="bot-avatar">
+                <Bot className="w-5 h-5 lg:w-6 lg:h-6" />
+              </div>
+              <div className="typing-indicator">
+                <div className="typing-dots">
+                  <div className="typing-dot"></div>
+                  <div className="typing-dot"></div>
+                  <div className="typing-dot"></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Contextual Follow-ups - HIDDEN FOR NOW */}
-        {sessionId && (
-          <div className="mb-4 hidden">
-            <ContextualFollowUps
-              sessionId={sessionId}
-              conversationLength={messages.length}
-              userProfile={userProfile}
-              onFollowUpClick={(followUp) => {
-                // Send the message directly as a request
-                sendDirectMessage(followUp.message);
-              }}
-              onActionClick={(action) => {
-                console.log('Follow-up action received:', action);
-                // Send the action directly as a request
-                sendDirectMessage(action);
-              }}
-            />
-          </div>
-        )}
+          {/* Contextual Follow-ups - HIDDEN FOR NOW */}
+          {sessionId && (
+            <div className="mb-4 hidden">
+              <ContextualFollowUps
+                sessionId={sessionId}
+                conversationLength={messages.length}
+                userProfile={userProfile}
+                onFollowUpClick={(followUp) => {
+                  sendDirectMessage(followUp.message);
+                }}
+                onActionClick={(action) => {
+                  console.log('Follow-up action received:', action);
+                  sendDirectMessage(action);
+                }}
+              />
+            </div>
+          )}
 
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Message Input - Luxury Design */}
-      <div className="input-container">
+      {/* Message Input - Luxury Design - Sticky Bottom */}
+      <div className="input-container flex-shrink-0 sticky bottom-0">
         <div className="max-w-6xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (
@@ -211,7 +211,7 @@ export default function ChatInterface() {
             </div>
           )}
 
-          <div className="flex items-end space-x-4">
+          <div className="flex items-end space-x-2 lg:space-x-4">
             <div className="flex-1">
               <div className="relative">
                 <Input
@@ -219,16 +219,16 @@ export default function ChatInterface() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about luxury fragrances, get personalized recommendations, or explore our premium collection..."
-                  className="luxury-input pr-16 min-h-[60px] text-base resize-none"
+                  className="luxury-input pr-12 lg:pr-16 min-h-[50px] lg:min-h-[60px] text-sm lg:text-base resize-none"
                   disabled={chatMutation.isPending}
                 />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cardboard-medium rounded-xl w-10 h-10 icon-3d"
+                  className="absolute right-2 lg:right-3 top-1/2 transform -translate-y-1/2 rounded-xl w-8 h-8 lg:w-10 lg:h-10"
                   title="Attach file"
                 >
-                  <Paperclip className="w-5 h-5" />
+                  <Paperclip className="w-4 h-4 lg:w-5 lg:h-5" />
                 </Button>
               </div>
             </div>
@@ -236,21 +236,19 @@ export default function ChatInterface() {
             <Button 
               onClick={handleSend}
               disabled={!input.trim() || chatMutation.isPending}
-              className="luxury-btn min-h-[60px] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="luxury-btn min-h-[50px] lg:min-h-[60px] disabled:opacity-50 disabled:cursor-not-allowed px-4 lg:px-8"
               size="default"
             >
               {chatMutation.isPending ? (
-                <div className="w-6 h-6 border-3 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 lg:w-6 lg:h-6 border-2 lg:border-3 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <Send className="h-5 w-5 sm:mr-2" />
-                  <span className="hidden sm:inline">Send</span>
+                  <Send className="h-4 w-4 lg:h-5 lg:w-5 sm:mr-2" />
+                  <span className="hidden sm:inline text-sm lg:text-base">Send</span>
                 </>
               )}
             </Button>
           </div>
-          
-
         </div>
       </div>
     </div>

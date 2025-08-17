@@ -21,43 +21,48 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-card dark:bg-card border-r border-border flex flex-col">
-      {/* Logo Section */}
-      <div className="p-6 border-b border-border">
+    <div className="w-64 lg:w-72 bg-card dark:bg-card border-r border-border flex flex-col luxury-container rounded-r-2xl">
+      {/* Logo Section - Luxury Design */}
+      <div className="p-4 lg:p-6 border-b border-border">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal rounded-xl flex items-center justify-center shadow-lg">
-            <Store className="text-white text-lg" />
+          <div className="bot-avatar animate-luxury-float">
+            <Store className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-silver bg-clip-text text-transparent">KarjiStore</h1>
+            <h1 className="text-xl lg:text-2xl font-heading font-bold text-foreground">KarjiStore</h1>
             <p className="text-xs text-muted-foreground">Luxury AI Concierge</p>
           </div>
         </div>
       </div>
 
-      {/* Navigation Menu */}
-      <nav className="flex-1 p-4 space-y-2">
+      {/* Navigation Menu - Luxury Design */}
+      <nav className="flex-1 p-4 space-y-3">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link key={item.href} href={item.href} className={cn(
-              "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200",
+              "flex items-center space-x-3 px-4 py-4 rounded-xl transition-all duration-300 relative overflow-hidden",
               item.active 
-                ? "bg-gradient-to-r from-karjistore-teal via-karjistore-slate to-karjistore-charcoal dark:from-karjistore-teal dark:via-karjistore-slate dark:to-karjistore-charcoal text-karjistore-gainsboro shadow-lg" 
-                : "text-foreground hover:bg-accent hover:shadow-sm"
+                ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-luxury" 
+                : "text-foreground hover:bg-muted/50 hover:shadow-sm hover:transform hover:translateY(-1px)"
             )}>
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
+              {item.active && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              )}
+              <Icon className="w-5 h-5 relative z-10" />
+              <span className="font-medium relative z-10">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Status Indicator */}
+      {/* Status Indicator - Luxury Design */}
       <div className="p-4 border-t border-border">
-        <div className="flex items-center space-x-2 text-sm">
-          <div className="w-2 h-2 bg-karjistore-teal rounded-full animate-pulse shadow-sm"></div>
-          <span className="text-muted-foreground">Luxury Assistant Online</span>
+        <div className="luxury-container px-3 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-luxury-pulse"></div>
+            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Assistant Online</span>
+          </div>
         </div>
       </div>
     </div>

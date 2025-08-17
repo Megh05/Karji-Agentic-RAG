@@ -121,19 +121,19 @@
   
   /* Premium Chat Interface */
   .chat-header {
-    @apply luxury-container border-b backdrop-blur-sm px-8 py-6;
+    @apply luxury-container border-b backdrop-blur-sm px-4 py-4 lg:px-8 lg:py-6;
     background: linear-gradient(135deg, hsl(var(--card) / 0.8) 0%, hsl(var(--muted) / 0.2) 100%);
   }
   
   .chat-container {
-    @apply bg-background min-h-screen;
+    @apply bg-background h-full;
     background-image: 
       radial-gradient(circle at 25% 25%, hsl(var(--muted) / 0.1) 0%, transparent 50%),
       radial-gradient(circle at 75% 75%, hsl(var(--accent) / 0.05) 0%, transparent 50%);
   }
   
   .message-area {
-    @apply px-6 py-4 space-y-6 max-w-5xl mx-auto;
+    @apply px-4 py-4 space-y-4 lg:space-y-6 max-w-5xl mx-auto lg:px-6;
   }
   
   /* Sophisticated Message Bubbles */
@@ -299,10 +299,13 @@
     animation-delay: 0.2s;
   }
   
-  /* Input Container */
+  /* Input Container - Sticky Bottom */
   .input-container {
-    @apply luxury-container backdrop-blur-sm border-t px-8 py-6;
-    background: linear-gradient(135deg, hsl(var(--card) / 0.95) 0%, hsl(var(--muted) / 0.1) 100%);
+    @apply luxury-container backdrop-blur-sm border-t px-4 py-4 lg:px-8 lg:py-6;
+    background: linear-gradient(135deg, hsl(var(--card) / 0.98) 0%, hsl(var(--muted) / 0.1) 100%);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
   }
   
   /* Discount Badges */
@@ -335,7 +338,18 @@
     animation: luxury-pulse 2s ease-in-out infinite;
   }
   
-  /* Responsive Design */
+  /* Enhanced Responsive Design */
+  @media (max-width: 1024px) {
+    .message-area {
+      @apply px-4 py-4 space-y-5;
+    }
+    
+    .bot-bubble,
+    .user-bubble {
+      @apply p-4 text-sm;
+    }
+  }
+  
   @media (max-width: 768px) {
     .message-area {
       @apply px-4 py-4 space-y-4;
@@ -355,21 +369,48 @@
     
     .bot-bubble,
     .user-bubble {
-      @apply p-4 text-sm;
+      @apply p-3 text-sm;
     }
     
     .product-card {
       margin-bottom: 0.5rem;
     }
+    
+    .product-title {
+      @apply text-base;
+    }
+    
+    .product-price {
+      @apply text-base;
+    }
   }
   
-  /* Improve scrolling for product grids */
+  @media (max-width: 640px) {
+    .bot-bubble,
+    .user-bubble {
+      @apply p-3 text-sm;
+    }
+    
+    .luxury-btn {
+      @apply py-3 px-6 text-sm;
+    }
+  }
+  
+  /* Improved Product Grids - Responsive */
   .products-grid {
     display: grid;
     gap: 0.75rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     max-width: 100%;
     overflow-x: visible;
+    margin: 0.75rem 0;
+  }
+  
+  @media (max-width: 1024px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.625rem;
+    }
   }
   
   @media (max-width: 768px) {
@@ -382,7 +423,32 @@
   @media (max-width: 640px) {
     .products-grid {
       grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    
+    .luxury-btn {
+      @apply py-3 px-6 text-sm;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .products-grid {
+      grid-template-columns: 1fr;
       gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
+  }
+  
+  /* Mobile Sidebar Responsiveness */
+  @media (max-width: 1024px) {
+    .sidebar {
+      @apply w-60;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      @apply w-56;
     }
   }
   

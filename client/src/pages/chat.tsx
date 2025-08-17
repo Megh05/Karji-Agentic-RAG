@@ -24,9 +24,9 @@ export default function ChatPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-amber-50/30 via-yellow-50/20 to-orange-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden">
         <ChatInterface />
-      </div>
+      </main>
       
       {/* Add the luxury floating chatbot as an additional feature */}
       <KarjistoreChatBot 
