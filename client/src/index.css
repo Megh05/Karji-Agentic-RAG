@@ -6,16 +6,16 @@
 @layer base {
   :root {
     /* AI Copilot Design System - Core Theme Colors */
-    --background: 0 0% 100%;               /* Pure white */
+    --background: 0 0% 98%;                /* Very light gray background */
     --foreground: 0 0% 9%;                 /* Near black text */
-    --surface: 0 0% 98%;                   /* Light gray surface */
+    --surface: 0 0% 98%;                   /* Very light gray surface */
     --surface-elevated: 0 0% 100%;         /* White elevated surfaces */
     
     /* AI Copilot Brand Colors */
     --ai-primary: 24 9.8% 10%;             /* Dark charcoal */
     --ai-primary-glow: 20 14.3% 4.1%;      /* Darker charcoal */
-    --ai-secondary: 60 4.8% 95.9%;         /* Light warm gray */
-    --ai-accent: 20 70% 65%;               /* Warm terracotta/orange */
+    --ai-secondary: 0 0% 98%;               /* Very light gray */
+    --ai-accent: 20 70% 65%;               /* Golden-brown accent */
     
     /* Semantic Colors */
     --card: 0 0% 100%;                     /* White */
@@ -26,31 +26,31 @@
     --primary-foreground: 60 9.1% 97.8%;   /* Off-white */
     --secondary: 0 0% 100%;                /* White */
     --secondary-foreground: 0 0% 9%;       /* Near black */
-    --muted: 60 4.8% 95.9%;                /* Light warm gray */
+    --muted: 0 0% 98%;                     /* Very light gray surface */
     --muted-foreground: 25 5.3% 44.7%;     /* Medium gray */
     --accent: 20 70% 65%;                  /* Warm terracotta */
     --accent-foreground: 0 0% 100%;        /* White */
     --destructive: 0 84.2% 60.2%;          /* Red */
     --destructive-foreground: 0 0% 100%;
-    --border: 60 9% 85%;                   /* Light gray */
+    --border: 20 10% 85%;                  /* Light golden border */
     --input: 0 0% 100%;                    /* White */
     --ring: 24 5.4% 63.9%;                 /* Medium warm gray */
     --radius: 0.75rem;                     /* Primary Radius: 12px */
     
     /* Glassmorphism Effects */
-    --glass-background: hsla(0, 0%, 100%, 0.95);
-    --glass-border: hsla(60, 9%, 85%, 0.5);
-    --glass-shadow: rgba(0, 0, 0, 0.05);
+    --glass-background: hsla(0, 0%, 98%, 0.95);
+    --glass-border: hsla(20, 10%, 85%, 0.5);
+    --glass-shadow: rgba(20, 70, 65, 0.05);
     
     /* Sidebar Colors */
-    --sidebar-background: 0 0% 98%;        /* Light gray */
-    --sidebar-foreground: 240 5.3% 26.1%;  /* Dark gray */
-    --sidebar-primary: 240 5.9% 10%;       /* Dark blue-gray */
+    --sidebar-background: 0 0% 98%;        /* Very light gray */
+    --sidebar-foreground: 0 0% 9%;         /* Near black */
+    --sidebar-primary: 24 9.8% 10%;        /* Dark charcoal */
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;      /* Light blue-gray */
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;         /* Light blue */
-    --sidebar-ring: 240 5.9% 10%;
+    --sidebar-accent: 20 70% 65%;          /* Golden-brown accent */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 20 10% 85%;          /* Light golden border */
+    --sidebar-ring: 20 70% 65%;
     
     /* Standard font families (no custom fonts) */
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
