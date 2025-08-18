@@ -338,7 +338,20 @@ KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: s
       const response = await callOpenRouterAPI(messages, config);
       console.log('OpenRouter API response received');
       
-      const baseAssistantMessage = response.choices[0]?.message?.content || "Sorry, I couldn't process your request.";
+      // Handle different response formats and add better error checking
+      let baseAssistantMessage = "Sorry, I couldn't process your request.";
+      
+      if (response && response.choices && Array.isArray(response.choices) && response.choices.length > 0) {
+        baseAssistantMessage = response.choices[0]?.message?.content || baseAssistantMessage;
+      } else if (response && response.message) {
+        // Handle direct message format
+        baseAssistantMessage = response.message;
+      } else if (response && typeof response === 'string') {
+        // Handle string response format
+        baseAssistantMessage = response;
+      } else {
+        console.error('Unexpected API response format:', JSON.stringify(response, null, 2));
+      }
 
       // Generate smart response with all intelligence features
       const smartResponse = smartResponseService.generateSmartResponse(
