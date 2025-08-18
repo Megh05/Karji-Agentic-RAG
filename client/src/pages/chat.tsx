@@ -22,7 +22,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex h-screen max-h-screen overflow-hidden gradient-background">
+    <div className="flex h-screen max-h-screen overflow-hidden bg-gradient-to-br from-amber-50/30 via-yellow-50/20 to-orange-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Sidebar />
       <main className="flex-1 flex flex-col h-full max-h-screen overflow-hidden">
         <ChatInterface />

@@ -21,7 +21,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 lg:w-72 h-full max-h-screen glass-panel flex flex-col rounded-none relative z-60 overflow-hidden border-r border-border">
+    <div className="w-64 lg:w-72 h-full max-h-screen bg-card dark:bg-card flex flex-col luxury-container rounded-none relative z-60 overflow-hidden border-r border-border">
       {/* Logo Section - Luxury Design - Match Main Header Height */}
       <div className="px-4 py-3 lg:px-6 lg:py-4 border-b border-border" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
         <div className="flex items-center space-x-3">
@@ -29,7 +29,7 @@ export default function Sidebar() {
             <Store className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl lg:text-2xl font-sans font-bold text-foreground">KarjiStore</h1>
+            <h1 className="text-xl lg:text-2xl font-heading font-bold text-foreground">KarjiStore</h1>
             <p className="text-xs text-muted-foreground">Luxury AI Concierge</p>
           </div>
         </div>
