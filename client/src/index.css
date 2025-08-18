@@ -264,19 +264,19 @@
   /* Typing Indicator */
   .typing-dots {
     @apply flex space-x-1 items-center justify-center;
-    padding: 8px 16px;
+    padding: 6px 12px;
   }
   
   .typing-dot {
     width: 10px;
     height: 10px;
-    background-color: #6b7280;
+    background-color: #374151;
     border-radius: 50%;
     animation: typing-pulse 1.5s infinite;
   }
   
   .dark .typing-dot {
-    background-color: #9ca3af;
+    background-color: #6b7280;
   }
   
   .typing-dot:nth-child(2) {
