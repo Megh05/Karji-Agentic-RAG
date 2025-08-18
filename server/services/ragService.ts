@@ -236,14 +236,20 @@ export class RAGService {
     
     // Price filter patterns - more flexible approach
     const priceKeywords = ['aed', 'dirham', 'price', 'cost', 'budget'];
-    const rangeKeywords = ['range', 'between', 'from', 'to', 'and'];
+    const rangeKeywords = ['range', 'rnage', 'between', 'from', 'to', 'and', '-'];
     const limitKeywords = ['under', 'below', 'less', 'maximum', 'max', 'up to'];
     
     const hasPriceContext = priceKeywords.some(keyword => queryLower.includes(keyword));
     const hasRangeContext = rangeKeywords.some(keyword => queryLower.includes(keyword));
     const hasLimitContext = limitKeywords.some(keyword => queryLower.includes(keyword));
     
-    if (hasPriceContext && numbers.length > 0) {
+    // Special handling for dash-separated ranges (e.g., "300-500")
+    const dashRangeMatch = query.match(/(\d+)\s*-\s*(\d+)/);
+    if (dashRangeMatch && (hasPriceContext || queryLower.includes('range') || queryLower.includes('rnage'))) {
+      const num1 = parseInt(dashRangeMatch[1]);
+      const num2 = parseInt(dashRangeMatch[2]);
+      priceFilter = { min: Math.min(num1, num2), max: Math.max(num1, num2) };
+    } else if (hasPriceContext && numbers.length > 0) {
       if (hasRangeContext && numbers.length >= 2) {
         // Range query: use first two numbers as min and max
         priceFilter = { min: Math.min(numbers[0], numbers[1]), max: Math.max(numbers[0], numbers[1]) };
@@ -337,6 +343,15 @@ export class RAGService {
       if (!priceFilter) priceFilter = { min: 300, max: 1000 }; // Auto-suggest mid-range
     }
     
+    console.log('Price parsing result:', {
+      query,
+      numbers,
+      priceFilter,
+      hasPriceContext,
+      hasRangeContext,
+      dashRangeMatch: !!dashRangeMatch
+    });
+    
     return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
   }
 
@@ -379,10 +394,12 @@ export class RAGService {
       if (intent.priceFilter) {
         const productPrice = parseFloat(product.price?.replace(/[^0-9.]/g, '') || '0');
         const { min = 0, max = Infinity } = intent.priceFilter;
+        console.log(`Price filtering: ${product.title} - ${productPrice} (range: ${min}-${max})`);
         if (productPrice >= min && productPrice <= max) {
           score += 30;
         } else {
           score = 0; // Exclude products outside price range
+          console.log(`  -> EXCLUDED: ${productPrice} not in range ${min}-${max}`);
         }
       }
       
