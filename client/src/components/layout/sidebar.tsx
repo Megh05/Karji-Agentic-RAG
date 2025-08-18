@@ -23,7 +23,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 lg:w-72 h-full max-h-screen bg-card dark:bg-card flex flex-col luxury-container rounded-none relative z-60 overflow-hidden border-r border-border">
       {/* Logo Section - Luxury Design - Match Main Header Height */}
-      <div className="px-4 py-3 lg:px-6 lg:py-4 border-b border-border">
+      <div className="px-4 py-3 lg:px-6 lg:py-4 border-b border-border" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
         <div className="flex items-center space-x-3">
           <div className="bot-avatar">
             <Store className="w-6 h-6" />

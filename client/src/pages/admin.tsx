@@ -22,8 +22,8 @@ export default function AdminPage() {
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-amber-50/30 via-yellow-50/20 to-orange-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Admin Header - Compact */}
-        <div className="luxury-container border-b backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20">
+        {/* Admin Header - Compact - Match Sidebar Height */}
+        <div className="luxury-container border-b backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20" style={{ height: '81px' }}>
           <div className="flex items-center justify-between max-w-6xl mx-auto">
             <div className="flex items-center space-x-3">
               <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
@@ -55,44 +55,40 @@ export default function AdminPage() {
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto message-area">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="api-setup" className="w-full">
-              <TabsList className="luxury-container mb-6 p-1 h-12 lg:h-14" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', width: '100%', gap: '0' }}>
-                <TabsTrigger 
-                  value="api-setup" 
-                  className="admin-tab-item data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium space-x-1"
-                  style={{ width: '100%', minWidth: '0', maxWidth: '100%', flex: 'none', overflow: 'hidden' }}
+              <div className="luxury-container mb-6 p-1 h-12 lg:h-14 w-full" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0' }}>
+                <button 
+                  className="flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium bg-primary text-primary-foreground shadow-luxury"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', flex: 'none', overflow: 'hidden', padding: '4px 8px', margin: '0' }}
                 >
-                  <Key className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60px' }}>API Setup</span>
+                  <Key className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
+                  <span className="hidden sm:inline truncate" style={{ maxWidth: '80px' }}>API Setup</span>
                   <span className="sm:hidden">API</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="knowledge-base" 
-                  className="admin-tab-item data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium space-x-1"
-                  style={{ width: '100%', minWidth: '0', maxWidth: '100%', flex: 'none', overflow: 'hidden' }}
+                </button>
+                <button 
+                  className="flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', flex: 'none', overflow: 'hidden', padding: '4px 8px', margin: '0' }}
                 >
-                  <Upload className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60px' }}>Knowledge Base</span>
+                  <Upload className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
+                  <span className="hidden sm:inline truncate" style={{ maxWidth: '80px' }}>Knowledge Base</span>
                   <span className="sm:hidden">KB</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="product-offers" 
-                  className="admin-tab-item data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium space-x-1"
-                  style={{ width: '100%', minWidth: '0', maxWidth: '100%', flex: 'none', overflow: 'hidden' }}
+                </button>
+                <button 
+                  className="flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', flex: 'none', overflow: 'hidden', padding: '4px 8px', margin: '0' }}
                 >
-                  <Tag className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60px' }}>Product Offers</span>
+                  <Tag className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
+                  <span className="hidden sm:inline truncate" style={{ maxWidth: '80px' }}>Product Offers</span>
                   <span className="sm:hidden">Offers</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="merchant-feed" 
-                  className="admin-tab-item data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium space-x-1"
-                  style={{ width: '100%', minWidth: '0', maxWidth: '100%', flex: 'none', overflow: 'hidden' }}
+                </button>
+                <button 
+                  className="flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100%', maxWidth: '100%', minWidth: '0', flex: 'none', overflow: 'hidden', padding: '4px 8px', margin: '0' }}
                 >
-                  <Rss className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60px' }}>Merchant Feed</span>
+                  <Rss className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
+                  <span className="hidden sm:inline truncate" style={{ maxWidth: '80px' }}>Merchant Feed</span>
                   <span className="sm:hidden">Feed</span>
-                </TabsTrigger>
-              </TabsList>
+                </button>
+              </div>
 
               <TabsContent value="api-setup" className="luxury-container p-6 space-y-6">
                 <ApiSetup />

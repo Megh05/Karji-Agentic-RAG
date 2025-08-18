@@ -122,8 +122,8 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full max-h-screen overflow-hidden chat-container">
-      {/* Chat Header - Compact */}
-      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-50">
+      {/* Chat Header - Compact - Match Sidebar Height */}
+      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-50" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
         <div className="flex items-center max-w-6xl mx-auto">
           <div className="flex items-center space-x-3">
             <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
