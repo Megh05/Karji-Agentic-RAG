@@ -58,34 +58,34 @@ export default function AdminPage() {
               <TabsList className="luxury-container grid w-full grid-cols-4 mb-6 p-1 h-12 lg:h-14">
                 <TabsTrigger 
                   value="api-setup" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-4 rounded-lg font-medium w-full"
+                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-3 lg:px-4 rounded-lg font-medium w-full min-w-0 flex-1"
                 >
-                  <Key className="w-3 h-3 lg:w-4 lg:h-4" />
-                  <span className="hidden sm:inline">API Setup</span>
+                  <Key className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
+                  <span className="hidden sm:inline truncate">API Setup</span>
                   <span className="sm:hidden">API</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="knowledge-base" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-4 rounded-lg font-medium w-full"
+                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-3 lg:px-4 rounded-lg font-medium w-full min-w-0 flex-1"
                 >
-                  <Upload className="w-3 h-3 lg:w-4 lg:h-4" />
-                  <span className="hidden sm:inline">Knowledge Base</span>
+                  <Upload className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
+                  <span className="hidden sm:inline truncate">Knowledge Base</span>
                   <span className="sm:hidden">KB</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="product-offers" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-4 rounded-lg font-medium w-full"
+                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-3 lg:px-4 rounded-lg font-medium w-full min-w-0 flex-1"
                 >
-                  <Tag className="w-3 h-3 lg:w-4 lg:h-4" />
-                  <span className="hidden sm:inline">Product Offers</span>
+                  <Tag className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
+                  <span className="hidden sm:inline truncate">Product Offers</span>
                   <span className="sm:hidden">Offers</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="merchant-feed" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-4 rounded-lg font-medium w-full"
+                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-3 lg:px-4 rounded-lg font-medium w-full min-w-0 flex-1"
                 >
-                  <Rss className="w-3 h-3 lg:w-4 lg:h-4" />
-                  <span className="hidden sm:inline">Merchant Feed</span>
+                  <Rss className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
+                  <span className="hidden sm:inline truncate">Merchant Feed</span>
                   <span className="sm:hidden">Feed</span>
                 </TabsTrigger>
               </TabsList>
