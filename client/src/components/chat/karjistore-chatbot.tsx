@@ -277,6 +277,13 @@ const KarjistoreChatBot: React.FC<KarjistoreChatBotProps> = ({
                 );
               })}
             </div>
+            
+            {/* Powered by MeghTechnologies */}
+            <div className="text-center mt-2">
+              <p className="text-xs text-gray-400 dark:text-gray-500" data-testid="text-powered-by-float">
+                powered by MeghTechnologies
+              </p>
+            </div>
           </div>
         </div>
       )}
