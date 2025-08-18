@@ -196,7 +196,7 @@ export default function ChatInterface() {
       </div>
 
       {/* Message Input - Fixed Bottom with Stable Positioning */}
-      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-4 lg:px-6 lg:py-4 flex-shrink-0 z-40 fixed bottom-0 left-0 right-0" style={{ marginLeft: '256px' }}>
+      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-4 lg:px-6 lg:py-4 flex-shrink-0 z-40 fixed bottom-0 right-0 left-64 lg:left-72" data-testid="chat-input-container">
         <div className="max-w-6xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (
