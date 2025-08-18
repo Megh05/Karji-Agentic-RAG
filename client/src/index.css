@@ -236,17 +236,20 @@
     @apply bg-accent text-accent-foreground;
   }
   
-  /* Message Bubbles */
+  /* Message Bubbles with Better Spacing */
   .message-bubble {
-    @apply glass-panel rounded-lg p-4 max-w-md;
+    @apply rounded-lg p-4;
+    max-width: 100%;
+    word-wrap: break-word;
   }
   
   .message-bubble.ai {
-    @apply rounded-tl-sm;
+    @apply glass-panel rounded-tl-sm bg-card border border-border;
   }
   
   .message-bubble.user {
     @apply bg-primary text-primary-foreground rounded-tr-sm;
+    margin-left: auto;
   }
   
   /* Typing Indicator */
