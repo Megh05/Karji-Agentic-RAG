@@ -22,9 +22,9 @@ export default function AdminPage() {
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-amber-50/30 via-yellow-50/20 to-orange-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Admin Header - Compact - Match Sidebar Height */}
-        <div className="luxury-container border-b backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20" style={{ height: '81px' }}>
-          <div className="flex items-center justify-between max-w-6xl mx-auto">
+        {/* Admin Header - Match Chat Header Exactly */}
+        <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-50" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center space-x-3">
               <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
                 <Database className="w-4 h-4 lg:w-5 lg:h-5" />
