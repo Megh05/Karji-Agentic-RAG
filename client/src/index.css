@@ -247,7 +247,6 @@
     @apply rounded-tl-sm bg-white border border-gray-200;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     color: #111827;  /* Much darker text for better readability */
-    max-width: 90%;
   }
   
   .dark .message-bubble.ai {
@@ -260,7 +259,6 @@
     @apply bg-black text-white rounded-tr-sm;
     margin-left: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    max-width: 85%;
   }
   
   /* Typing Indicator */

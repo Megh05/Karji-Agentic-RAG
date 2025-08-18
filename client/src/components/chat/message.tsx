@@ -44,8 +44,8 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
   const isUser = message.type === 'user';
 
   return (
-    <div className={`mb-8 w-full ${isUser ? 'flex justify-end' : 'flex justify-start'}`}>
-      <div className={`flex items-start space-x-4 max-w-3xl w-full ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
+    <div className={`mb-8 ${isUser ? 'flex justify-end' : 'flex justify-start'}`}>
+      <div className={`flex items-start space-x-4 max-w-4xl ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
         {!isUser && (
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center flex-shrink-0 shadow-lg">
             <Bot className="w-4 h-4" />
@@ -58,9 +58,9 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
           </div>
         )}
         
-        <div className="flex-1 min-w-0 overflow-hidden">
+        <div className="flex-1 min-w-0">
           <div className={`message-bubble ${isUser ? 'user' : 'ai'}`}>
-            <p className="whitespace-pre-wrap leading-relaxed text-sm break-words">{message.content}</p>
+            <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
           </div>
         
           {/* Welcome Guide for first message */}
