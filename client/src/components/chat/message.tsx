@@ -47,13 +47,13 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
     <div className={`mb-8 ${isUser ? 'flex justify-end' : 'flex justify-start'}`}>
       <div className={`flex items-start space-x-4 max-w-4xl ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
         {!isUser && (
-          <div className="ai-orb flex-shrink-0">
-            <Bot className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center flex-shrink-0 shadow-lg">
+            <Bot className="w-4 h-4" />
           </div>
         )}
         
         {isUser && (
-          <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center flex-shrink-0 shadow-lg">
             <User className="w-4 h-4" />
           </div>
         )}

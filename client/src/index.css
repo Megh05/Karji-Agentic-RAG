@@ -244,12 +244,14 @@
   }
   
   .message-bubble.ai {
-    @apply glass-panel rounded-tl-sm bg-card border border-border;
+    @apply rounded-tl-sm bg-white border border-gray-200 text-gray-900;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   .message-bubble.user {
-    @apply bg-primary text-primary-foreground rounded-tr-sm;
+    @apply bg-black text-white rounded-tr-sm;
     margin-left: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
   
   /* Typing Indicator */
