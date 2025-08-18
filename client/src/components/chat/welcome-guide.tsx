@@ -109,7 +109,7 @@ export default function WelcomeGuide({
           className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
             activeTab === 'categories' 
               ? 'bg-white dark:bg-gray-700 text-primary shadow-sm' 
-              : 'text-gray-600 dark:text-gray-300 hover:text-primary'
+              : 'text-gray-700 dark:text-gray-300 hover:text-primary'
           }`}
           data-testid="tab-categories"
         >
@@ -120,7 +120,7 @@ export default function WelcomeGuide({
           className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
             activeTab === 'help' 
               ? 'bg-white dark:bg-gray-700 text-primary shadow-sm' 
-              : 'text-gray-600 dark:text-gray-300 hover:text-primary'
+              : 'text-gray-700 dark:text-gray-300 hover:text-primary'
           }`}
           data-testid="tab-help"
         >
@@ -131,7 +131,7 @@ export default function WelcomeGuide({
           className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
             activeTab === 'store' 
               ? 'bg-white dark:bg-gray-700 text-primary shadow-sm' 
-              : 'text-gray-600 dark:text-gray-300 hover:text-primary'
+              : 'text-gray-700 dark:text-gray-300 hover:text-primary'
           }`}
           data-testid="tab-store"
         >
@@ -161,14 +161,14 @@ export default function WelcomeGuide({
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
+                    <p className="text-xs text-gray-700 dark:text-gray-300 mb-2">
                       {category.description}
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {category.examples.map((example, idx) => (
                         <span 
                           key={idx}
-                          className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-1 rounded"
+                          className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
                         >
                           {example}
                         </span>
@@ -185,7 +185,7 @@ export default function WelcomeGuide({
       {/* Quick Questions Tab */}
       {activeTab === 'help' && (
         <div className="space-y-2">
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
             Not sure where to start? Try one of these common questions:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
