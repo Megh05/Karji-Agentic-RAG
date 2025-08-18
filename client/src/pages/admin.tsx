@@ -55,10 +55,11 @@ export default function AdminPage() {
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto message-area">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="api-setup" className="w-full">
-              <TabsList className="luxury-container mb-6 p-1 h-12 lg:h-14 w-full flex">
+              <TabsList className="luxury-container mb-6 p-1 h-12 lg:h-14 w-full grid grid-cols-4">
                 <TabsTrigger 
                   value="api-setup"
-                  className="flex-1 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium min-w-0"
+                  className="!w-full flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100% !important', flex: 'none !important' }}
                 >
                   <Key className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
                   <span className="hidden sm:inline truncate">API Setup</span>
@@ -66,7 +67,8 @@ export default function AdminPage() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="knowledge-base"
-                  className="flex-1 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium min-w-0"
+                  className="!w-full flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100% !important', flex: 'none !important' }}
                 >
                   <Upload className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
                   <span className="hidden sm:inline truncate">Knowledge Base</span>
@@ -74,7 +76,8 @@ export default function AdminPage() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="product-offers"
-                  className="flex-1 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium min-w-0"
+                  className="!w-full flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100% !important', flex: 'none !important' }}
                 >
                   <Tag className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
                   <span className="hidden sm:inline truncate">Product Offers</span>
@@ -82,7 +85,8 @@ export default function AdminPage() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="merchant-feed"
-                  className="flex-1 flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium min-w-0"
+                  className="!w-full flex items-center justify-center data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full rounded-lg font-medium"
+                  style={{ width: '100% !important', flex: 'none !important' }}
                 >
                   <Rss className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0 mr-1" />
                   <span className="hidden sm:inline truncate">Merchant Feed</span>
