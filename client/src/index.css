@@ -6,7 +6,7 @@
 @layer base {
   :root {
     /* AI Copilot Design System - Core Theme Colors */
-    --background: 0 0% 100%;               /* Pure white */
+    --background: 20 70% 65%;              /* Warm golden-brown */
     --foreground: 0 0% 9%;                 /* Near black text */
     --surface: 0 0% 98%;                   /* Light gray surface */
     --surface-elevated: 0 0% 100%;         /* White elevated surfaces */
@@ -109,7 +109,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -118,6 +117,15 @@
     height: 100vh;
     margin: 0;
     padding: 0;
+    /* Warm golden-brown gradient background */
+    background: linear-gradient(135deg, 
+      hsl(var(--ai-accent)) 0%, 
+      hsl(var(--ai-accent) / 0.9) 25%, 
+      hsl(var(--ai-accent) / 0.8) 50%, 
+      hsl(var(--ai-accent) / 0.7) 75%, 
+      hsl(var(--ai-accent) / 0.6) 100%
+    );
+    color: hsl(var(--foreground));
   }
 
   #root {
@@ -137,11 +145,23 @@
   
   /* Glass Panel Effect */
   .glass-panel {
-    background: var(--glass-background);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    background: hsla(0, 0%, 100%, 0.95);
+    border: 1px solid hsla(60, 9%, 85%, 0.5);
+    box-shadow: rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+  }
+  
+  /* Background gradient utility for all pages */
+  .gradient-background {
+    background: linear-gradient(135deg, 
+      hsl(var(--ai-accent)) 0%, 
+      hsl(var(--ai-accent) / 0.9) 25%, 
+      hsl(var(--ai-accent) / 0.8) 50%, 
+      hsl(var(--ai-accent) / 0.7) 75%, 
+      hsl(var(--ai-accent) / 0.6) 100%
+    );
+    min-height: 100vh;
   }
 
   /* Admin Tab Uniform Sizing */
@@ -175,7 +195,15 @@
   
   /* Chat Interface */
   .chat-container {
-    @apply bg-background h-full max-h-screen overflow-hidden;
+    @apply h-full max-h-screen overflow-hidden;
+    /* Warm golden-brown gradient background */
+    background: linear-gradient(135deg, 
+      hsl(var(--ai-accent)) 0%, 
+      hsl(var(--ai-accent) / 0.9) 25%, 
+      hsl(var(--ai-accent) / 0.8) 50%, 
+      hsl(var(--ai-accent) / 0.7) 75%, 
+      hsl(var(--ai-accent) / 0.6) 100%
+    );
   }
   
   .message-area {
