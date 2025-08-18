@@ -138,16 +138,24 @@
   }
 
   .admin-tab-item {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-    flex: none;
-    display: flex;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 25% !important;
+    flex: none !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .admin-tab-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
   }
   
   /* Premium Chat Interface */
