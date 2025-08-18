@@ -38,7 +38,8 @@ export default function KnowledgeBase() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Document uploaded successfully"
+        description: "Document uploaded successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
     },
@@ -59,7 +60,8 @@ export default function KnowledgeBase() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Document deleted successfully"
+        description: "Document deleted successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
     },
@@ -87,7 +89,8 @@ export default function KnowledgeBase() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Custom instructions saved successfully"
+        description: "Custom instructions saved successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
       setCustomInstructions("");

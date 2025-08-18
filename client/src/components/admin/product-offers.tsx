@@ -31,7 +31,8 @@ export default function ProductOffers() {
     onSuccess: (data) => {
       toast({
         title: "Success",
-        description: `${data.count} offers uploaded successfully`
+        description: `${data.count} offers uploaded successfully`,
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/offers"] });
     },
@@ -52,7 +53,8 @@ export default function ProductOffers() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Offer deleted successfully"
+        description: "Offer deleted successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/offers"] });
     },
@@ -73,7 +75,8 @@ export default function ProductOffers() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "All offers cleared successfully"
+        description: "All offers cleared successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/offers"] });
     },

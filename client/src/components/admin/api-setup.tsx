@@ -47,7 +47,8 @@ export default function ApiSetup() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "API configuration saved successfully"
+        description: "API configuration saved successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/config"] });
     },

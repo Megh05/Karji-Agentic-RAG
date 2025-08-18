@@ -37,7 +37,8 @@ export default function MerchantFeed() {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Merchant feed added successfully"
+        description: "Merchant feed added successfully",
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/merchant-feeds"] });
     },
@@ -58,7 +59,8 @@ export default function MerchantFeed() {
     onSuccess: (data) => {
       toast({
         title: "Success",
-        description: `Feed synchronized successfully! ${data.productsImported} products imported.`
+        description: `Feed synchronized successfully! ${data.productsImported} products imported.`,
+        variant: "success"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/merchant-feeds"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });

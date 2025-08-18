@@ -101,6 +101,7 @@ export default function UserSettingsComponent({ sessionId, onClose }: UserSettin
       toast({
         title: "Settings saved",
         description: "Your preferences have been updated successfully.",
+        variant: "success"
       });
     },
     onError: (error) => {
