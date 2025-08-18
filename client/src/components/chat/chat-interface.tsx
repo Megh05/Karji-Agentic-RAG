@@ -124,7 +124,7 @@ export default function ChatInterface() {
     <div className="flex flex-col h-full max-h-screen overflow-hidden chat-container">
       {/* Chat Header - Compact - Match Sidebar Height */}
       <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 sticky top-0 z-50" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
-        <div className="flex items-center">
+        <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-3">
             <div className="bot-avatar w-10 h-10 lg:w-12 lg:h-12">
               <Bot className="w-4 h-4 lg:w-5 lg:h-5" />
@@ -132,6 +132,13 @@ export default function ChatInterface() {
             <div>
               <h1 className="text-sm lg:text-base font-heading font-semibold text-foreground">KarjiStore Concierge</h1>
               <p className="text-xs text-muted-foreground">Premium Fragrances & Luxury Accessories</p>
+            </div>
+          </div>
+          {/* Status Indicator - Moved from Sidebar */}
+          <div className="luxury-container px-3 py-1 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+              <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Assistant Online</span>
             </div>
           </div>
         </div>

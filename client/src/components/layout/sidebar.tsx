@@ -53,15 +53,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Status Indicator - Luxury Design */}
-      <div className="p-4 border-t border-border">
-        <div className="luxury-container px-3 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Assistant Online</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }
