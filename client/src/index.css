@@ -572,4 +572,18 @@
       animation: none;
     }
   }
+  
+  /* Toast Positioning - Prevent Layout Shift */
+  [data-radix-toast-viewport] {
+    position: fixed !important;
+    pointer-events: none !important;
+    z-index: 100 !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    margin: 0 !important;
+  }
+  
+  [data-radix-toast-viewport] > * {
+    pointer-events: auto !important;
+  }
 }
