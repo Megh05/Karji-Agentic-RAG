@@ -55,37 +55,41 @@ export default function AdminPage() {
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto message-area">
           <div className="max-w-6xl mx-auto">
             <Tabs defaultValue="api-setup" className="w-full">
-              <TabsList className="luxury-container flex w-full mb-6 p-1 h-12 lg:h-14">
+              <TabsList className="luxury-container grid w-full grid-cols-4 gap-0 mb-6 p-1 h-12 lg:h-14">
                 <TabsTrigger 
                   value="api-setup" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg font-medium flex-1 max-w-[25%] min-w-0"
+                  className="flex items-center justify-center space-x-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium w-full overflow-hidden"
+                  style={{ width: '100%', maxWidth: '100%' }}
                 >
                   <Key className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline truncate">API Setup</span>
+                  <span className="hidden sm:inline truncate text-ellipsis overflow-hidden whitespace-nowrap">API Setup</span>
                   <span className="sm:hidden">API</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="knowledge-base" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg font-medium flex-1 max-w-[25%] min-w-0"
+                  className="flex items-center justify-center space-x-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium w-full overflow-hidden"
+                  style={{ width: '100%', maxWidth: '100%' }}
                 >
                   <Upload className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline truncate">Knowledge Base</span>
+                  <span className="hidden sm:inline truncate text-ellipsis overflow-hidden whitespace-nowrap">Knowledge Base</span>
                   <span className="sm:hidden">KB</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="product-offers" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg font-medium flex-1 max-w-[25%] min-w-0"
+                  className="flex items-center justify-center space-x-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium w-full overflow-hidden"
+                  style={{ width: '100%', maxWidth: '100%' }}
                 >
                   <Tag className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline truncate">Product Offers</span>
+                  <span className="hidden sm:inline truncate text-ellipsis overflow-hidden whitespace-nowrap">Product Offers</span>
                   <span className="sm:hidden">Offers</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="merchant-feed" 
-                  className="flex items-center justify-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-2 lg:px-3 rounded-lg font-medium flex-1 max-w-[25%] min-w-0"
+                  className="flex items-center justify-center space-x-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury text-xs lg:text-sm h-full px-1 lg:px-2 rounded-lg font-medium w-full overflow-hidden"
+                  style={{ width: '100%', maxWidth: '100%' }}
                 >
                   <Rss className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline truncate">Merchant Feed</span>
+                  <span className="hidden sm:inline truncate text-ellipsis overflow-hidden whitespace-nowrap">Merchant Feed</span>
                   <span className="sm:hidden">Feed</span>
                 </TabsTrigger>
               </TabsList>
