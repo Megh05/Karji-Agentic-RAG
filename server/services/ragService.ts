@@ -234,18 +234,34 @@ export class RAGService {
     // Find all numbers in the query
     const numbers = query.match(/\d+/g)?.map(n => parseInt(n)) || [];
     
-    // Price filter patterns - more flexible approach
+    // Price filter patterns - intelligent approach with fuzzy matching
     const priceKeywords = ['aed', 'dirham', 'price', 'cost', 'budget'];
-    const rangeKeywords = ['range', 'rnage', 'between', 'from', 'to', 'and', '-'];
+    const rangeKeywords = ['range', 'between', 'from', 'to', 'and'];
     const limitKeywords = ['under', 'below', 'less', 'maximum', 'max', 'up to'];
     
-    const hasPriceContext = priceKeywords.some(keyword => queryLower.includes(keyword));
-    const hasRangeContext = rangeKeywords.some(keyword => queryLower.includes(keyword));
-    const hasLimitContext = limitKeywords.some(keyword => queryLower.includes(keyword));
+    // Fuzzy matching for common typos and variations
+    const fuzzyMatchKeyword = (word: string, keywords: string[], maxDistance: number = 2): boolean => {
+      return keywords.some(keyword => {
+        const distance = this.levenshteinDistance(word.toLowerCase(), keyword.toLowerCase());
+        return distance <= maxDistance;
+      });
+    };
+    
+    // Check for price, range, and limit context with fuzzy matching
+    const words = queryLower.split(/\s+/);
+    const hasPriceContext = words.some(word => 
+      priceKeywords.includes(word) || fuzzyMatchKeyword(word, priceKeywords)
+    );
+    const hasRangeContext = words.some(word => 
+      rangeKeywords.includes(word) || fuzzyMatchKeyword(word, rangeKeywords) || queryLower.includes('-')
+    );
+    const hasLimitContext = words.some(word => 
+      limitKeywords.includes(word) || fuzzyMatchKeyword(word, limitKeywords)
+    );
     
     // Special handling for dash-separated ranges (e.g., "300-500")
     const dashRangeMatch = query.match(/(\d+)\s*-\s*(\d+)/);
-    if (dashRangeMatch && (hasPriceContext || queryLower.includes('range') || queryLower.includes('rnage'))) {
+    if (dashRangeMatch && (hasPriceContext || hasRangeContext)) {
       const num1 = parseInt(dashRangeMatch[1]);
       const num2 = parseInt(dashRangeMatch[2]);
       priceFilter = { min: Math.min(num1, num2), max: Math.max(num1, num2) };
@@ -353,6 +369,27 @@ export class RAGService {
     });
     
     return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
+  }
+
+  // Levenshtein distance for fuzzy matching
+  private levenshteinDistance(str1: string, str2: string): number {
+    const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+    
+    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+    
+    for (let j = 1; j <= str2.length; j++) {
+      for (let i = 1; i <= str1.length; i++) {
+        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1,     // deletion
+          matrix[j - 1][i] + 1,     // insertion
+          matrix[j - 1][i - 1] + indicator  // substitution
+        );
+      }
+    }
+    
+    return matrix[str2.length][str1.length];
   }
 
   private searchProductsWithIntent(query: string, products: any[], intent: any, maxProducts: number): any[] {
