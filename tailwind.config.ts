@@ -139,6 +139,31 @@ export default {
             opacity: "1" 
           },
         },
+        "golden-wave": {
+          "0%": {
+            backgroundPosition: "0% 50%",
+          },
+          "50%": {
+            backgroundPosition: "100% 50%",
+          },
+          "100%": {
+            backgroundPosition: "0% 50%",
+          },
+        },
+        "floating-orbs": {
+          "0%, 100%": {
+            transform: "translateY(0px) rotate(0deg)",
+            opacity: "0.7",
+          },
+          "33%": {
+            transform: "translateY(-10px) rotate(120deg)",
+            opacity: "0.9",
+          },
+          "66%": {
+            transform: "translateY(5px) rotate(240deg)",
+            opacity: "0.5",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -149,6 +174,8 @@ export default {
         "glow-pulse": "glow-pulse 2s infinite",
         "fade-in": "fade-in 0.3s ease-out",
         "typing-pulse": "typing-pulse 1.5s infinite",
+        "golden-wave": "golden-wave 8s ease-in-out infinite",
+        "floating-orbs": "floating-orbs 12s ease-in-out infinite",
       },
     },
   },

@@ -6,15 +6,15 @@
 @layer base {
   :root {
     /* AI Copilot Design System - Core Theme Colors */
-    --background: 0 0% 98%;                /* Very light gray background */
+    --background: 35 15% 96%;              /* Subtle light golden background */
     --foreground: 0 0% 9%;                 /* Near black text */
-    --surface: 0 0% 98%;                   /* Very light gray surface */
-    --surface-elevated: 0 0% 100%;         /* White elevated surfaces */
+    --surface: 35 12% 97%;                 /* Light golden surface */
+    --surface-elevated: 35 8% 99%;         /* Very light golden elevated surfaces */
     
     /* AI Copilot Brand Colors */
     --ai-primary: 24 9.8% 10%;             /* Dark charcoal */
     --ai-primary-glow: 20 14.3% 4.1%;      /* Darker charcoal */
-    --ai-secondary: 0 0% 98%;               /* Very light gray */
+    --ai-secondary: 35 12% 97%;             /* Light golden secondary */
     --ai-accent: 20 70% 65%;               /* Golden-brown accent */
     
     /* Semantic Colors */
@@ -26,30 +26,30 @@
     --primary-foreground: 60 9.1% 97.8%;   /* Off-white */
     --secondary: 0 0% 100%;                /* White */
     --secondary-foreground: 0 0% 9%;       /* Near black */
-    --muted: 0 0% 98%;                     /* Very light gray surface */
+    --muted: 35 12% 97%;                   /* Light golden surface */
     --muted-foreground: 25 5.3% 44.7%;     /* Medium gray */
     --accent: 20 70% 65%;                  /* Warm terracotta */
     --accent-foreground: 0 0% 100%;        /* White */
     --destructive: 0 84.2% 60.2%;          /* Red */
     --destructive-foreground: 0 0% 100%;
-    --border: 20 10% 85%;                  /* Light golden border */
+    --border: 35 15% 88%;                  /* Light golden border */
     --input: 0 0% 100%;                    /* White */
     --ring: 24 5.4% 63.9%;                 /* Medium warm gray */
     --radius: 0.75rem;                     /* Primary Radius: 12px */
     
     /* Glassmorphism Effects */
-    --glass-background: hsla(0, 0%, 98%, 0.95);
-    --glass-border: hsla(20, 10%, 85%, 0.5);
-    --glass-shadow: rgba(20, 70, 65, 0.05);
+    --glass-background: hsla(35, 12%, 97%, 0.95);
+    --glass-border: hsla(35, 15%, 88%, 0.5);
+    --glass-shadow: rgba(0, 0, 0, 0.03);
     
     /* Sidebar Colors */
-    --sidebar-background: 0 0% 98%;        /* Very light gray */
+    --sidebar-background: 35 12% 97%;      /* Light golden background */
     --sidebar-foreground: 0 0% 9%;         /* Near black */
     --sidebar-primary: 24 9.8% 10%;        /* Dark charcoal */
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary-foreground: 35 12% 97%;
     --sidebar-accent: 20 70% 65%;          /* Golden-brown accent */
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 20 10% 85%;          /* Light golden border */
+    --sidebar-border: 35 15% 88%;          /* Light golden border */
     --sidebar-ring: 20 70% 65%;
     
     /* Standard font families (no custom fonts) */
@@ -173,9 +173,33 @@
     max-width: 100%;
   }
   
-  /* Chat Interface */
+  /* Chat Interface with Animated Golden Background */
   .chat-container {
-    @apply bg-background h-full max-h-screen overflow-hidden;
+    @apply bg-background h-full max-h-screen overflow-hidden relative;
+    background: linear-gradient(135deg, 
+      hsl(35, 15%, 96%) 0%, 
+      hsl(40, 12%, 97%) 25%, 
+      hsl(35, 15%, 96%) 50%, 
+      hsl(30, 18%, 95%) 75%, 
+      hsl(35, 15%, 96%) 100%
+    );
+    background-size: 400% 400%;
+    animation: golden-wave 8s ease-in-out infinite;
+  }
+  
+  .chat-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, hsla(45, 25%, 92%, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsla(35, 20%, 94%, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, hsla(30, 15%, 96%, 0.2) 0%, transparent 50%);
+    animation: floating-orbs 12s ease-in-out infinite;
+    pointer-events: none;
   }
   
   .message-area {
@@ -300,6 +324,33 @@
     }
   }
   
+  @keyframes golden-wave {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  @keyframes floating-orbs {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.7;
+    }
+    33% {
+      transform: translateY(-10px) rotate(120deg);
+      opacity: 0.9;
+    }
+    66% {
+      transform: translateY(5px) rotate(240deg);
+      opacity: 0.5;
+    }
+  }
+  
   /* Animation Utility Classes */
   .animate-breathe {
     animation: breathe 4s infinite;
@@ -319,6 +370,14 @@
   
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
+  }
+  
+  .animate-golden-wave {
+    animation: golden-wave 8s ease-in-out infinite;
+  }
+  
+  .animate-floating-orbs {
+    animation: floating-orbs 12s ease-in-out infinite;
   }
   
   /* Container Utility */
