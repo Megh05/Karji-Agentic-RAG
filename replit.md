@@ -16,11 +16,13 @@ Preferred communication style: Simple, everyday language.
 - **Routing**: Wouter for client-side routing
 - **Form Handling**: React Hook Form with Zod validation
 - **UI/UX Decisions**:
-    - Current Theme: Minimal monochrome with a 3D cardboard cut-out aesthetic, using off-white, pure black, white, gray accents, and gold highlights.
-    - Typography: Playfair Display for headings and Poppins for body text.
-    - Consistent layered shadows, rounded corners (16px-18px), and sophisticated hover effects.
-    - Responsive design across all components, including sticky chat input, responsive product grids, and optimized mobile views.
-    - Custom animations (e.g., typing animations, cardboard-float, cardboard-pulse).
+    - Current Theme: AI Copilot Design System with clean, minimal aesthetic and warm accents
+    - Color Palette: Pure white backgrounds, dark charcoal text, warm terracotta accents
+    - Typography: System font stack for optimal performance and readability
+    - Consistent glassmorphism effects, 12px border radius, and subtle animations
+    - Responsive design with touch-friendly targets and mobile optimizations
+    - Custom animations: breathe, particle-float, typewriter, glow-pulse, fade-in, typing-pulse
+    - MeghTechnologies branding integrated in chat interfaces
 
 ## Backend Architecture
 - **Framework**: Express.js with TypeScript

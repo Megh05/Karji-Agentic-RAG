@@ -1,0 +1,143 @@
+I'll provide you with a complete breakdown of all styling details used in this project's design system.
+
+## **Color Palette (HSL Values)**
+
+### **Core Theme Colors**
+- **Background**: `0 0% 100%` (Pure white)
+- **Foreground**: `0 0% 9%` (Near black text)
+- **Surface**: `0 0% 98%` (Light gray surface)
+- **Surface Elevated**: `0 0% 100%` (White elevated surfaces)
+
+### **AI Copilot Brand Colors**
+- **AI Primary**: `24 9.8% 10%` (Dark charcoal)
+- **AI Primary Glow**: `20 14.3% 4.1%` (Darker charcoal)
+- **AI Secondary**: `60 4.8% 95.9%` (Light warm gray)
+- **AI Accent**: `20 70% 65%` (Warm terracotta/orange)
+
+### **Semantic Colors**
+- **Primary**: `24 9.8% 10%` (Same as AI Primary)
+- **Primary Foreground**: `60 9.1% 97.8%` (Off-white)
+- **Secondary**: `0 0% 100%` (White)
+- **Secondary Foreground**: `0 0% 9%` (Near black)
+- **Muted**: `60 4.8% 95.9%` (Light warm gray)
+- **Muted Foreground**: `25 5.3% 44.7%` (Medium gray)
+- **Accent**: `20 70% 65%` (Warm terracotta)
+- **Accent Foreground**: `0 0% 100%` (White)
+- **Destructive**: `0 84.2% 60.2%` (Red)
+- **Border**: `60 9% 85%` (Light gray)
+- **Input**: `0 0% 100%` (White)
+- **Ring**: `24 5.4% 63.9%` (Medium warm gray)
+
+### **Glassmorphism Effects**
+- **Glass Background**: `0 0% 100% / 0.95` (Semi-transparent white)
+- **Glass Border**: `60 9% 85% / 0.5` (Semi-transparent gray)
+- **Glass Shadow**: `rgba(0, 0, 0, 0.05)` (Subtle black shadow)
+
+### **Product Card Colors**
+- **Card Background**: `0 0% 100%` (White)
+- **Card Hover**: `0 0% 98%` (Light gray)
+- **Card Border**: `60 9% 85%` (Light gray)
+
+### **Sidebar Colors**
+- **Sidebar Background**: `0 0% 98%` (Light gray)
+- **Sidebar Foreground**: `240 5.3% 26.1%` (Dark gray)
+- **Sidebar Primary**: `240 5.9% 10%` (Dark blue-gray)
+- **Sidebar Accent**: `240 4.8% 95.9%` (Light blue-gray)
+- **Sidebar Border**: `220 13% 91%` (Light blue)
+
+## **Typography System**
+
+### **Font Families**
+- **Default System Fonts**: Uses browser defaults (no custom fonts defined)
+- **Fallbacks**: Standard system font stack
+
+### **Font Sizes** (Tailwind defaults)
+- `text-xs`: 0.75rem (12px)
+- `text-sm`: 0.875rem (14px)
+- `text-base`: 1rem (16px)
+- `text-lg`: 1.125rem (18px)
+- `text-xl`: 1.25rem (20px)
+- `text-2xl`: 1.5rem (24px)
+- And all standard Tailwind text sizes
+
+### **Font Weights**
+- `font-medium`: 500
+- `font-semibold`: 600
+- `font-bold`: 700
+
+## **Spacing & Layout**
+
+### **Border Radius**
+- **Primary Radius**: `0.75rem` (12px)
+- **Medium**: `calc(0.75rem - 2px)` (10px)
+- **Small**: `calc(0.75rem - 4px)` (8px)
+
+### **Container**
+- **Max Width**: `1400px` (2xl breakpoint)
+- **Padding**: `2rem`
+- **Centered**: Yes
+
+## **Animations & Effects**
+
+### **Keyframe Animations**
+1. **Breathe**: Scale animation (1 → 1.02 → 1) with glow effect
+2. **Particle Float**: Floating particles with rotation (0° → 180°)
+3. **Typewriter**: Width animation for text reveal
+4. **Glow Pulse**: Box-shadow pulsing effect
+5. **Fade In**: Opacity + translateY animation
+6. **Accordion**: Built-in Radix accordion animations
+
+### **Animation Durations**
+- **Breathe**: 4s infinite
+- **Particle Float**: 3s infinite
+- **Typewriter**: 2s
+- **Glow Pulse**: 2s infinite
+- **Fade In**: 0.3s
+- **Accordion**: 0.2s
+
+### **Transition Effects**
+- **Standard Transition**: `all 0.3s cubic-bezier(0.4, 0, 0.2, 1)`
+- **Hover Effects**: 200ms duration
+- **Transform Effects**: 300ms duration
+
+## **Component-Specific Styles**
+
+### **Glass Panel**
+- Backdrop blur with semi-transparent background
+- Subtle border and shadow
+
+### **AI Orb**
+- Gradient from primary to accent
+- Breathing animation
+- Rounded full
+
+### **Product Card**
+- Clean white background
+- Hover effects with shadow and border color change
+- Rounded corners
+
+### **Message Bubbles**
+- Backdrop blur with rounded corners
+- Different styles for AI vs user messages
+- Max width constraints
+
+### **Quick Chips**
+- Pill-shaped buttons
+- Hover state with accent color
+- Small text sizing
+
+## **Responsive Design**
+
+### **Breakpoints** (Tailwind defaults)
+- **sm**: 640px
+- **md**: 768px
+- **lg**: 1024px
+- **xl**: 1280px
+- **2xl**: 1536px
+
+### **Mobile Optimizations**
+- Smaller chat launcher on mobile (14×14 vs 16×16)
+- Responsive padding and margins
+- Touch-friendly target sizes
+
+This design system uses a clean, minimal aesthetic with warm accents and subtle animations, perfect for an AI shopping copilot interface.

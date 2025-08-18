@@ -67,6 +67,13 @@ export default {
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
       },
+      container: {
+        center: true,
+        padding: "2rem",
+        screens: {
+          "2xl": "1400px",
+        },
+      },
       keyframes: {
         "accordion-down": {
           from: {
@@ -84,10 +91,64 @@ export default {
             height: "0",
           },
         },
+        breathe: {
+          "0%, 100%": { 
+            transform: "scale(1)", 
+            boxShadow: "0 0 0 0 hsl(var(--accent) / 0.4)"
+          },
+          "50%": { 
+            transform: "scale(1.02)", 
+            boxShadow: "0 0 0 10px hsl(var(--accent) / 0)"
+          },
+        },
+        "particle-float": {
+          "0%": { 
+            transform: "translateY(0) rotate(0deg)", 
+            opacity: "1" 
+          },
+          "100%": { 
+            transform: "translateY(-20px) rotate(180deg)", 
+            opacity: "0" 
+          },
+        },
+        typewriter: {
+          from: { width: "0" },
+          to: { width: "100%" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 5px hsl(var(--accent) / 0.3)" },
+          "50%": { boxShadow: "0 0 20px hsl(var(--accent) / 0.6)" },
+        },
+        "fade-in": {
+          from: { 
+            opacity: "0", 
+            transform: "translateY(10px)" 
+          },
+          to: { 
+            opacity: "1", 
+            transform: "translateY(0)" 
+          },
+        },
+        "typing-pulse": {
+          "0%, 60%, 100%": { 
+            transform: "translateY(0)", 
+            opacity: "0.4" 
+          },
+          "30%": { 
+            transform: "translateY(-8px)", 
+            opacity: "1" 
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        breathe: "breathe 4s infinite",
+        "particle-float": "particle-float 3s infinite",
+        typewriter: "typewriter 2s",
+        "glow-pulse": "glow-pulse 2s infinite",
+        "fade-in": "fade-in 0.3s ease-out",
+        "typing-pulse": "typing-pulse 1.5s infinite",
       },
     },
   },
