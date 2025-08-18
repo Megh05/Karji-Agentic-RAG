@@ -145,8 +145,8 @@ export default function ChatInterface() {
       </div>
 
       {/* Messages Container - Scrollable Middle Section with Bottom Padding */}
-      <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-6 space-y-6" style={{ minHeight: '0', paddingBottom: '120px' }}>
-        <div className="max-w-6xl mx-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 lg:px-6 py-6 space-y-6" style={{ minHeight: '0', paddingBottom: '120px' }}>
+        <div className="max-w-4xl mx-auto w-full">
           {messages.map((message) => (
             <Message 
               key={message.id} 
