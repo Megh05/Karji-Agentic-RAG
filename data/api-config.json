@@ -1,6 +1,6 @@
 {
   "727d560e-a36e-4708-81c4-5685e73440ab": {
-    "openrouterKey": "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",
+    "openrouterKey": "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",
     "selectedModel": "openai/gpt-oss-20b:free",
     "id": "727d560e-a36e-4708-81c4-5685e73440ab",
     "maxTokens": 1500,

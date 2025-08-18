@@ -263,12 +263,20 @@
   
   /* Typing Indicator */
   .typing-dots {
-    @apply flex space-x-1;
+    @apply flex space-x-1 items-center justify-center;
+    padding: 8px 16px;
   }
   
   .typing-dot {
-    @apply w-2 h-2 bg-muted-foreground rounded-full;
+    width: 8px;
+    height: 8px;
+    background-color: #6b7280;
+    border-radius: 50%;
     animation: typing-pulse 1.5s infinite;
+  }
+  
+  .dark .typing-dot {
+    background-color: #9ca3af;
   }
   
   .typing-dot:nth-child(2) {
@@ -327,11 +335,11 @@
   
   @keyframes typing-pulse {
     0%, 60%, 100% { 
-      transform: translateY(0); 
-      opacity: 0.4; 
+      transform: scale(0.8) translateY(0); 
+      opacity: 0.5; 
     }
     30% { 
-      transform: translateY(-8px); 
+      transform: scale(1.2) translateY(-4px); 
       opacity: 1; 
     }
   }
