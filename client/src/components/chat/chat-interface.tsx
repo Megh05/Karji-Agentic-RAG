@@ -126,7 +126,7 @@ export default function ChatInterface() {
       <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 flex-shrink-0 z-50" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 text-amber-100 flex items-center justify-center shadow-lg">
               <Bot className="w-4 h-4 lg:w-5 lg:h-5" />
             </div>
             <div>
@@ -159,7 +159,7 @@ export default function ChatInterface() {
           {isTyping && (
             <div className="mb-6">
               <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 text-amber-100 flex items-center justify-center flex-shrink-0 shadow-lg">
                   <Bot className="w-4 h-4" />
                 </div>
                 <div className="message-bubble ai">
