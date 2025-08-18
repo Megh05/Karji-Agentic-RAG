@@ -98,7 +98,7 @@ export class RAGService {
     maxDocuments?: number;
     maxProducts?: number;
     similarityThreshold?: number;
-  }): Promise<RAGContext> {
+  }, conversationHistory: any[] = []): Promise<RAGContext> {
     if (!this.isInitialized) await this.initialize();
 
     const { 
@@ -126,7 +126,7 @@ export class RAGService {
         ).map(doc => ({ ...doc, similarity: 0.8 })); // High similarity for vector matches
 
         // For products, use consolidated file if available
-        const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts);
+        const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts, conversationHistory);
         const relevantProducts = consolidatedProducts.length > 0 
           ? consolidatedProducts // Already processed by intelligent search
           : products.filter(product => 
@@ -142,15 +142,15 @@ export class RAGService {
 
       // Fallback to basic text similarity
       console.log('Falling back to basic text similarity search');
-      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts);
+      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts, conversationHistory);
 
     } catch (error) {
       console.error('Error in vector search, falling back to basic similarity:', error);
-      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts);
+      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts, conversationHistory);
     }
   }
 
-  private async searchConsolidatedProducts(query: string, maxProducts: number): Promise<any[]> {
+  private async searchConsolidatedProducts(query: string, maxProducts: number, conversationHistory: any[] = []): Promise<any[]> {
     try {
       const { langchainRAGService } = await import('./langchainRAG.js');
       const consolidatedProducts = await langchainRAGService.loadConsolidatedProducts();
@@ -164,7 +164,7 @@ export class RAGService {
         }
         // Search products based on title, description, and product_type  
         console.log(`Calling searchProductsIntelligently with maxProducts=${maxProducts}`);
-        const relevantProducts = await this.searchProductsIntelligently(query, allProducts, maxProducts);
+        const relevantProducts = await this.searchProductsIntelligently(query, allProducts, maxProducts, conversationHistory);
         return relevantProducts;
       }
 
@@ -172,7 +172,7 @@ export class RAGService {
       
       // Use intelligent search on consolidated products
       console.log(`Calling searchProductsIntelligently with consolidatedProducts, maxProducts=${maxProducts}`);
-      const relevantProducts = await this.searchProductsIntelligently(query, consolidatedProducts, maxProducts);
+      const relevantProducts = await this.searchProductsIntelligently(query, consolidatedProducts, maxProducts, conversationHistory);
       
       console.log(`Found ${relevantProducts.length} products from consolidated file`);
       return relevantProducts;
@@ -186,12 +186,13 @@ export class RAGService {
     query: string, 
     threshold: number, 
     maxDocs: number, 
-    maxProducts: number
+    maxProducts: number,
+    conversationHistory: any[] = []
   ): Promise<RAGContext> {
     const documents = await storage.getDocuments();
     
     // Use consolidated product file for product search with strict limits
-    const products = await this.searchConsolidatedProducts(query, maxProducts);
+    const products = await this.searchConsolidatedProducts(query, maxProducts, conversationHistory);
 
     const relevantDocs = documents
       .map(doc => ({ 
@@ -219,14 +220,19 @@ export class RAGService {
     return intersection.length / union.length;
   }
 
-  private parseUserIntent(query: string): {
+  private parseUserIntent(query: string, conversationHistory?: any[]): {
     searchTerms: string[];
     priceFilter: { min?: number; max?: number } | null;
     categoryHints: string[];
     brandPreferences: string[];
     qualityLevel: 'budget' | 'mid-range' | 'luxury' | null;
+    genderContext: 'men' | 'women' | 'unisex' | null;
+    categoryContext: string | null;
   } {
     const queryLower = query.toLowerCase();
+    
+    // Extract conversational context from history
+    const conversationContext = this.extractConversationContext(conversationHistory || []);
     
     // Extract price information using intelligent parsing
     let priceFilter: { min?: number; max?: number } | null = null;
@@ -359,16 +365,133 @@ export class RAGService {
       if (!priceFilter) priceFilter = { min: 300, max: 1000 }; // Auto-suggest mid-range
     }
     
-    console.log('Price parsing result:', {
+    // Intelligent gender detection using context and semantic understanding
+    const genderContext = this.intelligentGenderDetection(query, conversationContext);
+    
+    // Category context from conversation (e.g., if user was looking at watches)
+    const categoryContext = conversationContext.lastCategory || this.detectCategoryContext(query);
+    
+    // If user says "only for my husband" or similar, preserve the category they were looking at
+    if (queryLower.includes('only') && genderContext && conversationContext.lastCategory) {
+      categoryHints.push(conversationContext.lastCategory);
+    }
+    
+    console.log('Intent parsing result:', {
       query,
-      numbers,
+      genderContext,
+      categoryContext,
+      conversationContext,
       priceFilter,
-      hasPriceContext,
-      hasRangeContext,
-      dashRangeMatch: !!dashRangeMatch
+      categoryHints
     });
     
-    return { searchTerms, priceFilter, categoryHints, brandPreferences, qualityLevel };
+    return { 
+      searchTerms, 
+      priceFilter, 
+      categoryHints, 
+      brandPreferences, 
+      qualityLevel,
+      genderContext,
+      categoryContext
+    };
+  }
+
+  // Extract conversational context from message history
+  private extractConversationContext(history: any[]): {
+    lastCategory: string | null;
+    lastGender: 'men' | 'women' | 'unisex' | null;
+    lastBudget: { min?: number; max?: number } | null;
+    giftRecipient: 'husband' | 'wife' | 'self' | null;
+  } {
+    let lastCategory = null;
+    let lastGender = null;
+    let lastBudget = null;
+    let giftRecipient = null;
+
+    // Analyze recent messages for context
+    const recentMessages = history.slice(-6); // Look at last 6 messages for context
+    
+    for (const message of recentMessages) {
+      const content = message.content?.toLowerCase() || '';
+      
+      // Detect category mentions
+      if (content.includes('watch') || content.includes('timepiece')) {
+        lastCategory = 'watch';
+      } else if (content.includes('perfume') || content.includes('fragrance') || content.includes('cologne')) {
+        lastCategory = 'fragrance';
+      } else if (content.includes('jewelry') || content.includes('bracelet') || content.includes('necklace')) {
+        lastCategory = 'jewelry';
+      }
+      
+      // Detect gift recipient
+      if (content.includes('husband') || content.includes('him') || content.includes('he ') || content.includes('his ')) {
+        giftRecipient = 'husband';
+        lastGender = 'men';
+      } else if (content.includes('wife') || content.includes('her') || content.includes('she ') || content.includes('hers')) {
+        giftRecipient = 'wife';
+        lastGender = 'women';
+      }
+      
+      // Extract budget information
+      const budgetMatch = content.match(/budget.*?(\d+)/);
+      if (budgetMatch) {
+        const amount = parseInt(budgetMatch[1]);
+        lastBudget = { max: amount };
+      }
+    }
+    
+    return { lastCategory, lastGender, lastBudget, giftRecipient };
+  }
+
+  // Intelligent gender detection using semantic understanding
+  private intelligentGenderDetection(query: string, conversationContext: any): 'men' | 'women' | 'unisex' | null {
+    const queryLower = query.toLowerCase();
+    
+    // Direct gender references
+    const maleIndicators = [
+      'husband', 'boyfriend', 'dad', 'father', 'son', 'brother', 'uncle', 'grandfather',
+      'him', 'his', 'he ', 'man', 'guy', 'male', 'men', 'mens', "men's"
+    ];
+    
+    const femaleIndicators = [
+      'wife', 'girlfriend', 'mom', 'mother', 'daughter', 'sister', 'aunt', 'grandmother',
+      'her', 'hers', 'she ', 'woman', 'lady', 'female', 'women', 'womens', "women's"
+    ];
+    
+    // Check for direct indicators with fuzzy matching
+    const words = queryLower.split(/\s+/);
+    for (const word of words) {
+      // Exact matches first
+      if (maleIndicators.includes(word)) return 'men';
+      if (femaleIndicators.includes(word)) return 'women';
+      
+      // Fuzzy matching for typos
+      for (const indicator of maleIndicators) {
+        if (this.levenshteinDistance(word, indicator) <= 1 && word.length > 2) {
+          return 'men';
+        }
+      }
+      for (const indicator of femaleIndicators) {
+        if (this.levenshteinDistance(word, indicator) <= 1 && word.length > 2) {
+          return 'women';
+        }
+      }
+    }
+    
+    // Use conversation context if no direct indicators
+    return conversationContext.lastGender || null;
+  }
+
+  // Detect category context from current query
+  private detectCategoryContext(query: string): string | null {
+    const queryLower = query.toLowerCase();
+    
+    if (queryLower.includes('watch') || queryLower.includes('timepiece')) return 'watch';
+    if (queryLower.includes('perfume') || queryLower.includes('fragrance') || queryLower.includes('cologne')) return 'fragrance';
+    if (queryLower.includes('jewelry') || queryLower.includes('bracelet') || queryLower.includes('necklace')) return 'jewelry';
+    if (queryLower.includes('wallet') || queryLower.includes('bag') || queryLower.includes('accessory')) return 'accessory';
+    
+    return null;
   }
 
   // Levenshtein distance for fuzzy matching
@@ -449,24 +572,33 @@ export class RAGService {
         }
       }
       
-      // Gender filtering
-      const hasGenderRequest = intent.categoryHints.some((hint: string) => ['men', 'women', 'male', 'female'].includes(hint.toLowerCase()));
-      const hasWomenRequest = intent.categoryHints.some((hint: string) => ['women', 'female'].includes(hint.toLowerCase()));
-      
-      if (hasGenderRequest) {
-        const productType = (product as any).additionalFields?.product_type?.toLowerCase() || '';
+      // Intelligent gender filtering using context
+      if (intent.genderContext) {
+        const productType = (product as any).additionalFields?.product_type?.toLowerCase() || product.title?.toLowerCase() || '';
         const isMens = productType.includes('men') && !productType.includes('women');
         const isWomens = productType.includes('women') && !productType.includes('men');
         const isUnisex = productType.includes('unisex') || (!isMens && !isWomens);
         
-        if (hasWomenRequest && !isWomens && !isUnisex) {
-          score = 0; // Exclude men's products for women's requests
-        } else if (!hasWomenRequest && hasGenderRequest && !isMens && !isUnisex) {
-          score = 0; // Exclude women's products for men's requests
-        } else if (hasWomenRequest && (isWomens || isUnisex)) {
-          score += 200; // Boost women's and unisex products
-        } else if (!hasWomenRequest && hasGenderRequest && (isMens || isUnisex)) {
-          score += 200; // Boost men's and unisex products
+        console.log(`Gender filtering: ${product.title} - Type: ${productType}, Intent: ${intent.genderContext}`);
+        
+        if (intent.genderContext === 'men') {
+          if (isWomens && !isUnisex) {
+            score = 0; // Exclude women's products for men's requests
+            console.log(`  -> EXCLUDED: Women's product for men's request`);
+          } else if (isMens) {
+            score += 300; // Strong boost for men's products
+          } else if (isUnisex) {
+            score += 100; // Moderate boost for unisex products
+          }
+        } else if (intent.genderContext === 'women') {
+          if (isMens && !isUnisex) {
+            score = 0; // Exclude men's products for women's requests
+            console.log(`  -> EXCLUDED: Men's product for women's request`);
+          } else if (isWomens) {
+            score += 300; // Strong boost for women's products
+          } else if (isUnisex) {
+            score += 100; // Moderate boost for unisex products
+          }
         }
       }
       
@@ -482,9 +614,9 @@ export class RAGService {
     return filteredProducts;
   }
 
-  private async searchProductsIntelligently(query: string, products: any[], maxProducts: number): Promise<any[]> {
+  private async searchProductsIntelligently(query: string, products: any[], maxProducts: number, conversationHistory: any[] = []): Promise<any[]> {
     console.log(`Starting intelligent search with maxProducts=${maxProducts}`);
-    const intent = this.parseUserIntent(query);
+    const intent = this.parseUserIntent(query, conversationHistory);
     console.log('Parsed user intent:', JSON.stringify(intent, null, 2));
     
     const queryLower = query.toLowerCase();

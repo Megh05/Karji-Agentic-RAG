@@ -127,7 +127,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               maxDocuments: 2,
               maxProducts: 4,
               similarityThreshold: 0.3
-            });
+            }, conversationService.getMessages(currentSessionId) || []);
           }
         } else {
           // For general questions, only get documents (knowledge base) but not products
@@ -135,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             maxDocuments: 2,
             maxProducts: 0, // Don't search for products
             similarityThreshold: 0.3
-          });
+          }, conversationService.getMessages(currentSessionId) || []);
         }
       }
       
