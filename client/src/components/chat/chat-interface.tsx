@@ -250,9 +250,9 @@ export default function ChatInterface() {
           </div>
           
           {/* Powered by MeghTechnologies */}
-          <div className="text-center mt-2">
+          <div className="text-right mt-2">
             <p className="text-xs text-muted-foreground/60" data-testid="text-powered-by">
-              powered by MeghTechnologies
+              powered by <span className="text-yellow-600 dark:text-yellow-400">MeghTechnologies</span>
             </p>
           </div>
         </div>
