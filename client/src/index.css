@@ -316,7 +316,8 @@
   }
   
   .typing-dot {
-    @apply w-3 h-3 rounded-full bg-primary animate-bounce;
+    @apply w-3 h-3 rounded-full animate-bounce;
+    background-color: hsl(var(--foreground));
     opacity: 0.8;
     animation-duration: 1.2s;
     animation-iteration-count: infinite;
