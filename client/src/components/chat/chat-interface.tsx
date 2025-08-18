@@ -121,9 +121,9 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full max-h-screen chat-container relative">
-      {/* Chat Header - Fixed Top */}
-      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 flex-shrink-0 sticky top-0" style={{ height: '81px', display: 'flex', alignItems: 'center', zIndex: 1000 }}>
+    <div className="flex flex-col h-full max-h-screen bg-background">
+      {/* Chat Header - Sticky Top */}
+      <div className="bg-card border-b border-border backdrop-blur-sm px-4 py-3 lg:px-6 lg:py-4 bg-gradient-to-r from-card/90 to-muted/20 flex-shrink-0 sticky top-0 z-10" style={{ height: '81px', display: 'flex', alignItems: 'center' }}>
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center shadow-lg">
@@ -144,59 +144,61 @@ export default function ChatInterface() {
         </div>
       </div>
 
-      {/* Messages Container - Scrollable Middle Section with Bottom Padding */}
-      <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-6 space-y-6" style={{ minHeight: '0', paddingBottom: '120px' }}>
-        <div className="max-w-6xl mx-auto">
-          {messages.map((message) => (
-            <Message 
-              key={message.id} 
-              message={message} 
-              onFollowUpClick={sendDirectMessage}
-            />
-          ))}
-          
-          {/* Typing Indicator */}
-          {isTyping && (
-            <div className="mb-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center flex-shrink-0 shadow-lg">
-                  <Bot className="w-4 h-4" />
-                </div>
-                <div className="message-bubble ai">
-                  <div className="typing-dots">
-                    <div className="typing-dot"></div>
-                    <div className="typing-dot"></div>
-                    <div className="typing-dot"></div>
+      {/* Messages Container - Flex 1 with proper scrolling */}
+      <div className="flex-1 overflow-y-auto bg-gradient-to-br from-amber-50/30 via-yellow-50/20 to-orange-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="px-4 lg:px-6 py-6 space-y-6 min-h-full">
+          <div className="max-w-6xl mx-auto">
+            {messages.map((message) => (
+              <Message 
+                key={message.id} 
+                message={message} 
+                onFollowUpClick={sendDirectMessage}
+              />
+            ))}
+            
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="mb-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <Bot className="w-4 h-4" />
+                  </div>
+                  <div className="message-bubble ai">
+                    <div className="typing-dots">
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Contextual Follow-ups - HIDDEN FOR NOW */}
-          {sessionId && (
-            <div className="mb-4 hidden">
-              <ContextualFollowUps
-                sessionId={sessionId}
-                conversationLength={messages.length}
-                userProfile={userProfile}
-                onFollowUpClick={(followUp) => {
-                  sendDirectMessage(followUp.message);
-                }}
-                onActionClick={(action) => {
-                  console.log('Follow-up action received:', action);
-                  sendDirectMessage(action);
-                }}
-              />
-            </div>
-          )}
+            {/* Contextual Follow-ups - HIDDEN FOR NOW */}
+            {sessionId && (
+              <div className="mb-4 hidden">
+                <ContextualFollowUps
+                  sessionId={sessionId}
+                  conversationLength={messages.length}
+                  userProfile={userProfile}
+                  onFollowUpClick={(followUp) => {
+                    sendDirectMessage(followUp.message);
+                  }}
+                  onActionClick={(action) => {
+                    console.log('Follow-up action received:', action);
+                    sendDirectMessage(action);
+                  }}
+                />
+              </div>
+            )}
 
-          <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} />
+          </div>
         </div>
       </div>
 
-      {/* Message Input - Fixed Bottom with Stable Positioning */}
-      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-4 lg:px-6 lg:py-4 flex-shrink-0 fixed bottom-0 right-0 left-64 lg:left-72" style={{ zIndex: 1000 }} data-testid="chat-input-container">
+      {/* Message Input - Sticky Bottom */}
+      <div className="bg-card border-t border-border backdrop-blur-sm px-4 py-4 lg:px-6 lg:py-4 flex-shrink-0 sticky bottom-0 z-10" data-testid="chat-input-container">
         <div className="max-w-6xl mx-auto">
           {/* Quick Actions - HIDDEN FOR NOW */}
           {messages.length > 1 && (
