@@ -145,7 +145,7 @@ export default function WelcomeGuide({
           {categories.map((category) => (
             <Card 
               key={category.id} 
-              className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary/20"
+              className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary/20 relative"
               onClick={() => onCategorySelect?.(category.name)}
               data-testid={`category-${category.id}`}
             >
@@ -184,7 +184,7 @@ export default function WelcomeGuide({
 
       {/* Quick Questions Tab */}
       {activeTab === 'help' && (
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
             Not sure where to start? Try one of these common questions:
           </p>
@@ -208,7 +208,7 @@ export default function WelcomeGuide({
 
       {/* Store Information Tab */}
       {activeTab === 'store' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 relative">
           {storeHighlights.map((highlight, idx) => (
             <div key={idx} className="luxury-container flex items-start space-x-3 p-4 bg-gradient-to-br from-card to-muted/20">
               <div className="flex-shrink-0 text-primary">{highlight.icon}</div>
