@@ -77,7 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="luxury-btn w-full text-xs py-2"
           disabled={!product.link}
         >
-          View <ExternalLink className="w-3 h-3 ml-1" />
+          <span>View <ExternalLink className="w-3 h-3 ml-1" /></span>
         </Button>
       </div>
     </div>
