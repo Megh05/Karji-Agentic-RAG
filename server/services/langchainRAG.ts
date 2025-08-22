@@ -45,17 +45,26 @@ export class LangchainRAGService {
     try {
       console.log('Initializing Langchain RAG service...');
       
-      // Initialize HuggingFace Transformers embeddings (local) - temporarily disabled due to dependency conflicts
-      // this.embeddings = new HuggingFaceTransformersEmbeddings({
-      //   model: "Xenova/all-MiniLM-L6-v2",
-      // });
+      // Use fallback embeddings without external dependencies
+      const { embeddingService } = await import('./embedding.js');
+      await embeddingService.initialize();
 
-      // Initialize memory vector store with simple embeddings for now
-      const { OpenAIEmbeddings } = await import("@langchain/openai");
-      const openaiEmbeddings = new OpenAIEmbeddings({
-        openAIApiKey: process.env.OPENAI_API_KEY || 'placeholder',
-      });
-      this.vectorStore = new MemoryVectorStore(openaiEmbeddings);
+      // Create a simple embedding adapter for LangChain
+      const simpleEmbeddings = {
+        embedDocuments: async (texts: string[]) => {
+          const embeddings = [];
+          for (const text of texts) {
+            const embedding = await embeddingService.embedText(text);
+            embeddings.push(embedding);
+          }
+          return embeddings;
+        },
+        embedQuery: async (text: string) => {
+          return await embeddingService.embedText(text);
+        }
+      };
+
+      this.vectorStore = new MemoryVectorStore(simpleEmbeddings as any);
       
       // Load persisted vector store data if exists
       await this.loadPersistedVectorStore();

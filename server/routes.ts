@@ -20,8 +20,12 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
-// Initialize RAG service
-ragService.initialize();
+// Initialize RAG service and index existing documents
+ragService.initialize().then(async () => {
+  console.log('RAG service initialized, now indexing existing documents...');
+  await ragService.indexAllDocuments();
+  console.log('Existing documents indexed successfully');
+}).catch(console.error);
 
 // OpenRouter API call
 async function callOpenRouterAPI(messages: any[], config: any) {

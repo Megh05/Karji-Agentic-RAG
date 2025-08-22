@@ -57,7 +57,7 @@ export class RAGService {
         name: document.name,
         type: document.type,
         size: document.size,
-        uploadedAt: document.uploadedAt?.toISOString(),
+        uploadedAt: document.uploadedAt instanceof Date ? document.uploadedAt.toISOString() : document.uploadedAt,
         sourceType: 'document'
       });
 
