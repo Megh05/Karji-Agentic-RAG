@@ -60,7 +60,13 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
         
         <div className="flex-1 min-w-0">
           <div className={`message-bubble ${isUser ? 'user' : 'ai'}`}>
-            <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
+            <div className="whitespace-pre-wrap leading-relaxed text-sm space-y-2">
+              {message.content.split('\n').map((line, index) => (
+                <p key={index} className={line.trim() === '' ? 'h-2' : ''}>
+                  {line}
+                </p>
+              ))}
+            </div>
           </div>
         
           {/* Welcome Guide for first message */}

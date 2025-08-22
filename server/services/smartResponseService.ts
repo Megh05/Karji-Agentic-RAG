@@ -132,7 +132,13 @@ class SmartResponseService {
         return cat + 's';
       });
       
-      enhanced = `I apologize, but we currently don't have ${categoryNames.join(' or ')} in our inventory. We specialize in luxury fragrances, watches, and accessories. Would you like me to show you our available categories instead?`;
+      // Create list of available categories excluding the one they asked for
+      const availableCategories = ['luxury fragrances', 'premium accessories', 'exquisite watches', 'beauty products'];
+      const filteredCategories = availableCategories.filter(cat => 
+        !categoryNames.some(requestedCat => cat.includes(requestedCat.slice(0, -1))) // Remove 's' and check if category contains it
+      );
+      
+      enhanced = `I apologize, but we currently don't have ${categoryNames.join(' or ')} available right now. However, we do specialize in ${filteredCategories.join(', ')}. Would you like me to show you some of our available products instead?`;
     }
 
     // Strip markdown formatting to show clean text and convert tables to readable format
