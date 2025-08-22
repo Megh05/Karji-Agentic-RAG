@@ -1,0 +1,9 @@
+{
+  "727d560e-a36e-4708-81c4-5685e73440ab": {
+    "openrouterKey": "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",
+    "selectedModel": "openai/gpt-oss-20b:free",
+    "id": "727d560e-a36e-4708-81c4-5685e73440ab",
+    "maxTokens": 1500,
+    "temperature": 0.7
+  }
+}

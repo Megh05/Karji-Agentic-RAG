@@ -1,0 +1,72 @@
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:42 AM [express] POST /api/chat 500 in 7ms :: {"error":"Failed to process chat message"}
+OpenRouter API response received
+Chat error: TypeError: message.content?.toLowerCase is not a function
+    at <anonymous> (/home/runner/workspace/server/services/smartResponseService.ts:378:40)
+    at Array.forEach (<anonymous>)
+    at SmartResponseService.extractPreviousInterests (/home/runner/workspace/server/services/smartResponseService.ts:377:20)
+    at SmartResponseService.enhanceResponseWithIntelligence (/home/runner/workspace/server/services/smartResponseService.ts:131:38)
+    at SmartResponseService.generateSmartResponse (/home/runner/workspace/server/services/smartResponseService.ts:56:34)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:183:50)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2:19:42 AM [express] POST /api/chat 500 in 4153ms :: {"error":"Failed to process chat message"}
+Chat config check: {
+  hasApiKey: true,
+  selectedModel: 'mistralai/mistral-small-3.2-24b-instruct:free'
+}
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:44 AM [express] POST /api/chat 500 in 3ms :: {"error":"Failed to process chat message"}
+Chat config check: {
+  hasApiKey: true,
+  selectedModel: 'mistralai/mistral-small-3.2-24b-instruct:free'
+}
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:45 AM [express] POST /api/chat 500 in 2ms :: {"error":"Failed to process chat message"}
+Chat config check: {
+  hasApiKey: true,
+  selectedModel: 'mistralai/mistral-small-3.2-24b-instruct:free'
+}
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:46 AM [express] POST /api/chat 500 in 2ms :: {"error":"Failed to process chat message"}
+Chat config check: {
+  hasApiKey: true,
+  selectedModel: 'mistralai/mistral-small-3.2-24b-instruct:free'
+}
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:47 AM [express] POST /api/chat 500 in 2ms :: {"error":"Failed to process chat message"}
+Chat config check: {
+  hasApiKey: true,
+  selectedModel: 'mistralai/mistral-small-3.2-24b-instruct:free'
+}
+Added user message to session session_1754705967944_5tajlkqco
+Chat error: TypeError: msg.content.substring is not a function
+    at <anonymous> (/home/runner/workspace/server/services/conversationService.ts:219:48)
+    at Array.forEach (<anonymous>)
+    at ConversationService.getContextualPrompt (/home/runner/workspace/server/services/conversationService.ts:218:22)
+    at <anonymous> (/home/runner/workspace/server/routes.ts:82:55)
+2:19:47 AM [express] POST /api/chat 500 in 1ms :: {"error":"Failed to process chat message"}
