@@ -204,7 +204,37 @@ export class RAGService {
     } = options || {};
 
     try {
-      // Use vector search if available
+      // Primary: Use Langchain RAG service for semantic similarity search
+      const langchainResults = await langchainRAGService.getRelevantContext(query, {
+        maxDocuments,
+        maxProducts
+      });
+
+      if (langchainResults.documents.length > 0 || langchainResults.products.length > 0) {
+        console.log(`Langchain RAG found ${langchainResults.documents.length} documents and ${langchainResults.products.length} products`);
+        
+        // Convert Langchain Document format to our format
+        const documents = langchainResults.documents.map(doc => ({
+          id: doc.metadata.id || doc.metadata.parentId || 'unknown',
+          name: doc.metadata.name || 'Document',
+          content: doc.pageContent,
+          type: doc.metadata.type || 'document',
+          size: doc.metadata.size || 'Unknown',
+          uploadedAt: doc.metadata.uploadedAt,
+          similarity: 0.9 // High confidence for semantic matches
+        }));
+
+        // Get products through intelligent search
+        const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts, conversationHistory);
+
+        return {
+          documents,
+          products: consolidatedProducts,
+          relevantChunks: []
+        };
+      }
+
+      // Secondary: Use vector search if available
       const [vectorDocs, vectorProducts] = await Promise.all([
         vectorDBService.searchDocuments(query, maxDocuments),
         vectorDBService.searchProducts(query, maxProducts)
@@ -215,34 +245,27 @@ export class RAGService {
         
         // Get full document and product data
         const documents = await storage.getDocuments();
-        const products = await storage.getProducts();
 
         const relevantDocs = documents.filter(doc => 
           vectorDocs.some(vDoc => vDoc.id === doc.id)
-        ).map(doc => ({ ...doc, similarity: 0.8 })); // High similarity for vector matches
+        ).map(doc => ({ ...doc, similarity: 0.8 }));
 
-        // For products, use consolidated file if available
         const consolidatedProducts = await this.searchConsolidatedProducts(query, maxProducts, conversationHistory);
-        const relevantProducts = consolidatedProducts.length > 0 
-          ? consolidatedProducts // Already processed by intelligent search
-          : products.filter(product => 
-              vectorProducts.some(vProduct => vProduct.id === product.id)
-            ).map(product => ({ ...product, similarity: 0.8 }));
 
         return {
           documents: relevantDocs,
-          products: relevantProducts,
+          products: consolidatedProducts,
           relevantChunks: [...vectorDocs, ...vectorProducts]
         };
       }
 
-      // Fallback to basic text similarity
+      // Fallback: Use basic similarity with lower threshold for better coverage
       console.log('Falling back to basic text similarity search');
-      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts, conversationHistory);
+      return this.basicSimilaritySearch(query, Math.max(similarityThreshold, 0.01), maxDocuments, maxProducts, conversationHistory);
 
     } catch (error) {
-      console.error('Error in vector search, falling back to basic similarity:', error);
-      return this.basicSimilaritySearch(query, similarityThreshold, maxDocuments, maxProducts, conversationHistory);
+      console.error('Error in document search, falling back to basic similarity:', error);
+      return this.basicSimilaritySearch(query, Math.max(similarityThreshold, 0.01), maxDocuments, maxProducts, conversationHistory);
     }
   }
 
@@ -311,33 +334,9 @@ export class RAGService {
     const words2 = text2.toLowerCase().split(/\s+/);
     
     const intersection = words1.filter(word => words2.includes(word));
+    const union = Array.from(new Set([...words1, ...words2]));
     
-    // Use a better similarity calculation that considers:
-    // 1. How many query words are found (coverage)
-    // 2. Boost score for key terms like "location", "store", "address", etc.
-    const keyTerms = ['location', 'locations', 'store', 'stores', 'address', 'addresses', 'outlet', 'outlets', 'mall', 'malls', 'branch', 'branches', 'shop', 'shops'];
-    const hasKeyTerms = intersection.some(word => keyTerms.includes(word) || keyTerms.some(term => word.includes(term) || term.includes(word)));
-    
-    // Calculate base similarity as coverage of query terms
-    const coverage = intersection.length / words1.length;
-    
-    // Boost score significantly if key location terms are found
-    const boostedScore = hasKeyTerms ? Math.min(coverage * 3, 1.0) : coverage;
-    
-    // Also check for partial word matches for location-related terms
-    const partialMatches = words1.filter(word1 => 
-      words2.some(word2 => 
-        (word1.includes('location') && word2.includes('location')) ||
-        (word1.includes('store') && word2.includes('store')) ||
-        (word1.includes('address') && word2.includes('address')) ||
-        (word1.includes('where') && (word2.includes('location') || word2.includes('address'))) ||
-        (word1.includes('located') && (word2.includes('location') || word2.includes('store')))
-      )
-    );
-    
-    const finalScore = partialMatches.length > 0 ? Math.max(boostedScore, 0.8) : boostedScore;
-    
-    return finalScore;
+    return intersection.length / union.length;
   }
 
   private parseUserIntent(query: string, conversationHistory?: any[]): {
