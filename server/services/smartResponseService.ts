@@ -135,16 +135,25 @@ class SmartResponseService {
       enhanced = `I apologize, but we currently don't have ${categoryNames.join(' or ')} in our inventory. We specialize in luxury fragrances, watches, and accessories. Would you like me to show you our available categories instead?`;
     }
 
-    // Don't truncate responses unless they're extremely long (over 800 characters)
-    if (enhanced.length > 800) {
-      enhanced = enhanced.substring(0, 750).trim();
+    // Strip markdown formatting to show clean text
+    enhanced = enhanced
+      .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
+      .replace(/\*(.*?)\*/g, '$1')      // Remove *italic*
+      .replace(/#{1,6}\s+/g, '')       // Remove # headers
+      .replace(/`([^`]+)`/g, '$1')     // Remove `code`
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove [link](url)
+      .trim();
+
+    // Only truncate if extremely long (over 1500 characters for better user experience)
+    if (enhanced.length > 1500) {
+      enhanced = enhanced.substring(0, 1400).trim();
       // Ensure we end at a complete sentence
       const lastPeriod = enhanced.lastIndexOf('.');
       const lastExclamation = enhanced.lastIndexOf('!');
       const lastQuestion = enhanced.lastIndexOf('?');
       const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion);
       
-      if (lastSentenceEnd > 400) {
+      if (lastSentenceEnd > 700) {
         enhanced = enhanced.substring(0, lastSentenceEnd + 1);
       }
     }
