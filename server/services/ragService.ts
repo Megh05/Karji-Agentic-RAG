@@ -311,9 +311,33 @@ export class RAGService {
     const words2 = text2.toLowerCase().split(/\s+/);
     
     const intersection = words1.filter(word => words2.includes(word));
-    const union = Array.from(new Set([...words1, ...words2]));
     
-    return intersection.length / union.length;
+    // Use a better similarity calculation that considers:
+    // 1. How many query words are found (coverage)
+    // 2. Boost score for key terms like "location", "store", "address", etc.
+    const keyTerms = ['location', 'locations', 'store', 'stores', 'address', 'addresses', 'outlet', 'outlets', 'mall', 'malls', 'branch', 'branches', 'shop', 'shops'];
+    const hasKeyTerms = intersection.some(word => keyTerms.includes(word) || keyTerms.some(term => word.includes(term) || term.includes(word)));
+    
+    // Calculate base similarity as coverage of query terms
+    const coverage = intersection.length / words1.length;
+    
+    // Boost score significantly if key location terms are found
+    const boostedScore = hasKeyTerms ? Math.min(coverage * 3, 1.0) : coverage;
+    
+    // Also check for partial word matches for location-related terms
+    const partialMatches = words1.filter(word1 => 
+      words2.some(word2 => 
+        (word1.includes('location') && word2.includes('location')) ||
+        (word1.includes('store') && word2.includes('store')) ||
+        (word1.includes('address') && word2.includes('address')) ||
+        (word1.includes('where') && (word2.includes('location') || word2.includes('address'))) ||
+        (word1.includes('located') && (word2.includes('location') || word2.includes('store')))
+      )
+    );
+    
+    const finalScore = partialMatches.length > 0 ? Math.max(boostedScore, 0.8) : boostedScore;
+    
+    return finalScore;
   }
 
   private parseUserIntent(query: string, conversationHistory?: any[]): {
