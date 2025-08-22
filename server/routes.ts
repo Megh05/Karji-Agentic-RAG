@@ -340,7 +340,7 @@ INSTRUCTIONS:
 12. Always explain what makes KarjiStore special (premium brands, competitive prices, fast UAE shipping)
 
 KNOWLEDGE BASE:
-${context.documents.slice(0, 2).map((d: Document & { content?: string }) => (d.content || '').substring(0, 200)).join('\n')}
+${context.documents.map((d: Document & { content?: string }) => (d.content || '')).join('\n\n')}
 
 🚨 HONESTY RULE - NEVER HALLUCINATE PRODUCTS 🚨
 Remember: You're not just providing information - you're creating a personalized shopping experience that guides this specific customer toward a purchase decision.
@@ -403,7 +403,7 @@ INSTRUCTIONS:
 6. Explain KarjiStore's unique value (premium brands, competitive prices, UAE shipping)
 `}
 
-KNOWLEDGE BASE: ${context.documents.slice(0, 1).map((d: Document & { content?: string }) => (d.content || '').substring(0, 300)).join('\n')}`;
+KNOWLEDGE BASE: ${context.documents.map((d: Document & { content?: string }) => (d.content || '')).join('\n\n')}`;
         
         console.log('Optimized system prompt length:', coreSystemPrompt.length);
         
