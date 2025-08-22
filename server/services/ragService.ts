@@ -205,8 +205,12 @@ export class RAGService {
 
     try {
       // Primary: Use Langchain RAG service for semantic similarity search
+      // For location/address queries, increase document retrieval to get all chunks
+      const isLocationQuery = /\b(location|address|store|outlet|branch|where|situated|located)\b/i.test(query);
+      const adjustedMaxDocuments = isLocationQuery ? Math.max(maxDocuments, 6) : maxDocuments;
+      
       const langchainResults = await langchainRAGService.getRelevantContext(query, {
-        maxDocuments,
+        maxDocuments: adjustedMaxDocuments,
         maxProducts
       });
 

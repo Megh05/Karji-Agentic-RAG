@@ -220,7 +220,7 @@ export class LangchainRAGService {
     documents: Document[];
     products: Document[];
   }> {
-    const { maxDocuments = 3, maxProducts = 4 } = options || {};
+    const { maxDocuments = 5, maxProducts = 4 } = options || {};
 
     try {
       // Search for relevant documents and products
