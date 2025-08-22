@@ -135,25 +135,30 @@ class SmartResponseService {
       enhanced = `I apologize, but we currently don't have ${categoryNames.join(' or ')} in our inventory. We specialize in luxury fragrances, watches, and accessories. Would you like me to show you our available categories instead?`;
     }
 
-    // Strip markdown formatting to show clean text
+    // Strip markdown formatting to show clean text and convert tables to readable format
     enhanced = enhanced
       .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
       .replace(/\*(.*?)\*/g, '$1')      // Remove *italic*
       .replace(/#{1,6}\s+/g, '')       // Remove # headers
       .replace(/`([^`]+)`/g, '$1')     // Remove `code`
       .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove [link](url)
+      .replace(/\|([^|\n]+)\|/g, (match, content) => content.trim() + ' ') // Convert table cells to text
+      .replace(/^\|.*\|$/gm, '') // Remove table separator lines
+      .replace(/\|/g, ' - ')     // Convert remaining pipes to dashes
+      .replace(/\s+/g, ' ')      // Clean up multiple spaces
       .trim();
 
-    // Only truncate if extremely long (over 1500 characters for better user experience)
-    if (enhanced.length > 1500) {
-      enhanced = enhanced.substring(0, 1400).trim();
-      // Ensure we end at a complete sentence
+    // Only truncate if extremely long (over 2500 characters for location listings)
+    if (enhanced.length > 2500) {
+      enhanced = enhanced.substring(0, 2400).trim();
+      // Ensure we end at a complete sentence or line
       const lastPeriod = enhanced.lastIndexOf('.');
       const lastExclamation = enhanced.lastIndexOf('!');
       const lastQuestion = enhanced.lastIndexOf('?');
-      const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion);
+      const lastNewline = enhanced.lastIndexOf('\n');
+      const lastSentenceEnd = Math.max(lastPeriod, lastExclamation, lastQuestion, lastNewline);
       
-      if (lastSentenceEnd > 700) {
+      if (lastSentenceEnd > 1200) {
         enhanced = enhanced.substring(0, lastSentenceEnd + 1);
       }
     }
