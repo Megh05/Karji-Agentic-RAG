@@ -553,14 +553,16 @@ KNOWLEDGE BASE: ${context.documents.map((d: Document & { content?: string }) => 
         }
       }
 
-      // CRITICAL: Handle case when no products are found gracefully
+      // CRITICAL: Handle case when no products are found gracefully (but only if truly no products)
       if (!smartResponse.products || smartResponse.products.length === 0) {
+        console.log('No products found - smartResponse.products:', smartResponse.products);
         // Check if this was a category-specific request
         const intent = intentRecognitionService.analyzeIntent(message, conversationService.getMessages(currentSessionId) || []);
         const categoryHints = intent.entities?.categories || [];
         
         if (categoryHints.length > 0) {
-          // Update the message to be more helpful
+          // Only override if we truly have no products and this was a specific category request
+          console.log('Applying fallback response for category:', categoryHints);
           smartResponse.message = `I apologize, but we currently don't have ${categoryHints.map((cat: string) => {
             if (cat === 'watch') return 'watches';
             if (cat === 'fragrance') return 'fragrances';
@@ -569,6 +571,8 @@ KNOWLEDGE BASE: ${context.documents.map((d: Document & { content?: string }) => 
             return cat + 's';
           }).join(' or ')} in our inventory. We specialize in luxury fragrances, watches, and accessories. Would you like me to show you our available categories instead?`;
         }
+      } else {
+        console.log('Products found - preserving smartResponse with', smartResponse.products?.length, 'products');
       }
 
       // Debug: Log what we're sending to the frontend

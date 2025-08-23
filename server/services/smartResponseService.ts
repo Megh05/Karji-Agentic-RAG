@@ -78,7 +78,14 @@ class SmartResponseService {
     });
 
     // CRITICAL: Don't return products when clarification is needed
+    console.log('Intent analysis:', { 
+      category: intent.category, 
+      actions: intent.actions, 
+      willClearProducts: intent.category === 'support' && intent.actions.includes('ask_clarifying_questions')
+    });
+    
     if (intent.category === 'support' && intent.actions.includes('ask_clarifying_questions')) {
+      console.log('Clearing products due to clarification request');
       smartProducts = []; // Clear products for clarification requests
     }
 
