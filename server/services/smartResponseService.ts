@@ -125,12 +125,22 @@ class SmartResponseService {
     // Keep responses concise and conversational
     let enhanced = baseResponse;
 
+    console.log('Enhancing response - baseResponse:', baseResponse.substring(0, 100));
+    console.log('Intent categories:', intent.entities?.categories);
+
     // AI model handles spelling corrections, so no need for manual correction handling here
     
     // CRITICAL: Handle case when no products are found for the requested category
     // Check if this is a category-specific request that returned no products
     const categoryHints = intent.entities?.categories || [];
-    if (categoryHints.length > 0 && (baseResponse.includes("don't have") || baseResponse.includes("don't have"))) {
+    const containsDontHave = baseResponse.includes("don't have") || baseResponse.includes("don't have");
+    console.log('Category check:', { 
+      hasCategoryHints: categoryHints.length > 0, 
+      containsDontHave, 
+      willReplaceResponse: categoryHints.length > 0 && containsDontHave 
+    });
+    
+    if (categoryHints.length > 0 && containsDontHave) {
       const categoryNames = categoryHints.map((cat: string) => {
         if (cat === 'watch') return 'watches';
         if (cat === 'fragrance') return 'fragrances';

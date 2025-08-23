@@ -460,6 +460,8 @@ KNOWLEDGE BASE: ${context.documents.map((d: Document & { content?: string }) => 
         baseAssistantMessage = "I'm experiencing some technical difficulties with my AI processing right now. Let me try to help you with what I can find in our product database.";
       }
 
+      console.log('Base AI response:', baseAssistantMessage.substring(0, 200) + '...');
+
       // Check if this is a brand listing request
       const brandIntent = intentRecognitionService.analyzeIntent(message, conversationService.getMessages(currentSessionId) || []);
       
@@ -541,6 +543,12 @@ KNOWLEDGE BASE: ${context.documents.map((d: Document & { content?: string }) => 
         context,
         baseAssistantMessage
       );
+
+      console.log('SmartResponse generated:', {
+        hasProducts: !!smartResponse.products,
+        productCount: smartResponse.products?.length || 0,
+        productsPreview: smartResponse.products?.slice(0, 2).map(p => ({ id: p.id, title: p.title })) || 'No products'
+      });
 
       // SMART ERROR HANDLING: If there was an API error, be more intelligent about products
       if (isErrorResponse) {
