@@ -135,7 +135,7 @@ class SmartResponseService {
       // Create list of available categories excluding the one they asked for
       const availableCategories = ['luxury fragrances', 'premium accessories', 'exquisite watches', 'beauty products'];
       const filteredCategories = availableCategories.filter(cat => 
-        !categoryNames.some(requestedCat => cat.includes(requestedCat.slice(0, -1))) // Remove 's' and check if category contains it
+        !categoryNames.some((requestedCat: string) => cat.includes(requestedCat.slice(0, -1))) // Remove 's' and check if category contains it
       );
       
       enhanced = `I apologize, but we currently don't have ${categoryNames.join(' or ')} available right now. However, we do specialize in ${filteredCategories.join(', ')}. Would you like me to show you some of our available products instead?`;
@@ -215,9 +215,33 @@ class SmartResponseService {
   }
 
   private calculateProductScore(product: Product, profile: any, intent: any): number {
-    let score = 0;
+    let score = 10; // Base relevance score for all products
 
-    // Category preference matching
+    // Intent-based keyword matching (critical for new users)
+    const searchTerms = intent.searchTerms || [];
+    const productText = `${product.title} ${product.description} ${product.brand}`.toLowerCase();
+    
+    searchTerms.forEach((term: string) => {
+      if (productText.includes(term.toLowerCase())) {
+        score += 15; // High score for direct matches
+      }
+    });
+
+    // Category matching based on query intent
+    if (intent.entities?.categories) {
+      intent.entities.categories.forEach((category: string) => {
+        const categoryLower = category.toLowerCase();
+        if (productText.includes(categoryLower) || 
+            (category === 'fragrance' && (productText.includes('perfume') || productText.includes('fragrance'))) ||
+            (category === 'perfume' && (productText.includes('perfume') || productText.includes('fragrance'))) ||
+            (category === 'watch' && productText.includes('watch')) ||
+            (category === 'accessory' && productText.includes('accessory'))) {
+          score += 20;
+        }
+      });
+    }
+
+    // Category preference matching (for established users)
     Object.entries(profile.preferences.categories || {}).forEach(([category, weight]) => {
       if (product.title?.toLowerCase().includes(category.toLowerCase()) || 
           product.description?.toLowerCase().includes(category.toLowerCase())) {
@@ -225,7 +249,7 @@ class SmartResponseService {
       }
     });
 
-    // Brand preference matching
+    // Brand preference matching (for established users)
     Object.entries(profile.preferences.brands || {}).forEach(([brand, weight]) => {
       if (product.brand?.toLowerCase().includes(brand.toLowerCase())) {
         score += (weight as number) * 8;
