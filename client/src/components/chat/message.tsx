@@ -7,6 +7,23 @@ import WelcomeGuide from "./welcome-guide";
 import ProductComparison from "./product-comparison";
 import type { Product } from "@shared/schema";
 
+function formatMessageContent(content: string): string[] {
+  // First handle bullet points by converting them to proper line breaks
+  let formatted = content;
+  
+  // Replace bullet points with line breaks + bullet points
+  formatted = formatted.replace(/(\s*)(•|·|\*)\s*/g, '\n• ');
+  
+  // Clean up multiple consecutive line breaks
+  formatted = formatted.replace(/\n\n+/g, '\n\n');
+  
+  // Split by line breaks
+  const lines = formatted.split('\n');
+  
+  // Clean up empty lines and trim
+  return lines.map(line => line.trim()).filter(line => line !== '');
+}
+
 // Helper function to determine if products should be shown in carousel
 function shouldShowCarousel(products: any[]): boolean {
   if (products.length < 3) return false;
@@ -61,8 +78,12 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
         <div className="flex-1 min-w-0">
           <div className={`message-bubble ${isUser ? 'user' : 'ai'}`}>
             <div className="whitespace-pre-wrap leading-relaxed text-sm space-y-2">
-              {message.content.split('\n').map((line, index) => (
-                <p key={index} className={line.trim() === '' ? 'h-2' : ''}>
+              {formatMessageContent(message.content).map((line, index) => (
+                <p key={index} className={
+                  line.trim() === '' ? 'h-2' : 
+                  line.startsWith('• ') ? 'ml-4 text-sm leading-6' : 
+                  ''
+                }>
                   {line}
                 </p>
               ))}
