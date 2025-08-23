@@ -8,11 +8,20 @@ import ProductComparison from "./product-comparison";
 import type { Product } from "@shared/schema";
 
 function formatMessageContent(content: string): string[] {
-  // First handle bullet points by converting them to proper line breaks
   let formatted = content;
   
-  // Replace bullet points with line breaks + bullet points
-  formatted = formatted.replace(/(\s*)(•|·|\*)\s*/g, '\n• ');
+  // Handle markdown-style bullet points (- text)
+  formatted = formatted.replace(/(\s*)-\s+/g, '\n• ');
+  
+  // Handle other bullet point styles (•, ·, *)
+  formatted = formatted.replace(/(\s*)(•|·|\*)\s+/g, '\n• ');
+  
+  // Handle section headers with **bold** formatting
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '$1');
+  
+  // Handle line breaks and section separators
+  formatted = formatted.replace(/\s*–\s*/g, '\n• ');
+  formatted = formatted.replace(/\.\s*-/g, '.\n• ');
   
   // Clean up multiple consecutive line breaks
   formatted = formatted.replace(/\n\n+/g, '\n\n');
@@ -20,8 +29,15 @@ function formatMessageContent(content: string): string[] {
   // Split by line breaks
   const lines = formatted.split('\n');
   
-  // Clean up empty lines and trim
-  return lines.map(line => line.trim()).filter(line => line !== '');
+  // Clean up empty lines and trim, but keep intentional spacing
+  return lines.map(line => line.trim()).filter((line, index, array) => {
+    // Keep non-empty lines
+    if (line !== '') return true;
+    // Keep empty lines that create spacing between sections
+    const prevLine = array[index - 1];
+    const nextLine = array[index + 1];
+    return prevLine && nextLine && prevLine !== '' && nextLine !== '';
+  });
 }
 
 // Helper function to determine if products should be shown in carousel
@@ -78,15 +94,27 @@ export default function Message({ message, onFollowUpClick }: MessageProps) {
         <div className="flex-1 min-w-0">
           <div className={`message-bubble ${isUser ? 'user' : 'ai'}`}>
             <div className="whitespace-pre-wrap leading-relaxed text-sm space-y-2">
-              {formatMessageContent(message.content).map((line, index) => (
-                <p key={index} className={
-                  line.trim() === '' ? 'h-2' : 
-                  line.startsWith('• ') ? 'ml-4 text-sm leading-6' : 
-                  ''
-                }>
-                  {line}
-                </p>
-              ))}
+              {formatMessageContent(message.content).map((line, index) => {
+                const trimmedLine = line.trim();
+                
+                // Determine styling based on content
+                const isHeader = trimmedLine.endsWith(':') || 
+                  (trimmedLine.length < 50 && !trimmedLine.startsWith('• ') && 
+                   trimmedLine.match(/^[A-Z]/) && !trimmedLine.includes('.'));
+                const isBulletPoint = trimmedLine.startsWith('• ');
+                const isEmpty = trimmedLine === '';
+                
+                return (
+                  <p key={index} className={
+                    isEmpty ? 'h-3' : 
+                    isHeader ? 'font-semibold text-foreground mt-3 mb-1 first:mt-0' :
+                    isBulletPoint ? 'ml-4 text-sm leading-6 mb-1' : 
+                    'leading-6'
+                  }>
+                    {line}
+                  </p>
+                );
+              })}
             </div>
           </div>
         
