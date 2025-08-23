@@ -38,7 +38,7 @@ class IntentRecognitionService {
     
     // Enhanced intent classification patterns
     const buyingSignals = ['buy', 'purchase', 'order', 'add to cart', 'checkout', 'available', 'in stock', 'yes i want to buy', 'ready to purchase', 'want this', 'yes, i want to buy this'];
-    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes', 'open to any', 'open to anything', 'flexible', 'show me', 'what do you have', 'do you have', 'brands do you have', 'which brands'];
+    const browsingSignals = ['show me products', 'what products do you have', 'browse products', 'see your selection', 'show me fragrances', 'show me perfumes', 'open to any', 'open to anything', 'flexible', 'show me', 'what do you have', 'do you have', 'brands do you have', 'which brands', 'perfumes', 'fragrances', 'watches', 'accessories', 'perfume', 'fragrance', 'watch', 'accessory'];
     const brandListingSignals = ['which brands', 'what brands', 'brands do you have', 'what brands do you have', 'list brands', 'show brands', 'available brands', 'luxury brands', 'premium brands', 'designer brands'];
     const comparingSignals = ['compare these', 'difference between these', 'versus', 'vs', 'which of these is better', 'deciding between these products', 'compare between', 'show me comparison', 'side by side', 'compare', 'comparison'];
     const informationSignals = ['how', 'what', 'when', 'where', 'why', 'tell me about', 'explain', 'details', 'shipping', 'returns', 'price', 'cost'];
@@ -47,6 +47,21 @@ class IntentRecognitionService {
     const preferencesSignals = ['for myself', 'for someone special', 'budget-friendly', 'premium quality', 'floral', 'woody', 'musky', 'everyday', 'special occasion'];
     
     // Check if user is confirming a purchase intent from previous products shown
+    // First check if this is clearly a product browsing request
+    const isSimpleProductRequest = browsingSignals.some(signal => 
+      lowercaseMessage === signal || 
+      (lowercaseMessage.length <= 15 && lowercaseMessage.includes(signal))
+    );
+
+    if (isSimpleProductRequest) {
+      return {
+        category: 'browsing' as UserIntent['category'],
+        confidence: 0.95,
+        entities: this.extractEntities(message),
+        actions: ['show_products', 'provide_options']
+      };
+    }
+
     // Check if this is a follow-up query that needs clarification
     const needsClarification = this.needsClarification(message, conversationHistory);
     if (needsClarification) {
